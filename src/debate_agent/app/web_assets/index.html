@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>大辩</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <button id="themeToggleBtn" class="theme-toggle" type="button" aria-label="切换主题">切换暗色</button>
+    <section id="homeScreen" class="shell-screen">
+      <div class="landing-shell">
+        <section id="introView" class="landing-intro panel">
+          <div class="poster-minimal">
+            <p class="eyebrow">Debate Training System</p>
+            <div class="logo-stage">
+              <span class="logo-beam"></span>
+              <span class="logo-ring"></span>
+              <span class="logo-ring logo-ring-secondary"></span>
+              <div class="brand-lockup brand-lockup-minimal">
+                <p class="brand-mark">大辩</p>
+                <p class="brand-shadow-text">DA BIAN</p>
+              </div>
+            </div>
+            <div class="badge-row landing-badges minimal-badges">
+              <span id="healthBadge" class="badge">检测中</span>
+            </div>
+            <div class="toolbar intro-actions minimal-actions">
+              <button id="startTrainingBtn" type="button" class="primary-button hero-button">开始你的辩论训练</button>
+            </div>
+            <div class="flow-stage" aria-hidden="true">
+              <div class="flow-track flow-track-forward">
+                <div class="flow-content">
+                  <span>大辩</span>
+                  <span>严肃训练</span>
+                  <span>正经荒谬</span>
+                  <span>立论</span>
+                  <span>追问</span>
+                  <span>反打</span>
+                  <span>陈词</span>
+                  <span>举证</span>
+                  <span>大辩</span>
+                  <span>严肃训练</span>
+                  <span>正经荒谬</span>
+                  <span>立论</span>
+                  <span>追问</span>
+                  <span>反打</span>
+                  <span>陈词</span>
+                  <span>举证</span>
+                </div>
+              </div>
+              <div class="flow-track flow-track-backward">
+                <div class="flow-content">
+                  <span>标准先行</span>
+                  <span>证据优先</span>
+                  <span>攻防压强</span>
+                  <span>逻辑拆解</span>
+                  <span>裁判视角</span>
+                  <span>长稿输出</span>
+                  <span>标准先行</span>
+                  <span>证据优先</span>
+                  <span>攻防压强</span>
+                  <span>逻辑拆解</span>
+                  <span>裁判视角</span>
+                  <span>长稿输出</span>
+                </div>
+              </div>
+              <div class="flow-track flow-track-forward flow-track-soft">
+                <div class="flow-content">
+                  <span>debate</span>
+                  <span>pressure</span>
+                  <span>framing</span>
+                  <span>rebuttal</span>
+                  <span>closing</span>
+                  <span>evidence</span>
+                  <span>debate</span>
+                  <span>pressure</span>
+                  <span>framing</span>
+                  <span>rebuttal</span>
+                  <span>closing</span>
+                  <span>evidence</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="launchView" class="launch-view hidden">
+          <section class="landing-hero panel launch-hero">
+            <div class="launch-copy">
+              <div class="panel-head compact-head launch-head">
+                <div>
+                  <p class="eyebrow">Training Entry</p>
+                  <h2>进入训练区</h2>
+                </div>
+                <button id="backToIntroBtn" class="ghost-button" type="button">返回介绍</button>
+              </div>
+              <p class="muted">这里才放实际功能。先确定辩题与默认模式，再进入工作台继续交锋、教练和陈词。</p>
+            </div>
+
+            <form id="newSessionForm" class="panel launch-panel">
+              <div class="panel-head compact-head">
+                <h2>开始一场新辩论</h2>
+              </div>
+              <label>
+                <span>辩题</span>
+                <textarea id="topicInput" rows="5" placeholder="例如：人工智能是否应当被强制纳入高中通识教育"></textarea>
+              </label>
+              <div class="inline-grid">
+                <label>
+                  <span>你的立场</span>
+                  <input id="userSideInput" type="text" value="正方" />
+                </label>
+                <label>
+                  <span>对手立场</span>
+                  <input id="agentSideInput" type="text" value="反方" />
+                </label>
+              </div>
+              <div class="inline-grid tri-grid">
+                <label>
+                  <span>教练模式</span>
+                  <select id="coachModeInput">
+                    <option value="manual">按需</option>
+                    <option value="auto">自动</option>
+                  </select>
+                </label>
+                <label>
+                  <span>默认陈词方</span>
+                  <select id="closingSideInput">
+                    <option value="opponent">对手</option>
+                    <option value="user">我方</option>
+                  </select>
+                </label>
+                <label class="toggle-row">
+                  <span>网页检索</span>
+                  <input id="webSearchInput" type="checkbox" checked />
+                </label>
+              </div>
+              <button type="submit" class="primary-button">进入工作台</button>
+            </form>
+          </section>
+
+          <section class="panel landing-history">
+            <div class="panel-head">
+              <h2>继续已有会话</h2>
+              <div class="toolbar">
+                <button id="refreshSessionsBtn" class="ghost-button" type="button">刷新</button>
+              </div>
+            </div>
+            <div id="sessionList" class="session-list"></div>
+          </section>
+        </section>
+      </div>
+    </section>
+
+    <section id="workspaceScreen" class="shell-screen hidden">
+      <div class="workspace-shell">
+        <header class="workspace-topbar panel">
+          <div class="topbar-brand">
+            <button id="backHomeBtn" class="ghost-button" type="button">返回首页</button>
+            <div>
+              <p class="eyebrow">大辩</p>
+              <h2 id="sessionTitle">还没有选中会话</h2>
+              <p id="sessionMeta" class="muted">创建一个会话，或者从首页恢复已有记录。</p>
+            </div>
+          </div>
+          <div class="badge-row">
+            <span id="coachModeBadge" class="badge">教练：按需</span>
+            <span id="webSearchBadge" class="badge">检索：开启</span>
+          </div>
+        </header>
+
+        <section class="panel workspace-stagebar">
+          <div class="stage-copy">
+            <p class="eyebrow">Workflow</p>
+            <h2 id="workspaceModeTitle">立论打磨</h2>
+            <p id="workspaceModeDescription" class="muted">当前页面只负责框架稿与一辩成稿。确认无误后，再进入对辩检验。</p>
+          </div>
+          <div class="toolbar">
+            <button id="enterDebateBtn" class="primary-button" type="button">进入对辩检验</button>
+            <button id="returnOpeningBtn" class="ghost-button hidden" type="button">返回立论打磨</button>
+          </div>
+        </section>
+
+        <section id="openingWorkbench" class="workspace-grid opening-workbench">
+          <div class="column column-main">
+            <section class="panel meta-panel">
+              <div class="panel-head">
+                <h2>会话信息</h2>
+              </div>
+              <div class="hero-grid">
+                <label class="hero-field hero-field-wide">
+                  <span>当前辩题</span>
+                  <textarea id="sessionTopicInput" rows="3" placeholder="选中会话后可直接修改辩题"></textarea>
+                </label>
+                <label class="hero-field">
+                  <span>你的立场</span>
+                  <input id="sessionUserSideInput" type="text" placeholder="正方" />
+                </label>
+                <label class="hero-field">
+                  <span>对手立场</span>
+                  <input id="sessionAgentSideInput" type="text" placeholder="反方" />
+                </label>
+              </div>
+              <div class="toolbar">
+                <button id="updateMetadataBtn" class="primary-button" type="button">保存辩题与立场</button>
+              </div>
+            </section>
+
+            <section class="panel composer-panel">
+              <div class="panel-head">
+                <h2>框架稿编辑与一辩成稿</h2>
+                <span id="openingBriefLabel" class="muted">当前未设置</span>
+              </div>
+              <section class="opening-editor-section">
+                <div class="compact-head opening-subhead">
+                  <div>
+                    <p class="eyebrow">Framework</p>
+                    <h3>可编辑框架稿</h3>
+                  </div>
+                  <p class="muted">先独立生成并打磨框架稿，再基于当前框架按时长扩写一辩稿。</p>
+                </div>
+                <div id="openingDiagnosticPanel" class="opening-diagnostic-panel">
+                  <div class="empty-state">这里会显示可编辑的框架稿。你可以先生成，也可以在已有结果上继续修改。</div>
+                </div>
+                <div class="toolbar">
+                  <button id="generateFrameworkBtn" class="primary-button" type="button">生成框架稿</button>
+                </div>
+              </section>
+
+              <section class="opening-draft-section">
+                <div class="compact-head opening-subhead">
+                  <div>
+                    <p class="eyebrow">Draft</p>
+                    <h3>根据时长生成一辩稿</h3>
+                  </div>
+                  <p class="muted">框架稿在上方编辑，下面按时长生成并继续润色正文。</p>
+                </div>
+                <div id="openingStatus" class="opening-status hidden" aria-live="polite"></div>
+                <textarea id="openingBriefInput" rows="12" placeholder="你可以先生成一辩稿，或者把自己写好的一辩稿直接注入到这里。"></textarea>
+                <div class="toolbar opening-draft-toolbar">
+                  <label class="inline-select compact-select">
+                    <span>成稿时长</span>
+                    <select id="openingDurationSelect">
+                      <option value="2">2 分钟</option>
+                      <option value="3" selected>3 分钟</option>
+                      <option value="4">4 分钟</option>
+                      <option value="5">5 分钟</option>
+                    </select>
+                  </label>
+                  <button id="generateOpeningBtn" class="primary-button" type="button">基于当前框架生成我方一辩稿</button>
+                  <button id="saveOpeningBtn" class="ghost-button" type="button">保存当前框架与一辩稿</button>
+                  <button id="coachOpeningBtn" class="ghost-button" type="button">点评一辩稿</button>
+                </div>
+              </section>
+            </section>
+          </div>
+        </section>
+
+        <section id="debateWorkbench" class="workspace-grid debate-workbench hidden">
+          <div class="column column-main">
+            <section class="panel composer-panel">
+              <div class="panel-head">
+                <h2>回合输入</h2>
+                <span id="turnCountLabel" class="muted">0 条发言</span>
+              </div>
+              <textarea id="turnInput" rows="6" placeholder="输入你的本轮发言"></textarea>
+              <div class="toolbar">
+                <button id="sendTurnBtn" class="primary-button" type="button">发送本轮</button>
+                <button id="coachBtn" class="ghost-button" type="button">生成教练反馈</button>
+                <button id="closingMeBtn" class="ghost-button" type="button">生成我方陈词</button>
+                <button id="closingOpponentBtn" class="ghost-button" type="button">生成对手陈词</button>
+              </div>
+            </section>
+
+            <section class="panel timeline-panel">
+              <div class="panel-head">
+                <h2>交锋时间线</h2>
+              </div>
+              <div id="timeline" class="timeline"></div>
+            </section>
+          </div>
+
+          <div class="column column-side">
+            <section class="panel options-panel">
+              <div class="panel-head">
+                <h2>会话选项</h2>
+              </div>
+              <div class="inline-grid tri-grid">
+                <label>
+                  <span>教练模式</span>
+                  <select id="coachModeSelect">
+                    <option value="manual">按需</option>
+                    <option value="auto">自动</option>
+                  </select>
+                </label>
+                <label>
+                  <span>默认陈词</span>
+                  <select id="defaultClosingSelect">
+                    <option value="opponent">对手</option>
+                    <option value="user">我方</option>
+                  </select>
+                </label>
+                <label class="toggle-row">
+                  <span>网页检索</span>
+                  <input id="webSearchToggle" type="checkbox" />
+                </label>
+              </div>
+              <button id="updateOptionsBtn" class="ghost-button" type="button">保存会话选项</button>
+            </section>
+
+            <section class="panel analysis-panel">
+              <div class="panel-head">
+                <h2>Clash Board</h2>
+              </div>
+              <div id="clashBoard" class="stack-list empty-state">当前还没有 clash。</div>
+            </section>
+
+            <section class="panel analysis-panel">
+              <div class="panel-head">
+                <h2>教练反馈</h2>
+              </div>
+              <div id="coachOutput" class="stack-list empty-state">需要时点击“生成教练反馈”。</div>
+            </section>
+
+            <section class="panel analysis-panel">
+              <div class="panel-head">
+                <h2>陈词稿</h2>
+              </div>
+              <div id="closingOutput" class="stack-list empty-state">这里会显示最近生成的陈词稿。</div>
+            </section>
+
+            <section class="panel analysis-panel">
+              <div class="panel-head">
+                <h2>证据与研究</h2>
+              </div>
+              <div id="evidenceOutput" class="stack-list empty-state">发送一轮后，这里会展示本轮调用的证据。</div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <div id="toast" class="toast hidden"></div>
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,333 @@
+from __future__ import annotations
+
+import tempfile
+import unittest
+from pathlib import Path
+
+from fastapi.testclient import TestClient
+
+from debate_agent.app.service import DebateApplication
+from debate_agent.app.web import create_app
+from debate_agent.orchestration.pipeline import create_demo_profile
+from debate_agent.orchestration.turn_pipeline import TurnPipeline
+from debate_agent.storage.json_store import JSONSessionStore
+
+
+class WebAppTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.store = JSONSessionStore(session_dir=Path(self.temp_dir.name))
+        self.application = DebateApplication(pipeline=TurnPipeline(enable_web_search=False), store=self.store)
+        self.profile = create_demo_profile()
+        self.client = TestClient(create_app(application=self.application, profile=self.profile))
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def test_create_session_and_process_turn_via_api(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "opponent",
+            },
+        )
+        self.assertEqual(create_response.status_code, 200)
+        session_payload = create_response.json()
+        session_id = session_payload["session_id"]
+
+        turn_response = self.client.post(
+            f"/api/sessions/{session_id}/turns",
+            json={"user_text": "我方认为 AI 教育应该成为所有高中生的基础能力训练。"},
+        )
+        self.assertEqual(turn_response.status_code, 200)
+        payload = turn_response.json()
+        self.assertEqual(payload["session"]["summary"]["turn_count"], 2)
+        self.assertIn("opponent_output", payload["turn_result"])
+
+    def test_update_options_endpoint(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "测试辩题",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        update_response = self.client.patch(
+            f"/api/sessions/{session_id}/options",
+            json={
+                "coach_feedback_mode": "auto",
+                "web_search_enabled": False,
+                "default_closing_side": "user",
+            },
+        )
+        self.assertEqual(update_response.status_code, 200)
+        session_payload = update_response.json()["session"]
+        self.assertEqual(session_payload["options"]["coach_feedback_mode"], "auto")
+        self.assertFalse(session_payload["options"]["web_search_enabled"])
+        self.assertEqual(session_payload["options"]["default_closing_side"], "user")
+
+    def test_update_metadata_endpoint(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "旧辩题",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        update_response = self.client.patch(
+            f"/api/sessions/{session_id}/metadata",
+            json={
+                "topic": "新辩题",
+                "user_side": "支持方",
+                "agent_side": "反对方",
+            },
+        )
+        self.assertEqual(update_response.status_code, 200)
+        session_payload = update_response.json()["session"]
+        self.assertEqual(session_payload["topic"], "新辩题")
+        self.assertEqual(session_payload["user_side"], "支持方")
+        self.assertEqual(session_payload["agent_side"], "反对方")
+
+    def test_update_phase_endpoint(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "阶段切换测试",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+        self.assertEqual(create_response.json()["summary"]["current_phase"], "opening")
+
+        update_response = self.client.patch(
+            f"/api/sessions/{session_id}/phase",
+            json={"phase": "crossfire"},
+        )
+        self.assertEqual(update_response.status_code, 200)
+        session_payload = update_response.json()["session"]
+        self.assertEqual(session_payload["current_phase"], "crossfire")
+        self.assertEqual(session_payload["summary"]["current_phase"], "crossfire")
+
+    def test_user_closing_can_be_requested_before_first_turn(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "user",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        closing_response = self.client.post(
+            f"/api/sessions/{session_id}/closing",
+            json={"speaker_side": "user"},
+        )
+        self.assertEqual(closing_response.status_code, 200)
+        payload = closing_response.json()
+        self.assertEqual(payload["closing_result"]["closing_output"]["speaker_side"], "正方")
+        self.assertTrue(payload["closing_result"]["closing_output"]["spoken_text"])
+
+    def test_delete_session_endpoint(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "待删除辩题",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        delete_response = self.client.delete(f"/api/sessions/{session_id}")
+        self.assertEqual(delete_response.status_code, 200)
+        self.assertEqual(delete_response.json()["session_id"], session_id)
+
+        fetch_response = self.client.get(f"/api/sessions/{session_id}")
+        self.assertEqual(fetch_response.status_code, 404)
+
+    def test_opening_brief_generate_import_and_coach_endpoints(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "user",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        generate_response = self.client.post(
+            f"/api/sessions/{session_id}/opening-briefs/generate",
+            json={"speaker_side": "user", "target_duration_minutes": 4},
+        )
+        self.assertEqual(generate_response.status_code, 200)
+        opening_brief = generate_response.json()["opening_result"]["opening_brief"]
+        self.assertTrue(opening_brief["spoken_text"])
+        self.assertEqual(opening_brief["target_duration_minutes"], 4)
+        self.assertIsNotNone(opening_brief["framework"])
+
+        import_response = self.client.post(
+            f"/api/sessions/{session_id}/opening-briefs/import",
+            json={
+                "speaker_side": "user",
+                "spoken_text": "各位评判，本题应比较政策净收益。",
+                "target_duration_minutes": 4,
+                "framework": {
+                    "judge_standard": "比较哪一方更能提升教育效果并控制资源挤出。",
+                    "framework_summary": "先定标准，再论证能力提升、教育公平与执行成本。",
+                    "argument_cards": [
+                        {
+                            "claim": "把 AI 纳入通识教育能让学生获得最低限度的技术理解能力。",
+                            "data_support": "当前缺少可直接上场的硬证据。",
+                            "academic_support": "通识教育的任务是建立基础认知框架，而非职业技能训练。",
+                            "scenario_support": "学生面对 AI 生成内容时，若没有基础辨识能力，就更容易误判信息。"
+                        }
+                    ]
+                }
+            },
+        )
+        self.assertEqual(import_response.status_code, 200)
+        self.assertEqual(import_response.json()["opening_brief"]["source_mode"], "manual")
+        self.assertEqual(import_response.json()["opening_brief"]["target_duration_minutes"], 4)
+        self.assertEqual(import_response.json()["opening_brief"]["framework"]["judge_standard"], "比较哪一方更能提升教育效果并控制资源挤出。")
+
+        coach_response = self.client.post(f"/api/sessions/{session_id}/opening-briefs/coach")
+        self.assertEqual(coach_response.status_code, 200)
+        self.assertEqual(coach_response.json()["coach_result"]["coach_report"]["scope"], "opening_brief")
+
+    def test_opening_framework_generate_and_update_endpoints(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "user",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        framework_response = self.client.post(
+            f"/api/sessions/{session_id}/opening-framework/generate",
+            json={"speaker_side": "user"},
+        )
+        self.assertEqual(framework_response.status_code, 200)
+        framework_payload = framework_response.json()["framework_result"]["framework"]
+        self.assertTrue(framework_payload["judge_standard"])
+        self.assertGreaterEqual(len(framework_payload["argument_cards"]), 2)
+        self.assertEqual(framework_response.json()["session"]["current_opening_framework"]["judge_standard"], framework_payload["judge_standard"])
+
+        update_response = self.client.patch(
+            f"/api/sessions/{session_id}/opening-framework",
+            json={
+                "judge_standard": "比较哪一方更能稳定提升学生 AI 基础能力并控制资源挤出。",
+                "framework_summary": "先定标准，再比较基础能力、教育公平与执行成本。",
+                "argument_cards": [
+                    {
+                        "claim": "通识教育的最低目标是让学生具备识别和使用 AI 工具的基础能力。",
+                        "data_support": "当前缺少可直接上场的硬证据。",
+                        "academic_support": "通识教育强调面向全体学生的基础认知能力建设。",
+                        "scenario_support": "学生在面对 AI 生成内容时，如果没有基础识读能力，就更容易误信错误信息。"
+                    }
+                ]
+            },
+        )
+        self.assertEqual(update_response.status_code, 200)
+        self.assertEqual(
+            update_response.json()["session"]["current_opening_framework"]["framework_summary"],
+            "先定标准，再比较基础能力、教育公平与执行成本。",
+        )
+
+    def test_opening_brief_stream_endpoint(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "user",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        framework_response = self.client.post(
+            f"/api/sessions/{session_id}/opening-framework/generate",
+            json={"speaker_side": "user"},
+        )
+        framework = framework_response.json()["framework_result"]["framework"]
+
+        with self.client.stream(
+            "POST",
+            f"/api/sessions/{session_id}/opening-briefs/stream",
+            json={"speaker_side": "user", "target_duration_minutes": 3, "framework": framework},
+        ) as response:
+            self.assertEqual(response.status_code, 200)
+            body = "".join(response.iter_text())
+
+        self.assertIn("event: opening_chunk", body)
+        self.assertIn("event: completed", body)
+        self.assertNotIn("event: research_ready", body)
+
+    def test_opening_brief_stream_requires_framework(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "user",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        with self.client.stream(
+            "POST",
+            f"/api/sessions/{session_id}/opening-briefs/stream",
+            json={"speaker_side": "user", "target_duration_minutes": 3},
+        ) as response:
+            self.assertEqual(response.status_code, 200)
+            body = "".join(response.iter_text())
+
+        self.assertIn("event: error", body)
+        self.assertIn("当前会话还没有可用框架稿", body)
+
+
+if __name__ == "__main__":
+    unittest.main()

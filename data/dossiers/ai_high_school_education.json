@@ -1,0 +1,43 @@
+{
+  "dossier_id": "ai-high-school-education",
+  "topic": "人工智能是否应当被强制纳入高中通识教育",
+  "aliases": [
+    "AI 是否应纳入高中通识教育",
+    "人工智能教育是否应成为高中必修内容",
+    "高中是否应强制开设 AI 通识课程"
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev-ai-001",
+      "title": "课程实施存在显著师资培训成本",
+      "snippet": "新增 AI 通识课程通常要求教师接受额外培训，并对现有课程编排做结构性调整，短期内会显著增加学校执行成本。",
+      "stance_hint": "negative",
+      "source_type": "dossier",
+      "source_ref": "dossier://ai-high-school-education/costs"
+    },
+    {
+      "evidence_id": "ev-ai-002",
+      "title": "课程置换会挤压现有基础学科时间",
+      "snippet": "在总课时不显著增加的情况下，引入新课程往往意味着压缩现有基础学科、综合实践或选修课程的时间分配。",
+      "stance_hint": "negative",
+      "source_type": "dossier",
+      "source_ref": "dossier://ai-high-school-education/timetable"
+    },
+    {
+      "evidence_id": "ev-ai-003",
+      "title": "教育公平可以成为正方的重要支持点",
+      "snippet": "如果 AI 能力被视为未来关键素养，只依赖家庭资源和校外培训可能进一步扩大不同家庭背景学生之间的能力差距。",
+      "stance_hint": "positive",
+      "source_type": "dossier",
+      "source_ref": "dossier://ai-high-school-education/equity"
+    },
+    {
+      "evidence_id": "ev-ai-004",
+      "title": "试点与分层推进可作为强制全面推广的替代路径",
+      "snippet": "在全国统一强制推进之前，先进行区域试点、选修探索或分层课程设计，往往更有利于控制风险和积累执行经验。",
+      "stance_hint": "negative",
+      "source_type": "dossier",
+      "source_ref": "dossier://ai-high-school-education/phased-rollout"
+    }
+  ]
+}

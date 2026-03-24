@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "debate-project"
+version = "0.1.0"
+description = "Debate sparring agent prototype"
+requires-python = ">=3.11"
+dependencies = [
+	"fastapi>=0.115.0",
+	"openai>=1.66.0",
+	"ddgs>=8.0.0",
+	"python-dotenv>=1.0.1",
+	"uvicorn>=0.30.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
