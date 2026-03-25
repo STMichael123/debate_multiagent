@@ -17,6 +17,7 @@ from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, DebatePro
 from debate_agent.infrastructure.llm_client import DebateLLMClient
 from debate_agent.infrastructure.settings import load_settings
 from debate_agent.orchestration.pipeline import create_demo_profile
+from debate_agent.orchestration.preparation import PreparationCoordinator, ResearchScoutAgent, TheorySynthesisAgent
 from debate_agent.orchestration.turn_pipeline import TurnPipeline
 from debate_agent.storage.json_store import JSONSessionStore
 
@@ -38,6 +39,24 @@ class TurnPayload(BaseModel):
 class ClosingPayload(BaseModel):
     speaker_side: str | None = None
     closing_focus: str | None = None
+
+
+class InquiryPayload(BaseModel):
+    speaker_side: str | None = None
+    inquiry_focus: str | None = None
+    max_questions: int = Field(default=4, ge=3, le=8)
+
+
+class TimerPlanPayload(BaseModel):
+    speaker_side: str | None = None
+    phase: str | None = None
+    note: str | None = None
+
+
+class PreparationPayload(BaseModel):
+    preparation_goal: str | None = None
+    focus: str | None = None
+    limit: int = Field(default=6, ge=3, le=10)
 
 
 class OpeningBriefGeneratePayload(BaseModel):
@@ -197,6 +216,53 @@ def create_app(
         return {
             "session": _serialize_session_result(debate_application, result.session),
             "closing_result": jsonable_encoder(result.closing_result),
+            "saved_path": str(result.saved_path),
+        }
+
+    @app.post("/api/sessions/{session_id}/inquiry")
+    def request_inquiry(session_id: str, payload: InquiryPayload) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        result = debate_application.request_inquiry_strategy(
+            session=session,
+            profile=debate_profile,
+            speaker_side=_normalize_optional_closing_side(payload.speaker_side),
+            inquiry_focus=payload.inquiry_focus,
+            max_questions=payload.max_questions,
+        )
+        return {
+            "session": _serialize_session_result(debate_application, result.session),
+            "inquiry_result": jsonable_encoder(result.inquiry_result),
+            "saved_path": str(result.saved_path),
+        }
+
+    @app.post("/api/sessions/{session_id}/timer-plan")
+    def request_timer_plan(session_id: str, payload: TimerPlanPayload) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        result = debate_application.request_timer_plan(
+            session=session,
+            speaker_side=_normalize_optional_closing_side(payload.speaker_side),
+            phase=_parse_optional_phase(payload.phase),
+            note=payload.note,
+        )
+        return {
+            "session": _serialize_session_result(debate_application, result.session),
+            "timer_plan": jsonable_encoder(result.timer_plan),
+            "saved_path": str(result.saved_path),
+        }
+
+    @app.post("/api/sessions/{session_id}/preparation")
+    def prepare_session(session_id: str, payload: PreparationPayload) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        result = debate_application.prepare_session_research(
+            session=session,
+            profile=debate_profile,
+            preparation_goal=payload.preparation_goal,
+            focus=payload.focus,
+            limit=payload.limit,
+        )
+        return {
+            "session": _serialize_session_result(debate_application, result.session),
+            "preparation_result": jsonable_encoder(result.preparation_result),
             "saved_path": str(result.saved_path),
         }
 
@@ -382,7 +448,11 @@ def _build_application() -> DebateApplication:
     llm_client = _build_llm_client()
     store = JSONSessionStore()
     pipeline = TurnPipeline(llm_client=llm_client)
-    return DebateApplication(pipeline=pipeline, store=store)
+    preparation_coordinator = PreparationCoordinator(
+        research_scout=ResearchScoutAgent(evidence_service=pipeline.evidence_service),
+        theory_synthesis_agent=TheorySynthesisAgent(llm_client=llm_client, model_name=llm_client.settings.model if llm_client else None),
+    )
+    return DebateApplication(pipeline=pipeline, store=store, preparation_coordinator=preparation_coordinator)
 
 
 def _build_llm_client() -> DebateLLMClient | None:
@@ -449,6 +519,9 @@ def _serialize_session_summary(application: DebateApplication, session: DebateSe
         "current_phase": session.current_phase.value,
         "turn_count": len(session.turns),
         "opening_brief_count": len(session.opening_briefs),
+        "timer_plan_count": len(session.timer_plans),
+        "preparation_packet_count": len(session.preparation_packets),
+        "inquiry_count": len(session.inquiry_outputs),
         "clash_count": len(session.clash_points),
         "coach_mode": session.options.coach_feedback_mode.value,
         "web_search_enabled": session.options.web_search_enabled,
@@ -476,6 +549,12 @@ def _parse_phase(raw_value: str) -> DebatePhase:
         return DebatePhase(normalized)
     except ValueError as error:
         raise HTTPException(status_code=400, detail="phase 必须是 opening、crossfire、free_debate、closing 或 review。") from error
+
+
+def _parse_optional_phase(raw_value: str | None) -> DebatePhase | None:
+    if raw_value is None:
+        return None
+    return _parse_phase(raw_value)
 
 
 def _normalize_closing_side(raw_value: str) -> str:

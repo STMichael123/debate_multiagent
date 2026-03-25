@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from debate_agent.domain.models import AgentOutput, ArgumentUnit, ClashPoint, ClosingOutput, CoachReport, DebateSession, OpeningBrief, OpeningFramework, SpeakerRole, TurnAnalysis, TurnRecord
+from debate_agent.domain.models import AgentOutput, ArgumentUnit, ClashPoint, ClosingOutput, CoachReport, DebateSession, InquiryOutput, OpeningBrief, OpeningFramework, PreparationPacket, SpeakerRole, TimerPlan, TurnAnalysis, TurnRecord
 
 
 class SessionStateMutator:
@@ -87,6 +87,15 @@ class SessionStateMutator:
 
     def add_closing_output(self, session: DebateSession, closing_output: ClosingOutput) -> None:
         session.closing_outputs.append(closing_output)
+
+    def add_inquiry_output(self, session: DebateSession, inquiry_output: InquiryOutput) -> None:
+        session.inquiry_outputs.append(inquiry_output)
+
+    def add_timer_plan(self, session: DebateSession, timer_plan: TimerPlan) -> None:
+        session.timer_plans.append(timer_plan)
+
+    def add_preparation_packet(self, session: DebateSession, preparation_packet: PreparationPacket) -> None:
+        session.preparation_packets.append(preparation_packet)
 
     def add_opening_brief(self, session: DebateSession, opening_brief: OpeningBrief) -> None:
         session.opening_briefs.append(opening_brief)

@@ -46,6 +46,12 @@ pyproject.toml
 12. 应用服务层：CLI 通过统一应用服务调用对辩、教练、陈词与会话配置能力。
 13. Web 工作台：支持在浏览器中创建会话、发起回合、查看 clash、请求教练反馈和生成陈词稿。
 14. Web 会话编辑：支持在前端直接修改当前辩题和双方立场。
+15. 多层 Agent 原型：已从单纯对手 + 教练扩展为“主调度 Agent + 比赛执行 Agent”结构。
+16. 三类比赛 Agent：当前按职责拆为质询 Agent、陈词 and 结辩 Agent、对辩 and 自由辩 Agent。
+17. 主调度 Plan：turn、opening、closing、inquiry 等结果会返回主 Agent 的路由决策，便于前端和后续调试观察。
+18. 独立监督体系：保留教练评判能力，并引入自动化计时规划组件，让输出链路与评判链路解耦。
+19. 独立备赛体系：新增资料检索 Agent 和学理整合 Agent，由 preparation coordinator 统一组织，专门服务备赛而非比赛现场输出。
+20. 数据流闭环：最新 preparation packet 现可作为比赛系统的可选上游输入，参与比赛阶段的证据合流与 prompt 组织。
 
 ## 下一阶段建议
 
@@ -127,6 +133,34 @@ Web 工作台当前支持：
 4. 我方或对方陈词生成
 5. clash board、时间线和证据卡片展示
 6. 当前辩题与双方立场的直接编辑
+
+当前 Web API 还支持：
+
+1. 主调度后的质询提纲生成：`POST /api/sessions/{session_id}/inquiry`
+2. 在回合、陈词、一辩稿结果中返回 `master_plan`，标识本次由哪类比赛 Agent 执行
+3. 独立监督计时规划：`POST /api/sessions/{session_id}/timer-plan`
+4. 独立备赛资料包生成：`POST /api/sessions/{session_id}/preparation`
+
+## 当前双轨结构
+
+当前原型已经区分为两套协作体系：
+
+1. 输出体系：主调度 Agent + 三类比赛 Agent，负责生成回合回应、质询、陈词和一辩稿。
+2. 评判体系：Oversight Coordinator + 教练 Agent + 自动化计时组件，负责回合诊断、计时规划和组织辅助。
+
+现在项目已经进一步扩展为三套可拆分体系：
+
+1. 备赛体系：Preparation Coordinator + 资料检索 Agent + 学理整合 Agent，负责找资料、提炼学理、整理论点种子与风险点。
+2. 比赛体系：主调度 Agent + 三类比赛 Agent，负责实际发言、质询、陈词和自由辩输出。
+3. 评判体系：Oversight Coordinator + 教练 Agent + 自动化计时组件，负责诊断、组织、计时和复盘。
+
+其中计时部分当前优先采用确定性自动化组件，而不是额外的大模型 Agent，目的是减少无谓复杂度并保持评判链路稳定可控。
+同样地，备赛体系会独立整理资料和学理，不再要求比赛链路在生成现场输出时顺带承担研究工作。
+当 session 中已经存在 preparation packet 时，比赛系统会把它视为可选上游输入：
+
+1. 备赛包中的 evidence_records 会与比赛现场检索结果合并去重，形成更稳定的候选证据集。
+2. 备赛包中的 theory_points、argument_seeds 和 recommended_opening_frame 会进入比赛 prompt，帮助比赛系统复用赛前准备成果。
+3. 如果没有 preparation packet，比赛系统仍可独立运行，不依赖备赛链路。
 
 ## LLM 配置
 

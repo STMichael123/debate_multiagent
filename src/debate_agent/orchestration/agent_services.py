@@ -6,7 +6,7 @@ import time
 from typing import Callable
 from uuid import uuid4
 
-from debate_agent.domain.models import AgentOutput, ArgumentUnit, ClashPoint, ClosingOutput, CoachReport, DebateProfile, DebateSession, EvidenceRecord, OpeningArgumentCard, OpeningBrief, OpeningFramework, SpeakerRole, TurnAnalysis, TurnRecord
+from debate_agent.domain.models import AgentOutput, ArgumentUnit, ClashPoint, ClosingOutput, CoachReport, DebatePhase, DebateProfile, DebateSession, EvidenceRecord, InquiryOutput, MasterAgentPlan, MatchAgentType, OpeningArgumentCard, OpeningBrief, OpeningFramework, SpeakerRole, TurnAnalysis, TurnRecord
 from debate_agent.infrastructure.llm_client import DebateLLMClient
 from debate_agent.prompts.builders import build_closing_variables, build_coach_variables, build_opening_coach_variables, build_opening_draft_variables, build_opening_variables, build_opponent_variables
 from debate_agent.prompts.templates import ARGUMENT_ANALYSIS_TEMPLATE, CLOSING_TEMPLATE, COACH_TEMPLATE, OPENING_COACH_TEMPLATE, OPENING_DRAFT_STREAM_TEMPLATE, OPENING_DRAFT_TEMPLATE, OPENING_FRAMEWORK_TEMPLATE, OPPONENT_TEMPLATE
@@ -38,6 +38,22 @@ class OpeningGenerationResult:
 class OpeningFrameworkGenerationResult:
     framework: OpeningFramework
     prompt: str
+    model_name: str | None = None
+
+
+@dataclass(slots=True)
+class InquiryGenerationResult:
+    inquiry_output: InquiryOutput
+    prompt: str
+    model_name: str | None = None
+
+
+@dataclass(slots=True)
+class DebateRoundExecutionResult:
+    turn_analysis: TurnAnalysis
+    analysis_prompt: str
+    opponent_output: AgentOutput
+    opponent_prompt: str
     model_name: str | None = None
 
 
@@ -154,6 +170,333 @@ class TurnAnalyzer:
             clash_points=clash_points,
             pending_response_arguments=_ensure_list(payload.get("pending_response_arguments")),
             model_notes=_ensure_list(payload.get("model_notes")),
+        )
+
+
+class MasterOrchestratorAgent:
+    def plan_turn(self, session: DebateSession, user_text: str) -> MasterAgentPlan:
+        objective = f"围绕用户最新发言推进 {session.current_phase.value} 阶段交锋，并保持对核心 clash 的压力。"
+        rationale = "当前阶段属于对辩或自由辩推进，应由对辩 and 自由辩 agent 负责拆解论点、组织回应与持续施压。"
+        notes = [
+            f"用户最新输入：{user_text.strip()}",
+            f"当前未解决 clash 数：{len(session.clash_points)}",
+        ]
+        return self._build_plan(session, MatchAgentType.DEBATE, objective, rationale, notes)
+
+    def plan_opening(self, session: DebateSession, brief_focus: str, speaker_side: str) -> MasterAgentPlan:
+        objective = f"为 {speaker_side} 组织陈词框架或一辩稿，目标是建立判断标准、主张层次和后续推进抓手。"
+        rationale = "开篇陈词和结辩都属于陈词型任务，应由陈词 and 结辩 agent 统一负责。"
+        notes = [brief_focus.strip() or "建立可直接使用的陈词骨架。"]
+        return self._build_plan(session, MatchAgentType.SPEECH, objective, rationale, notes)
+
+    def plan_closing(self, session: DebateSession, closing_focus: str, speaker_side: str) -> MasterAgentPlan:
+        objective = f"为 {speaker_side} 收束本场比赛，放大赢点并定格对方未完成的证明责任。"
+        rationale = "结辩需要整合 clash、证据和判准，属于陈词 and 结辩 agent 的执行域。"
+        notes = [closing_focus.strip() or "回到判准完成收束。"]
+        return self._build_plan(session, MatchAgentType.SPEECH, objective, rationale, notes)
+
+    def plan_inquiry(self, session: DebateSession, inquiry_focus: str, speaker_side: str) -> MasterAgentPlan:
+        objective = f"为 {speaker_side} 生成一组高压质询，持续追打当前尚未解决的证明缺口。"
+        rationale = "质询任务需要聚焦 open questions 和追问路径，应由质询 agent 负责。"
+        notes = [inquiry_focus.strip() or "优先追问必要性、可行性和替代方案。"]
+        if session.clash_points:
+            notes.append(f"优先聚焦 clash：{session.clash_points[0].topic_label}")
+        return self._build_plan(session, MatchAgentType.INQUIRY, objective, rationale, notes)
+
+    def _build_plan(
+        self,
+        session: DebateSession,
+        selected_agent: MatchAgentType,
+        objective: str,
+        rationale: str,
+        handoff_notes: list[str],
+    ) -> MasterAgentPlan:
+        return MasterAgentPlan(
+            plan_id=str(uuid4()),
+            session_id=session.session_id,
+            phase=session.current_phase,
+            selected_agent=selected_agent,
+            objective=objective,
+            rationale=rationale,
+            handoff_notes=handoff_notes,
+        )
+
+
+class DebateAndFreeDebateAgent:
+    def __init__(self, turn_analyzer: TurnAnalyzer, opponent_agent: OpponentAgent) -> None:
+        self.turn_analyzer = turn_analyzer
+        self.opponent_agent = opponent_agent
+
+    def analyze_turn(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        user_turn: TurnRecord,
+    ) -> tuple[TurnAnalysis, str]:
+        return self.turn_analyzer.analyze(session, profile, user_turn)
+
+    def generate_response(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        user_text: str,
+        recent_turns_summary: str,
+        active_clash_points: list[ClashPoint],
+        pending_response_arguments: list[str],
+        target_argument_ids: list[str],
+        evidence_records: list[EvidenceRecord],
+    ) -> tuple[AgentOutput, str, str | None]:
+        return self.opponent_agent.generate(
+            session=session,
+            profile=profile,
+            user_text=user_text,
+            recent_turns_summary=recent_turns_summary,
+            active_clash_points=active_clash_points,
+            pending_response_arguments=pending_response_arguments,
+            target_argument_ids=target_argument_ids,
+            evidence_records=evidence_records,
+        )
+
+    def execute(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        user_turn: TurnRecord,
+        active_clash_points: list[ClashPoint],
+        evidence_records: list[EvidenceRecord],
+    ) -> DebateRoundExecutionResult:
+        turn_analysis, analysis_prompt = self.analyze_turn(session, profile, user_turn)
+        target_argument_ids = [item.argument_id for item in turn_analysis.arguments[:2]] or [f"arg-{user_turn.turn_id}"]
+        opponent_output, opponent_prompt, model_name = self.generate_response(
+            session=session,
+            profile=profile,
+            user_text=user_turn.raw_text,
+            recent_turns_summary=turn_analysis.summary,
+            active_clash_points=active_clash_points,
+            pending_response_arguments=turn_analysis.pending_response_arguments,
+            target_argument_ids=target_argument_ids,
+            evidence_records=evidence_records,
+        )
+        return DebateRoundExecutionResult(
+            turn_analysis=turn_analysis,
+            analysis_prompt=analysis_prompt,
+            opponent_output=opponent_output,
+            opponent_prompt=opponent_prompt,
+            model_name=model_name,
+        )
+
+
+class SpeechAndClosingAgent:
+    def __init__(self, opening_agent: OpeningAgent, closing_agent: ClosingAgent) -> None:
+        self.opening_agent = opening_agent
+        self.closing_agent = closing_agent
+
+    def generate_closing(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        recent_turns_summary: str,
+        active_clash_points: list[ClashPoint],
+        evidence_records: list[EvidenceRecord],
+        speaker_side: str,
+        closing_focus: str,
+    ) -> ClosingGenerationResult:
+        return self.closing_agent.generate(
+            session=session,
+            profile=profile,
+            recent_turns_summary=recent_turns_summary,
+            active_clash_points=active_clash_points,
+            evidence_records=evidence_records,
+            speaker_side=speaker_side,
+            closing_focus=closing_focus,
+        )
+
+    def generate_opening_framework(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        evidence_records: list[EvidenceRecord],
+        speaker_side: str,
+        brief_focus: str,
+        progress_callback: Callable[[dict[str, object]], None] | None = None,
+    ) -> OpeningFrameworkGenerationResult:
+        return self.opening_agent.generate_framework(
+            session=session,
+            profile=profile,
+            evidence_records=evidence_records,
+            speaker_side=speaker_side,
+            brief_focus=brief_focus,
+            progress_callback=progress_callback,
+        )
+
+    def generate_opening_from_framework(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        speaker_side: str,
+        brief_focus: str,
+        framework: OpeningFramework,
+        target_duration_minutes: int,
+        progress_callback: Callable[[dict[str, object]], None] | None = None,
+    ) -> OpeningGenerationResult:
+        return self.opening_agent.generate_from_framework(
+            session=session,
+            profile=profile,
+            speaker_side=speaker_side,
+            brief_focus=brief_focus,
+            framework=framework,
+            target_duration_minutes=target_duration_minutes,
+            progress_callback=progress_callback,
+        )
+
+    def generate_opening_stream_from_framework(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        speaker_side: str,
+        brief_focus: str,
+        framework: OpeningFramework,
+        target_duration_minutes: int,
+        progress_callback: Callable[[dict[str, object]], None] | None = None,
+    ) -> OpeningGenerationResult:
+        return self.opening_agent.generate_stream_from_framework(
+            session=session,
+            profile=profile,
+            speaker_side=speaker_side,
+            brief_focus=brief_focus,
+            framework=framework,
+            target_duration_minutes=target_duration_minutes,
+            progress_callback=progress_callback,
+        )
+
+
+class InquiryAgent:
+    def __init__(self, llm_client: DebateLLMClient | None = None, model_name: str | None = None) -> None:
+        self.llm_client = llm_client
+        self.model_name = model_name
+
+    def generate(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        active_clash_points: list[ClashPoint],
+        evidence_records: list[EvidenceRecord],
+        speaker_side: str,
+        inquiry_focus: str,
+        max_questions: int = 4,
+    ) -> InquiryGenerationResult:
+        prompt = self._build_prompt(session, profile, active_clash_points, evidence_records, speaker_side, inquiry_focus, max_questions)
+        if self.llm_client is None:
+            return InquiryGenerationResult(
+                inquiry_output=self._mock_inquiry_output(session, active_clash_points, evidence_records, speaker_side, max_questions),
+                prompt=prompt,
+                model_name=None,
+            )
+
+        try:
+            payload, response = self.llm_client.parse_json(prompt, model=self.model_name)
+            inquiry_output = self._parse_inquiry_payload(session, speaker_side, payload, active_clash_points, evidence_records, max_questions)
+            return InquiryGenerationResult(inquiry_output=inquiry_output, prompt=prompt, model_name=response.model)
+        except RuntimeError:
+            return InquiryGenerationResult(
+                inquiry_output=self._mock_inquiry_output(session, active_clash_points, evidence_records, speaker_side, max_questions),
+                prompt=prompt,
+                model_name=None,
+            )
+
+    def _build_prompt(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        active_clash_points: list[ClashPoint],
+        evidence_records: list[EvidenceRecord],
+        speaker_side: str,
+        inquiry_focus: str,
+        max_questions: int,
+    ) -> str:
+        clash_summary = "\n".join(
+            f"- {clash.topic_label}: {clash.summary} | 待追问: {'；'.join(clash.open_questions[:3]) or '暂无显式问题'}"
+            for clash in active_clash_points[:3]
+        ) or "- 当前尚无明确 clash，请直接围绕辩题的证明责任发问。"
+        evidence_summary = "\n".join(
+            f"- [{record.evidence_id}] {record.title or record.source_ref}: {record.snippet}"
+            for record in evidence_records[:3]
+        ) or "- 当前没有可用证据，请优先追打逻辑缺口。"
+        return (
+            "你现在是比赛中的质询 agent。请输出 JSON，对当前局面生成一组高压、短句、连续推进的质询问题。\n"
+            f"辩题：{session.topic}\n"
+            f"当前阶段：{session.current_phase.value}\n"
+            f"发问方：{speaker_side}\n"
+            f"裁判标准：{profile.judge_standard}\n"
+            f"质询焦点：{inquiry_focus or '优先追问必要性、可行性和替代方案。'}\n"
+            f"最多问题数：{max_questions}\n"
+            "当前 clash：\n"
+            f"{clash_summary}\n"
+            "可用资料：\n"
+            f"{evidence_summary}\n"
+            "请严格输出 JSON，字段包括：strategy_summary、target_clash_points、priority_targets、questions、spoken_text、evidence_citations、confidence_notes。"
+        )
+
+    def _mock_inquiry_output(
+        self,
+        session: DebateSession,
+        active_clash_points: list[ClashPoint],
+        evidence_records: list[EvidenceRecord],
+        speaker_side: str,
+        max_questions: int,
+    ) -> InquiryOutput:
+        target_clash_points = [item.topic_label for item in active_clash_points[:2]]
+        priority_targets = [question for clash in active_clash_points for question in clash.open_questions[:2]][:max_questions]
+        if not priority_targets:
+            priority_targets = [
+                "为什么你的结论必须走向制度强制？",
+                "如果执行条件不足，这个方案为什么不会先制造新成本？",
+                "你的替代方案比较到底完成了没有？",
+            ][:max_questions]
+        questions = priority_targets[:max_questions]
+        evidence_ids = [item.evidence_id for item in evidence_records[:2]]
+        spoken_text = " ".join(questions)
+        return InquiryOutput(
+            inquiry_id=str(uuid4()),
+            session_id=session.session_id,
+            speaker_side=speaker_side,
+            strategy_summary="先锁定对方尚未完成的证明责任，再连续追问必要性、执行路径和替代方案比较。",
+            target_clash_points=target_clash_points,
+            priority_targets=priority_targets,
+            questions=questions,
+            spoken_text=spoken_text,
+            evidence_citations=evidence_ids,
+            confidence_notes=["当前为 fallback 质询提纲，可继续人工压缩语气。"],
+        )
+
+    def _parse_inquiry_payload(
+        self,
+        session: DebateSession,
+        speaker_side: str,
+        payload: dict[str, object],
+        active_clash_points: list[ClashPoint],
+        evidence_records: list[EvidenceRecord],
+        max_questions: int,
+    ) -> InquiryOutput:
+        evidence_ids = {item.evidence_id for item in evidence_records}
+        citations = [item for item in _ensure_list(payload.get("evidence_citations")) if item in evidence_ids]
+        target_clash_points = _ensure_list(payload.get("target_clash_points"))
+        if not target_clash_points:
+            target_clash_points = [item.topic_label for item in active_clash_points[:2]]
+        questions = _ensure_list(payload.get("questions"))[:max_questions]
+        if not questions:
+            questions = self._mock_inquiry_output(session, active_clash_points, evidence_records, speaker_side, max_questions).questions
+        return InquiryOutput(
+            inquiry_id=str(uuid4()),
+            session_id=session.session_id,
+            speaker_side=speaker_side,
+            strategy_summary=_ensure_str(payload.get("strategy_summary"), default="未提供质询策略摘要。"),
+            target_clash_points=target_clash_points,
+            priority_targets=_ensure_list(payload.get("priority_targets"))[:max_questions] or questions,
+            questions=questions,
+            spoken_text=_ensure_str(payload.get("spoken_text"), default=" ".join(questions)),
+            evidence_citations=citations,
+            confidence_notes=_ensure_list(payload.get("confidence_notes")),
         )
 
 

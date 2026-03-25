@@ -4,9 +4,10 @@ from dataclasses import dataclass
 from typing import Callable
 from uuid import uuid4
 
-from debate_agent.domain.models import AgentOutput, ClashPoint, ClosingOutput, CoachFeedbackMode, CoachReport, DebateProfile, DebateSession, EvidenceRecord, OpeningBrief, OpeningFramework, TurnAnalysis, TurnRecord
+from debate_agent.domain.models import AgentOutput, ClashPoint, ClosingOutput, CoachFeedbackMode, CoachReport, DebatePhase, DebateProfile, DebateSession, EvidenceRecord, InquiryOutput, MasterAgentPlan, OpeningBrief, OpeningFramework, TimerPlan, TurnAnalysis, TurnRecord
 from debate_agent.infrastructure.llm_client import DebateLLMClient
-from debate_agent.orchestration.agent_services import ClosingAgent, CoachAgent, CoachGenerationResult, ClosingGenerationResult, OpeningAgent, OpeningCoachAgent, OpeningFrameworkGenerationResult, OpponentAgent, TurnAnalyzer
+from debate_agent.orchestration.agent_services import ClosingAgent, CoachAgent, DebateAndFreeDebateAgent, InquiryAgent, MasterOrchestratorAgent, OpeningAgent, OpeningCoachAgent, OpponentAgent, SpeechAndClosingAgent, TurnAnalyzer
+from debate_agent.orchestration.oversight import MatchTimerAutomation, OversightCoordinator
 from debate_agent.orchestration.session_state import SessionStateMutator
 from debate_agent.retrieval.evidence_service import EvidenceService
 from debate_agent.retrieval.web_search import WebSearchRetriever
@@ -16,6 +17,8 @@ from debate_agent.retrieval.web_search import WebSearchRetriever
 class ProcessTurnResult:
     user_turn: TurnRecord
     opponent_turn: TurnRecord
+    master_plan: MasterAgentPlan
+    timer_plan: TimerPlan
     analysis_prompt: str
     opponent_prompt: str
     coach_prompt: str | None
@@ -39,6 +42,8 @@ class CoachFeedbackResult:
 @dataclass(slots=True)
 class ClosingStatementResult:
     closing_output: ClosingOutput
+    master_plan: MasterAgentPlan
+    timer_plan: TimerPlan
     closing_prompt: str
     evidence_records: list[EvidenceRecord]
     model_name: str | None = None
@@ -48,6 +53,8 @@ class ClosingStatementResult:
 @dataclass(slots=True)
 class OpeningBriefResult:
     opening_brief: OpeningBrief
+    master_plan: MasterAgentPlan
+    timer_plan: TimerPlan
     opening_prompt: str
     evidence_records: list[EvidenceRecord]
     model_name: str | None = None
@@ -57,7 +64,20 @@ class OpeningBriefResult:
 @dataclass(slots=True)
 class OpeningFrameworkResult:
     framework: OpeningFramework
+    master_plan: MasterAgentPlan
+    timer_plan: TimerPlan
     opening_prompt: str
+    evidence_records: list[EvidenceRecord]
+    model_name: str | None = None
+    research_query: str | None = None
+
+
+@dataclass(slots=True)
+class InquiryStrategyResult:
+    inquiry_output: InquiryOutput
+    master_plan: MasterAgentPlan
+    timer_plan: TimerPlan
+    inquiry_prompt: str
     evidence_records: list[EvidenceRecord]
     model_name: str | None = None
     research_query: str | None = None
@@ -83,11 +103,36 @@ class TurnPipeline:
         coach_model = llm_client.settings.coach_model if llm_client else None
         closing_model = llm_client.settings.closing_model if llm_client else None
         opening_model = llm_client.settings.model if llm_client else None
+        self.master_agent = MasterOrchestratorAgent()
         self.opponent_agent = OpponentAgent(llm_client=llm_client, model_name=opponent_model)
         self.coach_agent = CoachAgent(llm_client=llm_client, model_name=coach_model)
         self.closing_agent = ClosingAgent(llm_client=llm_client, model_name=closing_model)
         self.opening_agent = OpeningAgent(llm_client=llm_client, model_name=opening_model)
         self.opening_coach_agent = OpeningCoachAgent(llm_client=llm_client, model_name=coach_model)
+        self.inquiry_agent = InquiryAgent(llm_client=llm_client, model_name=opponent_model)
+        self.debate_match_agent = DebateAndFreeDebateAgent(turn_analyzer=self.turn_analyzer, opponent_agent=self.opponent_agent)
+        self.speech_match_agent = SpeechAndClosingAgent(opening_agent=self.opening_agent, closing_agent=self.closing_agent)
+        self.oversight_coordinator = OversightCoordinator(
+            coach_agent=self.coach_agent,
+            opening_coach_agent=self.opening_coach_agent,
+            timer_automation=MatchTimerAutomation(),
+        )
+
+    def _latest_preparation_evidence(self, session: DebateSession) -> list[EvidenceRecord]:
+        if not session.preparation_packets:
+            return []
+        return session.preparation_packets[-1].evidence_records
+
+    def _merge_upstream_evidence(self, session: DebateSession, live_records: list[EvidenceRecord]) -> list[EvidenceRecord]:
+        merged: list[EvidenceRecord] = []
+        seen: set[str] = set()
+        for record in [*self._latest_preparation_evidence(session), *live_records]:
+            dedupe_key = f"{record.evidence_id}|{record.source_ref}|{record.title}|{record.snippet}"
+            if dedupe_key in seen:
+                continue
+            seen.add(dedupe_key)
+            merged.append(record)
+        return merged
 
     def _retrieve_opening_evidence(self, session: DebateSession) -> tuple[list[EvidenceRecord], str | None]:
         evidence_result = self.evidence_service.retrieve(
@@ -97,11 +142,14 @@ class TurnPipeline:
             limit=3 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
-        return evidence_result.records, evidence_result.research_query
+        return self._merge_upstream_evidence(session, evidence_result.records), evidence_result.research_query
+
+    def _resolve_session_speaker(self, session: DebateSession, speaker_side: str | None, default_side: str = "user") -> str:
+        requested_speaker = speaker_side or default_side
+        return session.user_side if requested_speaker in {"user", "me", session.user_side} else session.agent_side
 
     def _resolve_opening_speaker(self, session: DebateSession, speaker_side: str | None) -> str:
-        requested_speaker = speaker_side or "user"
-        return session.user_side if requested_speaker in {"user", "me", session.user_side} else session.agent_side
+        return self._resolve_session_speaker(session, speaker_side, default_side="user")
 
     def process_turn(
         self,
@@ -114,8 +162,9 @@ class TurnPipeline:
         if should_generate_coach is None:
             should_generate_coach = session.options.coach_feedback_mode == CoachFeedbackMode.AUTO
 
+        master_plan = self.master_agent.plan_turn(session=session, user_text=user_text)
         user_turn = self.state_mutator.create_user_turn(session, user_text)
-        turn_analysis, analysis_prompt = self.turn_analyzer.analyze(session, profile, user_turn)
+        turn_analysis, analysis_prompt = self.debate_match_agent.analyze_turn(session, profile, user_turn)
         user_turn.argument_ids = [item.argument_id for item in turn_analysis.arguments]
         target_argument_ids = user_turn.argument_ids[:2] or [f"arg-{user_turn.turn_id}"]
         clash_points = self.state_mutator.merge_clash_points(session, turn_analysis.clash_points)
@@ -125,7 +174,8 @@ class TurnPipeline:
             clash_points=clash_points,
             enable_web_search=session.options.web_search_enabled,
         )
-        opponent_output, opponent_prompt, model_name = self.opponent_agent.generate(
+        available_evidence_records = self._merge_upstream_evidence(session, evidence_result.records)
+        opponent_output, opponent_prompt, model_name = self.debate_match_agent.generate_response(
             session=session,
             profile=profile,
             user_text=user_text,
@@ -133,22 +183,25 @@ class TurnPipeline:
             active_clash_points=clash_points,
             pending_response_arguments=turn_analysis.pending_response_arguments,
             target_argument_ids=target_argument_ids,
-            evidence_records=evidence_result.records,
+            evidence_records=available_evidence_records,
         )
         opponent_turn, opponent_arguments = self.state_mutator.create_opponent_turn(session, opponent_output, target_argument_ids)
 
         coach_result: CoachFeedbackResult | None = None
-        if should_generate_coach:
-            generated_coach = self.coach_agent.generate(
-                session=session,
-                profile=profile,
-                recent_turns_summary=turn_analysis.summary,
-                active_clash_points=clash_points,
-                evidence_records=evidence_result.records,
-                latest_user_turn=user_text,
-                latest_opponent_turn=opponent_output.spoken_text,
-                related_turn_ids=[user_turn.turn_id, opponent_turn.turn_id],
-            )
+        oversight_result = self.oversight_coordinator.review_turn(
+            session=session,
+            profile=profile,
+            recent_turns_summary=turn_analysis.summary,
+            active_clash_points=clash_points,
+            evidence_records=available_evidence_records,
+            latest_user_turn=user_text,
+            latest_opponent_turn=opponent_output.spoken_text,
+            related_turn_ids=[user_turn.turn_id, opponent_turn.turn_id],
+            include_coach_feedback=bool(should_generate_coach),
+        )
+        self.state_mutator.add_timer_plan(session, oversight_result.timer_plan)
+        if oversight_result.coach_result is not None:
+            generated_coach = oversight_result.coach_result
             coach_result = CoachFeedbackResult(
                 coach_report=generated_coach.coach_report,
                 coach_prompt=generated_coach.prompt,
@@ -170,6 +223,8 @@ class TurnPipeline:
         return ProcessTurnResult(
             user_turn=user_turn,
             opponent_turn=opponent_turn,
+            master_plan=master_plan,
+            timer_plan=oversight_result.timer_plan,
             analysis_prompt=analysis_prompt,
             opponent_prompt=opponent_prompt,
             coach_prompt=coach_result.coach_prompt if coach_result else None,
@@ -177,8 +232,54 @@ class TurnPipeline:
             opponent_output=opponent_output,
             coach_report=coach_result.coach_report if coach_result else None,
             clash_points=clash_points,
-            evidence_records=evidence_result.records,
+            evidence_records=available_evidence_records,
             model_name=model_name,
+            research_query=evidence_result.research_query,
+        )
+
+    def generate_inquiry_strategy(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        speaker_side: str | None = None,
+        inquiry_focus: str = "优先追打对方尚未完成的证明责任，并连续追问必要性、可行性与替代方案。",
+        max_questions: int = 4,
+    ) -> InquiryStrategyResult:
+        latest_turn_text = session.turns[-1].raw_text if session.turns else session.topic
+        evidence_result = self.evidence_service.retrieve(
+            topic=session.topic,
+            latest_user_turn=latest_turn_text,
+            clash_points=session.clash_points,
+            limit=3 if not session.options.web_search_enabled else None,
+            enable_web_search=session.options.web_search_enabled,
+        )
+        available_evidence_records = self._merge_upstream_evidence(session, evidence_result.records)
+        speaker = self._resolve_session_speaker(session, speaker_side, default_side="opponent")
+        master_plan = self.master_agent.plan_inquiry(session=session, inquiry_focus=inquiry_focus, speaker_side=speaker)
+        timer_plan = self.oversight_coordinator.build_timer_plan(
+            session=session,
+            speaker_side=speaker,
+            phase=session.current_phase,
+            note="该计时规划用于组织当前质询阶段的推进节奏。",
+        )
+        result = self.inquiry_agent.generate(
+            session=session,
+            profile=profile,
+            active_clash_points=session.clash_points,
+            evidence_records=available_evidence_records,
+            speaker_side=speaker,
+            inquiry_focus=inquiry_focus,
+            max_questions=max_questions,
+        )
+        self.state_mutator.add_timer_plan(session, timer_plan)
+        self.state_mutator.add_inquiry_output(session, result.inquiry_output)
+        return InquiryStrategyResult(
+            inquiry_output=result.inquiry_output,
+            master_plan=master_plan,
+            timer_plan=timer_plan,
+            inquiry_prompt=result.prompt,
+            evidence_records=available_evidence_records,
+            model_name=result.model_name,
             research_query=evidence_result.research_query,
         )
 
@@ -203,22 +304,26 @@ class TurnPipeline:
             limit=2 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
-        result = self.coach_agent.generate(
+        available_evidence_records = self._merge_upstream_evidence(session, evidence_result.records)
+        oversight_result = self.oversight_coordinator.review_turn(
             session=session,
             profile=profile,
             recent_turns_summary=session.context_summary,
             active_clash_points=session.clash_points,
-            evidence_records=evidence_result.records,
+            evidence_records=available_evidence_records,
             latest_user_turn=latest_user_turn.raw_text,
             latest_opponent_turn=latest_opponent_turn.raw_text,
             related_turn_ids=related_turn_ids,
+            include_coach_feedback=True,
         )
-        self.state_mutator.upsert_coach_report(session, result.coach_report)
+        self.state_mutator.add_timer_plan(session, oversight_result.timer_plan)
+        assert oversight_result.coach_result is not None
+        self.state_mutator.upsert_coach_report(session, oversight_result.coach_result.coach_report)
         return CoachFeedbackResult(
-            coach_report=result.coach_report,
-            coach_prompt=result.prompt,
-            model_name=result.model_name,
-            used_cached=result.used_cached,
+            coach_report=oversight_result.coach_result.coach_report,
+            coach_prompt=oversight_result.coach_result.prompt,
+            model_name=oversight_result.coach_result.model_name,
+            used_cached=oversight_result.coach_result.used_cached,
         )
 
     def generate_closing_statement(
@@ -236,6 +341,7 @@ class TurnPipeline:
             limit=2 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
+        available_evidence_records = self._merge_upstream_evidence(session, evidence_result.records)
         requested_speaker = speaker_side or session.options.default_closing_side
         speaker = session.user_side if requested_speaker in {"user", "me", session.user_side} else session.agent_side
         default_focus = closing_focus
@@ -244,20 +350,30 @@ class TurnPipeline:
                 f"在没有历史交锋的情况下，先为 {speaker} 生成一版可直接使用的立场陈词。"
                 f"要求优先建立判断标准、给出 2 到 3 个核心赢点，并自然整合检索资料。"
             )
-        result = self.closing_agent.generate(
+        master_plan = self.master_agent.plan_closing(session=session, closing_focus=default_focus, speaker_side=speaker)
+        timer_plan = self.oversight_coordinator.build_timer_plan(
+            session=session,
+            speaker_side=speaker,
+            phase=DebatePhase.CLOSING,
+            note="该计时规划服务于陈词 and 结辩 agent 的输出组织。",
+        )
+        result = self.speech_match_agent.generate_closing(
             session=session,
             profile=profile,
             recent_turns_summary=session.context_summary,
             active_clash_points=session.clash_points,
-            evidence_records=evidence_result.records,
+            evidence_records=available_evidence_records,
             speaker_side=speaker,
             closing_focus=default_focus,
         )
+        self.state_mutator.add_timer_plan(session, timer_plan)
         self.state_mutator.add_closing_output(session, result.closing_output)
         return ClosingStatementResult(
             closing_output=result.closing_output,
+            master_plan=master_plan,
+            timer_plan=timer_plan,
             closing_prompt=result.prompt,
-            evidence_records=evidence_result.records,
+            evidence_records=available_evidence_records,
             model_name=result.model_name,
             research_query=evidence_result.research_query,
         )
@@ -282,7 +398,14 @@ class TurnPipeline:
                 }
             )
         speaker = self._resolve_opening_speaker(session, speaker_side)
-        framework_result = self.opening_agent.generate_framework(
+        master_plan = self.master_agent.plan_opening(session=session, brief_focus=brief_focus, speaker_side=speaker)
+        timer_plan = self.oversight_coordinator.build_timer_plan(
+            session=session,
+            speaker_side=speaker,
+            phase=DebatePhase.OPENING,
+            note=f"目标成稿时长约 {target_duration_minutes} 分钟。",
+        )
+        framework_result = self.speech_match_agent.generate_opening_framework(
             session=session,
             profile=profile,
             evidence_records=evidence_records,
@@ -291,7 +414,7 @@ class TurnPipeline:
             progress_callback=progress_callback,
         )
         self.state_mutator.set_opening_framework(session, framework_result.framework)
-        opening_result = self.opening_agent.generate_from_framework(
+        opening_result = self.speech_match_agent.generate_opening_from_framework(
             session=session,
             profile=profile,
             speaker_side=speaker,
@@ -300,9 +423,12 @@ class TurnPipeline:
             target_duration_minutes=target_duration_minutes,
             progress_callback=progress_callback,
         )
+        self.state_mutator.add_timer_plan(session, timer_plan)
         self.state_mutator.add_opening_brief(session, opening_result.opening_brief)
         return OpeningBriefResult(
             opening_brief=opening_result.opening_brief,
+            master_plan=master_plan,
+            timer_plan=timer_plan,
             opening_prompt=f"{framework_result.prompt}\n\n-----\n\n{opening_result.prompt}",
             evidence_records=evidence_records,
             model_name=opening_result.model_name or framework_result.model_name,
@@ -328,7 +454,14 @@ class TurnPipeline:
                 }
             )
         speaker = self._resolve_opening_speaker(session, speaker_side)
-        result = self.opening_agent.generate_framework(
+        master_plan = self.master_agent.plan_opening(session=session, brief_focus=brief_focus, speaker_side=speaker)
+        timer_plan = self.oversight_coordinator.build_timer_plan(
+            session=session,
+            speaker_side=speaker,
+            phase=DebatePhase.OPENING,
+            note="该计时规划用于框架稿阶段的组织，而非正式计时。",
+        )
+        result = self.speech_match_agent.generate_opening_framework(
             session=session,
             profile=profile,
             evidence_records=evidence_records,
@@ -336,9 +469,12 @@ class TurnPipeline:
             brief_focus=brief_focus,
             progress_callback=progress_callback,
         )
+        self.state_mutator.add_timer_plan(session, timer_plan)
         self.state_mutator.set_opening_framework(session, result.framework)
         return OpeningFrameworkResult(
             framework=result.framework,
+            master_plan=master_plan,
+            timer_plan=timer_plan,
             opening_prompt=result.prompt,
             evidence_records=evidence_records,
             model_name=result.model_name,
@@ -363,7 +499,14 @@ class TurnPipeline:
         if selected_framework is None:
             raise ValueError("当前会话还没有可用框架稿，请先生成或保存框架稿。")
         speaker = self._resolve_opening_speaker(session, speaker_side)
-        result = self.opening_agent.generate_from_framework(
+        master_plan = self.master_agent.plan_opening(session=session, brief_focus=brief_focus, speaker_side=speaker)
+        timer_plan = self.oversight_coordinator.build_timer_plan(
+            session=session,
+            speaker_side=speaker,
+            phase=DebatePhase.OPENING,
+            note=f"该计时规划匹配 {target_duration_minutes} 分钟的一辩成稿扩写。",
+        )
+        result = self.speech_match_agent.generate_opening_from_framework(
             session=session,
             profile=profile,
             speaker_side=speaker,
@@ -372,9 +515,12 @@ class TurnPipeline:
             target_duration_minutes=target_duration_minutes,
             progress_callback=progress_callback,
         )
+        self.state_mutator.add_timer_plan(session, timer_plan)
         self.state_mutator.add_opening_brief(session, result.opening_brief)
         return OpeningBriefResult(
             opening_brief=result.opening_brief,
+            master_plan=master_plan,
+            timer_plan=timer_plan,
             opening_prompt=result.prompt,
             evidence_records=[],
             model_name=result.model_name,
@@ -395,7 +541,14 @@ class TurnPipeline:
         if selected_framework is None:
             raise ValueError("当前会话还没有可用框架稿，请先生成或保存框架稿。")
         speaker = self._resolve_opening_speaker(session, speaker_side)
-        result = self.opening_agent.generate_stream_from_framework(
+        master_plan = self.master_agent.plan_opening(session=session, brief_focus=brief_focus, speaker_side=speaker)
+        timer_plan = self.oversight_coordinator.build_timer_plan(
+            session=session,
+            speaker_side=speaker,
+            phase=DebatePhase.OPENING,
+            note=f"该流式成稿计时规划匹配 {target_duration_minutes} 分钟的一辩输出。",
+        )
+        result = self.speech_match_agent.generate_opening_stream_from_framework(
             session=session,
             profile=profile,
             speaker_side=speaker,
@@ -404,9 +557,12 @@ class TurnPipeline:
             target_duration_minutes=target_duration_minutes,
             progress_callback=progress_callback,
         )
+        self.state_mutator.add_timer_plan(session, timer_plan)
         self.state_mutator.add_opening_brief(session, result.opening_brief)
         return OpeningBriefResult(
             opening_brief=result.opening_brief,
+            master_plan=master_plan,
+            timer_plan=timer_plan,
             opening_prompt=result.prompt,
             evidence_records=[],
             model_name=result.model_name,
@@ -461,16 +617,35 @@ class TurnPipeline:
             limit=3 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
-        result = self.opening_coach_agent.generate(
+        available_evidence_records = self._merge_upstream_evidence(session, evidence_result.records)
+        oversight_result = self.oversight_coordinator.review_opening_brief(
             session=session,
             profile=profile,
-            evidence_records=evidence_result.records,
+            evidence_records=available_evidence_records,
             opening_brief=opening_brief,
         )
-        self.state_mutator.upsert_coach_report(session, result.coach_report)
+        self.state_mutator.add_timer_plan(session, oversight_result.timer_plan)
+        self.state_mutator.upsert_coach_report(session, oversight_result.coach_report)
         return CoachFeedbackResult(
-            coach_report=result.coach_report,
-            coach_prompt=result.prompt,
-            model_name=result.model_name,
-            used_cached=result.used_cached,
+            coach_report=oversight_result.coach_report,
+            coach_prompt=oversight_result.coach_prompt,
+            model_name=oversight_result.model_name,
+            used_cached=oversight_result.used_cached,
         )
+
+    def build_timer_plan(
+        self,
+        session: DebateSession,
+        speaker_side: str | None = None,
+        phase: DebatePhase | None = None,
+        note: str | None = None,
+    ) -> TimerPlan:
+        resolved_speaker = self._resolve_session_speaker(session, speaker_side, default_side="user")
+        timer_plan = self.oversight_coordinator.build_timer_plan(
+            session=session,
+            speaker_side=resolved_speaker,
+            phase=phase,
+            note=note or "该计时规划由评判与组织体系独立生成。",
+        )
+        self.state_mutator.add_timer_plan(session, timer_plan)
+        return timer_plan

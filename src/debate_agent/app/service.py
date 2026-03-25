@@ -5,8 +5,9 @@ from pathlib import Path
 from typing import Callable
 from uuid import uuid4
 
-from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, DebateProfile, DebateSession, OpeningBrief, OpeningFramework, SessionOptions
-from debate_agent.orchestration.turn_pipeline import ClosingStatementResult, CoachFeedbackResult, OpeningBriefResult, OpeningFrameworkResult, ProcessTurnResult, TurnPipeline
+from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, DebateProfile, DebateSession, OpeningBrief, OpeningFramework, PreparationPacket, SessionOptions, TimerPlan
+from debate_agent.orchestration.preparation import PreparationCoordinator, PreparationResult
+from debate_agent.orchestration.turn_pipeline import ClosingStatementResult, CoachFeedbackResult, InquiryStrategyResult, OpeningBriefResult, OpeningFrameworkResult, ProcessTurnResult, TurnPipeline
 from debate_agent.storage.json_store import JSONSessionStore
 
 
@@ -50,6 +51,21 @@ class ClosingActionResult(SessionActionResult):
 
 
 @dataclass(slots=True)
+class InquiryActionResult(SessionActionResult):
+    inquiry_result: InquiryStrategyResult
+
+
+@dataclass(slots=True)
+class TimerPlanActionResult(SessionActionResult):
+    timer_plan: TimerPlan
+
+
+@dataclass(slots=True)
+class PreparationActionResult(SessionActionResult):
+    preparation_result: PreparationResult
+
+
+@dataclass(slots=True)
 class OpeningBriefActionResult(SessionActionResult):
     opening_result: OpeningBriefResult
 
@@ -65,9 +81,10 @@ class OpeningBriefImportActionResult(SessionActionResult):
 
 
 class DebateApplication:
-    def __init__(self, pipeline: TurnPipeline, store: JSONSessionStore) -> None:
+    def __init__(self, pipeline: TurnPipeline, store: JSONSessionStore, preparation_coordinator: PreparationCoordinator | None = None) -> None:
         self.pipeline = pipeline
         self.store = store
+        self.preparation_coordinator = preparation_coordinator
 
     def create_session(self, request: NewSessionRequest) -> SessionActionResult:
         session = DebateSession(
@@ -142,6 +159,61 @@ class DebateApplication:
             return None
         saved_path = self.store.save_session(session)
         return ClosingActionResult(session=session, saved_path=saved_path, closing_result=closing_result)
+
+    def request_inquiry_strategy(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        speaker_side: str | None = None,
+        inquiry_focus: str | None = None,
+        max_questions: int = 4,
+    ) -> InquiryActionResult:
+        inquiry_result = self.pipeline.generate_inquiry_strategy(
+            session=session,
+            profile=profile,
+            speaker_side=speaker_side,
+            inquiry_focus=inquiry_focus or "优先追打对方尚未完成的证明责任，并连续追问必要性、可行性与替代方案。",
+            max_questions=max_questions,
+        )
+        saved_path = self.store.save_session(session)
+        return InquiryActionResult(session=session, saved_path=saved_path, inquiry_result=inquiry_result)
+
+    def request_timer_plan(
+        self,
+        session: DebateSession,
+        speaker_side: str | None = None,
+        phase: DebatePhase | None = None,
+        note: str | None = None,
+    ) -> TimerPlanActionResult:
+        timer_plan = self.pipeline.build_timer_plan(
+            session=session,
+            speaker_side=speaker_side,
+            phase=phase,
+            note=note,
+        )
+        saved_path = self.store.save_session(session)
+        return TimerPlanActionResult(session=session, saved_path=saved_path, timer_plan=timer_plan)
+
+    def prepare_session_research(
+        self,
+        session: DebateSession,
+        profile: DebateProfile,
+        preparation_goal: str | None = None,
+        focus: str | None = None,
+        limit: int = 6,
+    ) -> PreparationActionResult:
+        if self.preparation_coordinator is None:
+            raise RuntimeError("当前应用未配置 preparation coordinator。")
+        preparation_result = self.preparation_coordinator.prepare(
+            session=session,
+            profile=profile,
+            preparation_goal=preparation_goal or "为备赛整理资料、学理抓手、论点种子与可能被追打的风险点。",
+            focus=focus,
+            limit=limit,
+        )
+        self.pipeline.state_mutator.add_preparation_packet(session, preparation_result.preparation_packet)
+        saved_path = self.store.save_session(session)
+        return PreparationActionResult(session=session, saved_path=saved_path, preparation_result=preparation_result)
 
     def generate_opening_brief(
         self,

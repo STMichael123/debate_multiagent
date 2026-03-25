@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from debate_agent.domain.models import AgentOutput, ClashPoint, DebateProfile, DebateSession, EvidenceRecord, OpeningBrief, OpeningFramework
+from debate_agent.domain.models import AgentOutput, ClashPoint, DebateProfile, DebateSession, EvidenceRecord, OpeningBrief, OpeningFramework, PreparationPacket
 
 
 def format_clash_points(clash_points: list[ClashPoint]) -> str:
@@ -95,6 +95,7 @@ def build_base_prompt_variables(
 ) -> dict[str, str]:
     phase_policy = profile.phase_policies.get(session.current_phase.value, {})
     opening_brief = session.opening_briefs[-1] if session.opening_briefs else None
+    preparation_packet = session.preparation_packets[-1] if session.preparation_packets else None
     return {
         "topic": session.topic,
         "debate_type": profile.debate_type.value,
@@ -113,6 +114,8 @@ def build_base_prompt_variables(
         "active_clash_points": format_clash_points(active_clash_points),
         "evidence_packet": format_evidence_packet(evidence_records),
         "opening_brief_packet": format_opening_brief_packet(opening_brief),
+        "preparation_packet": format_preparation_packet(preparation_packet),
+        "preparation_opening_hint": preparation_packet.recommended_opening_frame if preparation_packet is not None else "当前没有备赛阶段提供的开篇建议。",
     }
 
 
@@ -240,6 +243,7 @@ def build_opening_draft_variables(
     target_duration_minutes: int,
     framework: OpeningFramework,
 ) -> dict[str, str]:
+    preparation_packet = session.preparation_packets[-1] if session.preparation_packets else None
     variables = {
         "topic": session.topic,
         "speaker_side": speaker_side,
@@ -247,6 +251,8 @@ def build_opening_draft_variables(
         "brief_focus": brief_focus,
         "target_duration_minutes": str(target_duration_minutes),
         "opening_length": f"{target_duration_minutes * 300}-{target_duration_minutes * 320}字",
+        "preparation_packet": format_preparation_packet(preparation_packet),
+        "preparation_opening_hint": preparation_packet.recommended_opening_frame if preparation_packet is not None else "当前没有备赛阶段提供的开篇建议。",
     }
     variables["framework_judge_standard"] = framework.judge_standard or profile.judge_standard
     variables["framework_summary"] = framework.framework_summary or "未提供框架摘要。"
@@ -442,4 +448,28 @@ def format_opening_brief_packet(opening_brief: OpeningBrief | None) -> str:
         f"当前一辩稿立场={opening_brief.speaker_side}；来源模式={opening_brief.source_mode}；"
         f"策略摘要={opening_brief.strategy_summary}；提纲={outline}；"
         f"正文={opening_brief.spoken_text}"
+    )
+
+
+def format_preparation_packet(preparation_packet: PreparationPacket | None) -> str:
+    if preparation_packet is None:
+        return "当前没有可复用的备赛资料包。"
+
+    evidence_titles = "；".join(record.title for record in preparation_packet.evidence_records[:3] if record.title) or "暂无资料标题"
+    theory_lines = []
+    for theory_point in preparation_packet.theory_points[:3]:
+        source_ids = "、".join(theory_point.source_evidence_ids) or "无显式证据编号"
+        theory_lines.append(
+            f"{theory_point.label}: 机制={theory_point.mechanism}；辩论价值={theory_point.debate_value or '未补'}；来源={source_ids}"
+        )
+    theory_summary = "\n".join(theory_lines) or "当前没有学理抓手。"
+    argument_seeds = "；".join(preparation_packet.argument_seeds[:3]) or "暂无论点种子。"
+    counterplay_risks = "；".join(preparation_packet.counterplay_risks[:3]) or "暂无显式风险提醒。"
+    return (
+        f"备赛检索查询={preparation_packet.research_query or '未记录'}\n"
+        f"备赛资料预览={evidence_titles}\n"
+        f"学理抓手：\n{theory_summary}\n"
+        f"论点种子={argument_seeds}\n"
+        f"风险提示={counterplay_risks}\n"
+        f"推荐开篇方向={preparation_packet.recommended_opening_frame or '未提供'}"
     )

@@ -30,6 +30,12 @@ class CoachFeedbackMode(str, Enum):
     AUTO = "auto"
 
 
+class MatchAgentType(str, Enum):
+    INQUIRY = "inquiry"
+    SPEECH = "speech"
+    DEBATE = "debate"
+
+
 @dataclass(slots=True)
 class ArgumentUnit:
     argument_id: str
@@ -137,6 +143,67 @@ class CoachReport:
 
 
 @dataclass(slots=True)
+class MasterAgentPlan:
+    plan_id: str
+    session_id: str
+    phase: DebatePhase
+    selected_agent: MatchAgentType
+    objective: str
+    rationale: str = ""
+    handoff_notes: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class TimerPlan:
+    timer_id: str
+    session_id: str
+    phase: DebatePhase
+    speaker_side: str
+    allocated_seconds: int
+    warning_threshold_seconds: int
+    status: str = "planned"
+    source: str = "automation"
+    notes: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class InquiryOutput:
+    inquiry_id: str
+    session_id: str
+    speaker_side: str
+    strategy_summary: str
+    target_clash_points: list[str] = field(default_factory=list)
+    priority_targets: list[str] = field(default_factory=list)
+    questions: list[str] = field(default_factory=list)
+    spoken_text: str = ""
+    evidence_citations: list[str] = field(default_factory=list)
+    confidence_notes: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class TheoryPoint:
+    label: str
+    mechanism: str
+    debate_value: str = ""
+    source_evidence_ids: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class PreparationPacket:
+    packet_id: str
+    session_id: str
+    topic: str
+    research_query: str
+    evidence_records: list[EvidenceRecord] = field(default_factory=list)
+    theory_points: list[TheoryPoint] = field(default_factory=list)
+    argument_seeds: list[str] = field(default_factory=list)
+    counterplay_risks: list[str] = field(default_factory=list)
+    recommended_opening_frame: str = ""
+    source_mode: str = "prepared"
+    confidence_notes: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
 class ClosingOutput:
     closing_id: str
     session_id: str
@@ -207,6 +274,9 @@ class DebateSession:
     arguments: list[ArgumentUnit] = field(default_factory=list)
     clash_points: list[ClashPoint] = field(default_factory=list)
     coach_reports: list[CoachReport] = field(default_factory=list)
+    timer_plans: list[TimerPlan] = field(default_factory=list)
+    preparation_packets: list[PreparationPacket] = field(default_factory=list)
+    inquiry_outputs: list[InquiryOutput] = field(default_factory=list)
     closing_outputs: list[ClosingOutput] = field(default_factory=list)
     current_opening_framework: OpeningFramework | None = None
     opening_briefs: list[OpeningBrief] = field(default_factory=list)

@@ -71,6 +71,9 @@ OPPONENT_TEMPLATE = PromptTemplate(
 
 本轮优先反驳目标：
 {target_argument_ids}
+
+当前可复用的备赛资料包：
+{preparation_packet}
 """.strip(),
         """
 [Evidence Packet]
@@ -149,6 +152,9 @@ COACH_TEMPLATE = PromptTemplate(
 
 对手本轮原话：
 {latest_opponent_turn}
+
+当前可复用的备赛资料包：
+{preparation_packet}
 """.strip(),
         """
 [Opponent Move Review]
@@ -224,6 +230,9 @@ CLOSING_TEMPLATE = PromptTemplate(
 
 最近回合摘要：
 {recent_turns_summary}
+
+当前可复用的备赛资料包：
+{preparation_packet}
 """.strip(),
         """
 [Evidence Packet]
@@ -362,6 +371,12 @@ OPENING_FRAMEWORK_TEMPLATE = PromptTemplate(
 
 本题推荐比较轴：
 {framework_axis_guidance}
+
+当前可复用的备赛资料包：
+{preparation_packet}
+
+备赛阶段建议的开篇方向：
+{preparation_opening_hint}
 """.strip(),
         """
 [Evidence Packet]
@@ -445,6 +460,12 @@ OPENING_DRAFT_TEMPLATE = PromptTemplate(
 辩题类型：{debate_type}
 目标时长：{target_duration_minutes} 分钟
 目标长度：{opening_length}
+
+当前可复用的备赛资料包：
+{preparation_packet}
+
+备赛阶段建议的开篇方向：
+{preparation_opening_hint}
 """.strip(),
         """
 [Framework Packet]
@@ -510,6 +531,12 @@ OPENING_DRAFT_STREAM_TEMPLATE = PromptTemplate(
 辩题类型：{debate_type}
 目标时长：{target_duration_minutes} 分钟
 目标长度：{opening_length}
+
+当前可复用的备赛资料包：
+{preparation_packet}
+
+备赛阶段建议的开篇方向：
+{preparation_opening_hint}
 """.strip(),
         """
 [Framework Packet]

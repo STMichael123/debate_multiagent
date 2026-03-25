@@ -7,6 +7,7 @@ from pathlib import Path
 from debate_agent.app.service import DebateApplication, NewSessionRequest
 from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, OpeningArgumentCard, OpeningFramework
 from debate_agent.orchestration.pipeline import create_demo_profile
+from debate_agent.orchestration.preparation import PreparationCoordinator, ResearchScoutAgent, TheorySynthesisAgent
 from debate_agent.orchestration.turn_pipeline import TurnPipeline
 from debate_agent.storage.json_store import JSONSessionStore
 
@@ -16,7 +17,16 @@ class DebateApplicationTests(unittest.TestCase):
         self.profile = create_demo_profile()
         self.temp_dir = tempfile.TemporaryDirectory()
         self.store = JSONSessionStore(session_dir=Path(self.temp_dir.name))
-        self.application = DebateApplication(pipeline=TurnPipeline(enable_web_search=False), store=self.store)
+        self.pipeline = TurnPipeline(enable_web_search=False)
+        self.preparation_coordinator = PreparationCoordinator(
+            research_scout=ResearchScoutAgent(evidence_service=self.pipeline.evidence_service),
+            theory_synthesis_agent=TheorySynthesisAgent(),
+        )
+        self.application = DebateApplication(
+            pipeline=self.pipeline,
+            store=self.store,
+            preparation_coordinator=self.preparation_coordinator,
+        )
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
@@ -65,6 +75,8 @@ class DebateApplicationTests(unittest.TestCase):
 
         self.assertIsNotNone(turn_action.turn_result.coach_report)
         self.assertEqual(len(turn_action.session.coach_reports), 1)
+        self.assertGreaterEqual(len(turn_action.session.timer_plans), 1)
+        self.assertEqual(turn_action.turn_result.timer_plan.phase.value, "crossfire")
 
     def test_closing_statement_can_target_user_side(self) -> None:
         session_result = self.application.create_session(
@@ -119,6 +131,132 @@ class DebateApplicationTests(unittest.TestCase):
         self.assertIn("学理研究", closing_action.closing_result.closing_prompt)
         self.assertIn("辩论稿转载", closing_action.closing_result.closing_prompt)
         self.assertIn("学理机制 + 生活情景", closing_action.closing_result.closing_prompt)
+        self.assertEqual(closing_action.closing_result.master_plan.selected_agent.value, "speech")
+
+    def test_inquiry_strategy_can_be_generated_and_persisted(self) -> None:
+        session_result = self.application.create_session(
+            NewSessionRequest(
+                topic="人工智能是否应当被强制纳入高中通识教育",
+                user_side="正方",
+                agent_side="反方",
+                profile_id=self.profile.profile_id,
+            )
+        )
+        self.application.process_user_turn(
+            session=session_result.session,
+            profile=self.profile,
+            user_text="我方认为 AI 教育应该强制推进，因为它是未来基础素养。",
+        )
+
+        inquiry_action = self.application.request_inquiry_strategy(
+            session=session_result.session,
+            profile=self.profile,
+            speaker_side="opponent",
+        )
+
+        self.assertTrue(inquiry_action.inquiry_result.inquiry_output.questions)
+        self.assertEqual(inquiry_action.inquiry_result.master_plan.selected_agent.value, "inquiry")
+        self.assertEqual(len(inquiry_action.session.inquiry_outputs), 1)
+        self.assertEqual(inquiry_action.inquiry_result.timer_plan.source, "automation")
+
+    def test_timer_plan_can_be_requested_independently(self) -> None:
+        session_result = self.application.create_session(
+            NewSessionRequest(
+                topic="人工智能是否应当被强制纳入高中通识教育",
+                user_side="正方",
+                agent_side="反方",
+                profile_id=self.profile.profile_id,
+            )
+        )
+
+        timer_action = self.application.request_timer_plan(
+            session=session_result.session,
+            speaker_side="user",
+            phase=DebatePhase.CLOSING,
+            note="测试独立计时规划。",
+        )
+
+        self.assertEqual(timer_action.timer_plan.phase, DebatePhase.CLOSING)
+        self.assertEqual(timer_action.timer_plan.speaker_side, "正方")
+        self.assertIn("测试独立计时规划。", timer_action.timer_plan.notes)
+        self.assertEqual(len(timer_action.session.timer_plans), 1)
+
+    def test_preparation_packet_can_be_generated_independently(self) -> None:
+        session_result = self.application.create_session(
+            NewSessionRequest(
+                topic="人工智能是否应当被强制纳入高中通识教育",
+                user_side="正方",
+                agent_side="反方",
+                profile_id=self.profile.profile_id,
+                web_search_enabled=False,
+            )
+        )
+
+        preparation_action = self.application.prepare_session_research(
+            session=session_result.session,
+            profile=self.profile,
+            focus="官方 数据 研究",
+            limit=5,
+        )
+
+        self.assertTrue(preparation_action.preparation_result.preparation_packet.argument_seeds)
+        self.assertTrue(preparation_action.preparation_result.preparation_packet.theory_points)
+        self.assertEqual(len(preparation_action.session.preparation_packets), 1)
+
+    def test_preparation_packet_becomes_optional_upstream_input_for_turns(self) -> None:
+        session_result = self.application.create_session(
+            NewSessionRequest(
+                topic="人工智能是否应当被强制纳入高中通识教育",
+                user_side="正方",
+                agent_side="反方",
+                profile_id=self.profile.profile_id,
+                web_search_enabled=False,
+            )
+        )
+
+        preparation_action = self.application.prepare_session_research(
+            session=session_result.session,
+            profile=self.profile,
+            focus="官方 数据 研究",
+            limit=5,
+        )
+
+        turn_action = self.application.process_user_turn(
+            session=session_result.session,
+            profile=self.profile,
+            user_text="我方主张强制纳入能稳定补齐学生的 AI 基础能力。",
+        )
+
+        self.assertTrue(turn_action.turn_result.evidence_records)
+        self.assertIn("当前可复用的备赛资料包", turn_action.turn_result.opponent_prompt)
+        self.assertIn(preparation_action.preparation_result.preparation_packet.argument_seeds[0], turn_action.turn_result.opponent_prompt)
+
+    def test_preparation_packet_becomes_optional_upstream_input_for_opening(self) -> None:
+        session_result = self.application.create_session(
+            NewSessionRequest(
+                topic="人工智能是否应当被强制纳入高中通识教育",
+                user_side="正方",
+                agent_side="反方",
+                profile_id=self.profile.profile_id,
+                web_search_enabled=False,
+            )
+        )
+
+        preparation_action = self.application.prepare_session_research(
+            session=session_result.session,
+            profile=self.profile,
+            focus="官方 数据 研究",
+            limit=5,
+        )
+
+        opening_action = self.application.generate_opening_framework(
+            session=session_result.session,
+            profile=self.profile,
+            speaker_side="user",
+        )
+
+        self.assertIn("当前可复用的备赛资料包", opening_action.framework_result.opening_prompt)
+        self.assertIn(preparation_action.preparation_result.preparation_packet.recommended_opening_frame, opening_action.framework_result.opening_prompt)
 
     def test_session_round_trip_preserves_options(self) -> None:
         session_result = self.application.create_session(
@@ -217,6 +355,7 @@ class DebateApplicationTests(unittest.TestCase):
         self.assertEqual(opening_action.opening_result.opening_brief.target_duration_minutes, 3)
         self.assertEqual(opening_action.opening_result.opening_brief.target_word_count, 900)
         self.assertIsNotNone(opening_action.session.current_opening_framework)
+        self.assertEqual(opening_action.opening_result.timer_plan.phase, DebatePhase.OPENING)
 
         turn_action = self.application.process_user_turn(
             session=session_result.session,
@@ -226,6 +365,7 @@ class DebateApplicationTests(unittest.TestCase):
 
         self.assertIn("当前用户一辩稿骨架", turn_action.turn_result.opponent_prompt)
         self.assertIn("一辩稿", turn_action.turn_result.opponent_prompt)
+        self.assertEqual(turn_action.turn_result.master_plan.selected_agent.value, "debate")
 
     def test_opening_framework_can_be_generated_and_persisted_independently(self) -> None:
         session_result = self.application.create_session(

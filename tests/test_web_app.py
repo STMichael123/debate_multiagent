@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from debate_agent.app.service import DebateApplication
 from debate_agent.app.web import create_app
 from debate_agent.orchestration.pipeline import create_demo_profile
+from debate_agent.orchestration.preparation import PreparationCoordinator, ResearchScoutAgent, TheorySynthesisAgent
 from debate_agent.orchestration.turn_pipeline import TurnPipeline
 from debate_agent.storage.json_store import JSONSessionStore
 
@@ -17,7 +18,16 @@ class WebAppTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.store = JSONSessionStore(session_dir=Path(self.temp_dir.name))
-        self.application = DebateApplication(pipeline=TurnPipeline(enable_web_search=False), store=self.store)
+        self.pipeline = TurnPipeline(enable_web_search=False)
+        self.preparation_coordinator = PreparationCoordinator(
+            research_scout=ResearchScoutAgent(evidence_service=self.pipeline.evidence_service),
+            theory_synthesis_agent=TheorySynthesisAgent(),
+        )
+        self.application = DebateApplication(
+            pipeline=self.pipeline,
+            store=self.store,
+            preparation_coordinator=self.preparation_coordinator,
+        )
         self.profile = create_demo_profile()
         self.client = TestClient(create_app(application=self.application, profile=self.profile))
 
@@ -48,6 +58,8 @@ class WebAppTests(unittest.TestCase):
         payload = turn_response.json()
         self.assertEqual(payload["session"]["summary"]["turn_count"], 2)
         self.assertIn("opponent_output", payload["turn_result"])
+        self.assertEqual(payload["turn_result"]["master_plan"]["selected_agent"], "debate")
+        self.assertEqual(payload["turn_result"]["timer_plan"]["source"], "automation")
 
     def test_update_options_endpoint(self) -> None:
         create_response = self.client.post(
@@ -151,6 +163,115 @@ class WebAppTests(unittest.TestCase):
         payload = closing_response.json()
         self.assertEqual(payload["closing_result"]["closing_output"]["speaker_side"], "正方")
         self.assertTrue(payload["closing_result"]["closing_output"]["spoken_text"])
+        self.assertEqual(payload["closing_result"]["master_plan"]["selected_agent"], "speech")
+
+    def test_inquiry_endpoint_returns_master_plan_and_questions(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        self.client.post(
+            f"/api/sessions/{session_id}/turns",
+            json={"user_text": "我方认为 AI 教育应该成为所有高中生的基础能力训练。"},
+        )
+
+        inquiry_response = self.client.post(
+            f"/api/sessions/{session_id}/inquiry",
+            json={"speaker_side": "opponent", "max_questions": 4},
+        )
+        self.assertEqual(inquiry_response.status_code, 200)
+        payload = inquiry_response.json()
+        self.assertEqual(payload["inquiry_result"]["master_plan"]["selected_agent"], "inquiry")
+        self.assertTrue(payload["inquiry_result"]["inquiry_output"]["questions"])
+        self.assertEqual(payload["session"]["summary"]["inquiry_count"], 1)
+        self.assertGreaterEqual(payload["session"]["summary"]["timer_plan_count"], 2)
+
+    def test_timer_plan_endpoint_returns_oversight_data(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        timer_response = self.client.post(
+            f"/api/sessions/{session_id}/timer-plan",
+            json={"speaker_side": "user", "phase": "closing", "note": "测试接口计时规划"},
+        )
+        self.assertEqual(timer_response.status_code, 200)
+        payload = timer_response.json()
+        self.assertEqual(payload["timer_plan"]["phase"], "closing")
+        self.assertEqual(payload["timer_plan"]["speaker_side"], "正方")
+        self.assertEqual(payload["timer_plan"]["source"], "automation")
+        self.assertEqual(payload["session"]["summary"]["timer_plan_count"], 1)
+
+    def test_preparation_endpoint_returns_research_and_theory_packet(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": False,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        preparation_response = self.client.post(
+            f"/api/sessions/{session_id}/preparation",
+            json={"focus": "官方 数据 研究", "limit": 5},
+        )
+        self.assertEqual(preparation_response.status_code, 200)
+        payload = preparation_response.json()
+        self.assertTrue(payload["preparation_result"]["preparation_packet"]["argument_seeds"])
+        self.assertTrue(payload["preparation_result"]["preparation_packet"]["theory_points"])
+        self.assertEqual(payload["session"]["summary"]["preparation_packet_count"], 1)
+
+    def test_preparation_packet_is_consumed_by_turn_api(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": False,
+                "default_closing_side": "opponent",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        preparation_response = self.client.post(
+            f"/api/sessions/{session_id}/preparation",
+            json={"focus": "官方 数据 研究", "limit": 5},
+        )
+        preparation_payload = preparation_response.json()
+
+        turn_response = self.client.post(
+            f"/api/sessions/{session_id}/turns",
+            json={"user_text": "我方主张强制纳入能稳定补齐学生的 AI 基础能力。"},
+        )
+        self.assertEqual(turn_response.status_code, 200)
+        payload = turn_response.json()
+        self.assertIn("当前可复用的备赛资料包", payload["turn_result"]["opponent_prompt"])
+        self.assertIn(preparation_payload["preparation_result"]["preparation_packet"]["argument_seeds"][0], payload["turn_result"]["opponent_prompt"])
 
     def test_delete_session_endpoint(self) -> None:
         create_response = self.client.post(
@@ -196,7 +317,6 @@ class WebAppTests(unittest.TestCase):
         self.assertTrue(opening_brief["spoken_text"])
         self.assertEqual(opening_brief["target_duration_minutes"], 4)
         self.assertIsNotNone(opening_brief["framework"])
-
         import_response = self.client.post(
             f"/api/sessions/{session_id}/opening-briefs/import",
             json={

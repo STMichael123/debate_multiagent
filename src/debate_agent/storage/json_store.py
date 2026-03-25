@@ -4,7 +4,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
-from debate_agent.domain.models import ArgumentUnit, ClashPoint, ClosingOutput, CoachFeedbackMode, CoachReport, DebatePhase, DebateSession, OpeningArgumentCard, OpeningBrief, OpeningFramework, SessionOptions, SpeakerRole, TurnRecord
+from debate_agent.domain.models import ArgumentUnit, ClashPoint, ClosingOutput, CoachFeedbackMode, CoachReport, DebatePhase, DebateSession, EvidenceRecord, InquiryOutput, OpeningArgumentCard, OpeningBrief, OpeningFramework, PreparationPacket, SessionOptions, SpeakerRole, TheoryPoint, TimerPlan, TurnRecord
 
 
 class JSONSessionStore:
@@ -36,6 +36,9 @@ class JSONSessionStore:
         arguments = [self._build_argument(item) for item in self._ensure_list_of_dicts(payload.get("arguments"))]
         clash_points = [self._build_clash_point(item) for item in self._ensure_list_of_dicts(payload.get("clash_points"))]
         coach_reports = [self._build_coach_report(item) for item in self._ensure_list_of_dicts(payload.get("coach_reports"))]
+        timer_plans = [self._build_timer_plan(item) for item in self._ensure_list_of_dicts(payload.get("timer_plans"))]
+        preparation_packets = [self._build_preparation_packet(item) for item in self._ensure_list_of_dicts(payload.get("preparation_packets"))]
+        inquiry_outputs = [self._build_inquiry_output(item) for item in self._ensure_list_of_dicts(payload.get("inquiry_outputs"))]
         closing_outputs = [self._build_closing_output(item) for item in self._ensure_list_of_dicts(payload.get("closing_outputs"))]
         opening_briefs = [self._build_opening_brief(item) for item in self._ensure_list_of_dicts(payload.get("opening_briefs"))]
         current_opening_framework = self._build_opening_framework(payload.get("current_opening_framework"))
@@ -57,6 +60,9 @@ class JSONSessionStore:
             arguments=arguments,
             clash_points=clash_points,
             coach_reports=coach_reports,
+            timer_plans=timer_plans,
+            preparation_packets=preparation_packets,
+            inquiry_outputs=inquiry_outputs,
             closing_outputs=closing_outputs,
             current_opening_framework=current_opening_framework,
             opening_briefs=opening_briefs,
@@ -146,6 +152,73 @@ class JSONSessionStore:
             spoken_text=self._ensure_str(payload.get("spoken_text")),
             evidence_citations=self._ensure_list_of_str(payload.get("evidence_citations")),
             confidence_notes=self._ensure_list_of_str(payload.get("confidence_notes")),
+        )
+
+    def _build_inquiry_output(self, payload: dict[str, object]) -> InquiryOutput:
+        return InquiryOutput(
+            inquiry_id=self._ensure_str(payload.get("inquiry_id")),
+            session_id=self._ensure_str(payload.get("session_id")),
+            speaker_side=self._ensure_str(payload.get("speaker_side")),
+            strategy_summary=self._ensure_str(payload.get("strategy_summary")),
+            target_clash_points=self._ensure_list_of_str(payload.get("target_clash_points")),
+            priority_targets=self._ensure_list_of_str(payload.get("priority_targets")),
+            questions=self._ensure_list_of_str(payload.get("questions")),
+            spoken_text=self._ensure_str(payload.get("spoken_text")),
+            evidence_citations=self._ensure_list_of_str(payload.get("evidence_citations")),
+            confidence_notes=self._ensure_list_of_str(payload.get("confidence_notes")),
+        )
+
+    def _build_timer_plan(self, payload: dict[str, object]) -> TimerPlan:
+        return TimerPlan(
+            timer_id=self._ensure_str(payload.get("timer_id")),
+            session_id=self._ensure_str(payload.get("session_id")),
+            phase=DebatePhase(self._ensure_str(payload.get("phase"), default=DebatePhase.CROSSFIRE.value)),
+            speaker_side=self._ensure_str(payload.get("speaker_side")),
+            allocated_seconds=self._ensure_optional_int(payload.get("allocated_seconds")) or 0,
+            warning_threshold_seconds=self._ensure_optional_int(payload.get("warning_threshold_seconds")) or 0,
+            status=self._ensure_str(payload.get("status"), default="planned"),
+            source=self._ensure_str(payload.get("source"), default="automation"),
+            notes=self._ensure_list_of_str(payload.get("notes")),
+        )
+
+    def _build_preparation_packet(self, payload: dict[str, object]) -> PreparationPacket:
+        evidence_records = [self._build_evidence_record(item) for item in self._ensure_list_of_dicts(payload.get("evidence_records"))]
+        theory_points = [self._build_theory_point(item) for item in self._ensure_list_of_dicts(payload.get("theory_points"))]
+        return PreparationPacket(
+            packet_id=self._ensure_str(payload.get("packet_id")),
+            session_id=self._ensure_str(payload.get("session_id")),
+            topic=self._ensure_str(payload.get("topic")),
+            research_query=self._ensure_str(payload.get("research_query")),
+            evidence_records=evidence_records,
+            theory_points=theory_points,
+            argument_seeds=self._ensure_list_of_str(payload.get("argument_seeds")),
+            counterplay_risks=self._ensure_list_of_str(payload.get("counterplay_risks")),
+            recommended_opening_frame=self._ensure_str(payload.get("recommended_opening_frame")),
+            source_mode=self._ensure_str(payload.get("source_mode"), default="prepared"),
+            confidence_notes=self._ensure_list_of_str(payload.get("confidence_notes")),
+        )
+
+    def _build_evidence_record(self, payload: dict[str, object]) -> EvidenceRecord:
+        return EvidenceRecord(
+            evidence_id=self._ensure_str(payload.get("evidence_id")),
+            query_text=self._ensure_str(payload.get("query_text")),
+            source_type=self._ensure_str(payload.get("source_type")),
+            source_ref=self._ensure_str(payload.get("source_ref")),
+            title=self._ensure_str(payload.get("title")),
+            snippet=self._ensure_str(payload.get("snippet")),
+            stance_hint=self._ensure_str(payload.get("stance_hint")),
+            relevance_score=self._ensure_optional_float(payload.get("relevance_score")),
+            credibility_score=self._ensure_optional_float(payload.get("credibility_score")),
+            used_by_turn_ids=self._ensure_list_of_str(payload.get("used_by_turn_ids")),
+            verification_state=self._ensure_str(payload.get("verification_state"), default="unverified"),
+        )
+
+    def _build_theory_point(self, payload: dict[str, object]) -> TheoryPoint:
+        return TheoryPoint(
+            label=self._ensure_str(payload.get("label")),
+            mechanism=self._ensure_str(payload.get("mechanism")),
+            debate_value=self._ensure_str(payload.get("debate_value")),
+            source_evidence_ids=self._ensure_list_of_str(payload.get("source_evidence_ids")),
         )
 
     def _build_opening_brief(self, payload: dict[str, object]) -> OpeningBrief:
