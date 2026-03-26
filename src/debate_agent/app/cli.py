@@ -11,7 +11,8 @@ from debate_agent.infrastructure.settings import load_settings
 from debate_agent.app.service import DebateApplication, NewSessionRequest
 from debate_agent.domain.models import CoachFeedbackMode
 from debate_agent.orchestration.pipeline import create_demo_profile
-from debate_agent.orchestration.turn_pipeline import ProcessTurnResult, TurnPipeline
+from debate_agent.orchestration.pipeline_models import ProcessTurnResult
+from debate_agent.orchestration.turn_pipeline import TurnPipeline
 from debate_agent.prompts.builders import build_session_state_preview
 from debate_agent.storage.json_store import JSONSessionStore
 

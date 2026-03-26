@@ -6,8 +6,9 @@ from typing import Callable
 from uuid import uuid4
 
 from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, DebateProfile, DebateSession, OpeningBrief, OpeningFramework, PreparationPacket, SessionOptions, TimerPlan
+from debate_agent.orchestration.pipeline_models import ClosingStatementResult, CoachFeedbackResult, InquiryStrategyResult, OpeningBriefResult, OpeningFrameworkResult, ProcessTurnResult
 from debate_agent.orchestration.preparation import PreparationCoordinator, PreparationResult
-from debate_agent.orchestration.turn_pipeline import ClosingStatementResult, CoachFeedbackResult, InquiryStrategyResult, OpeningBriefResult, OpeningFrameworkResult, ProcessTurnResult, TurnPipeline
+from debate_agent.orchestration.turn_pipeline import TurnPipeline
 from debate_agent.storage.json_store import JSONSessionStore
 
 
@@ -211,7 +212,7 @@ class DebateApplication:
             focus=focus,
             limit=limit,
         )
-        self.pipeline.state_mutator.add_preparation_packet(session, preparation_result.preparation_packet)
+        self.pipeline.add_preparation_packet(session, preparation_result.preparation_packet)
         saved_path = self.store.save_session(session)
         return PreparationActionResult(session=session, saved_path=saved_path, preparation_result=preparation_result)
 
