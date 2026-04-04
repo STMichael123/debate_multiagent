@@ -28,6 +28,7 @@
 
 ```text
 docs/
+  agent-backend-learning.md
   technical-design.md
   prompts.md
   evaluation.md
@@ -95,6 +96,16 @@ docker run --rm -p 8000:8000 debate-project
 ```
 
 启动后打开 http://127.0.0.1:8000。
+
+## 学习入口
+
+如果你想把这个仓库当成一个 agent 项目和 Python 后端项目来学习，建议按下面顺序阅读：
+
+1. [docs/agent-backend-learning.md](docs/agent-backend-learning.md)：面向学习者的详细导读，解释 agent、分层、请求链路、状态管理、存储、测试和扩展方式。
+2. [docs/technical-design.md](docs/technical-design.md)：系统设计总览。
+3. [docs/prompts.md](docs/prompts.md)：Prompt 体系设计。
+4. [src/debate_agent/app/service.py](src/debate_agent/app/service.py)：应用服务层。
+5. [src/debate_agent/orchestration/turn_pipeline.py](src/debate_agent/orchestration/turn_pipeline.py)：业务编排总入口。
 
 ## 运行模式
 
