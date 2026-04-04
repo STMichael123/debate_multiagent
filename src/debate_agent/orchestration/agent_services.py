@@ -6,7 +6,7 @@ import time
 from typing import Callable
 from uuid import uuid4
 
-from debate_agent.domain.models import AgentOutput, ArgumentUnit, ClashPoint, ClosingOutput, CoachReport, DebatePhase, DebateProfile, DebateSession, EvidenceRecord, InquiryOutput, MasterAgentPlan, MatchAgentType, OpeningArgumentCard, OpeningBrief, OpeningFramework, SpeakerRole, TurnAnalysis, TurnRecord
+from debate_agent.domain.models import AgentOutput, ArgumentUnit, ClashPoint, ClosingOutput, CoachReport, DebateProfile, DebateSession, EvidenceRecord, InquiryOutput, MasterAgentPlan, MatchAgentType, OpeningArgumentCard, OpeningBrief, OpeningFramework, SpeakerRole, TurnAnalysis, TurnRecord
 from debate_agent.infrastructure.llm_client import DebateLLMClient
 from debate_agent.prompts.builders import build_closing_variables, build_coach_variables, build_opening_coach_variables, build_opening_draft_variables, build_opening_variables, build_opponent_variables, format_reference_examples
 from debate_agent.prompts.templates import ARGUMENT_ANALYSIS_TEMPLATE, CLOSING_TEMPLATE, COACH_TEMPLATE, OPENING_COACH_TEMPLATE, OPENING_DRAFT_STREAM_TEMPLATE, OPENING_DRAFT_TEMPLATE, OPENING_FRAMEWORK_TEMPLATE, OPPONENT_TEMPLATE
@@ -578,9 +578,9 @@ class OpponentAgent:
                 "没有回答课程置换和资源成本问题。",
             ],
             spoken_text=(
-                f"你现在的问题不是没有看到 AI 的重要性，而是把‘重要’直接跳成了‘必须强制纳入’。"
-                f"这中间至少差了两步证明：第一，你要证明为什么现有课程和选修机制不足；第二，你要证明学校有能力承担统一推进的师资和课时成本。"
-                f"如果这些条件都没证明，你的结论就不是政策主张，只是愿景表态。"
+                "你现在的问题不是没有看到 AI 的重要性，而是把‘重要’直接跳成了‘必须强制纳入’。"
+                "这中间至少差了两步证明：第一，你要证明为什么现有课程和选修机制不足；第二，你要证明学校有能力承担统一推进的师资和课时成本。"
+                "如果这些条件都没证明，你的结论就不是政策主张，只是愿景表态。"
             ),
             follow_up_questions=[
                 "请你具体说明，为什么这件事必须是强制纳入，而不能是校本或选修推进？",

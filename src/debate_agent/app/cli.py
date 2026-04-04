@@ -4,7 +4,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
-from debate_agent.domain.models import DebatePhase, DebateSession
+from debate_agent.domain.models import DebateSession
 from debate_agent.infrastructure.llm_client import DebateLLMClient
 from debate_agent.infrastructure.settings import load_settings
 from debate_agent.app.service import DebateApplication, NewSessionRequest

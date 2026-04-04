@@ -4,8 +4,6 @@ import json
 import sqlite3
 from dataclasses import asdict
 from pathlib import Path
-from typing import Generator
-
 from debate_agent.domain.models import DebateSession
 from debate_agent.storage.json_store import JSONSessionStore
 

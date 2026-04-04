@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Callable
 from uuid import uuid4
 
-from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, DebateProfile, DebateSession, OpeningBrief, OpeningFramework, PreparationPacket, SessionOptions, TimerPlan
+from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, DebateProfile, DebateSession, OpeningBrief, OpeningFramework, SessionOptions, TimerPlan
 from debate_agent.orchestration.pipeline_models import ClosingStatementResult, CoachFeedbackResult, InquiryStrategyResult, OpeningBriefResult, OpeningFrameworkResult, ProcessTurnResult
 from debate_agent.orchestration.preparation import PreparationCoordinator, PreparationResult
 from debate_agent.orchestration.turn_pipeline import TurnPipeline

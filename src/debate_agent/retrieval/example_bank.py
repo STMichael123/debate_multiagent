@@ -4,9 +4,6 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from debate_agent.domain.models import EvidenceRecord
-
-
 @dataclass(slots=True)
 class AnnotatedArgument:
     argument_id: str

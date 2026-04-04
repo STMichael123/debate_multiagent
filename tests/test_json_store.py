@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from debate_agent.domain.models import DebatePhase, DebateSession, SessionOptions
+from debate_agent.domain.models import DebatePhase, DebateSession
 from debate_agent.storage.json_store import JSONSessionStore
 
 
