@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import logging
 from urllib.parse import urlparse
 
 from debate_agent.domain.models import EvidenceRecord
@@ -27,6 +28,7 @@ class WebSearchRetriever:
             with self._create_search_client() as search_client:
                 raw_results = list(search_client.text(query, max_results=limit))
         except Exception:
+            logging.warning("Web search failed for query: %s", query[:80], exc_info=True)
             return []
 
         records: list[EvidenceRecord] = []
@@ -107,90 +109,99 @@ def assess_web_source_quality(title: str, snippet: str, source_ref: str) -> dict
     }
 
 
+LOW_VALUE_KEYWORDS = [
+    "辩论",
+    "辩题",
+    "一辩稿",
+    "二辩稿",
+    "三辩稿",
+    "四辩稿",
+    "攻辩",
+    "立论稿",
+    "辩词",
+    "稿件",
+    "辩之竹",
+    "知乎",
+    "贴吧",
+    "论坛",
+    "blog",
+    "bbs",
+    "wenku",
+    "docin",
+    "doc88",
+    "360doc",
+]
+
+LOW_VALUE_HOSTS = {
+    "zhihu.com",
+    "www.zhihu.com",
+    "tieba.baidu.com",
+    "wenku.baidu.com",
+    "www.docin.com",
+    "www.doc88.com",
+    "www.360doc.com",
+    "www.bilibili.com",
+}
+
+
 def _looks_like_debate_repost(text: str, host: str) -> bool:
-    low_value_keywords = [
-        "辩论",
-        "辩题",
-        "一辩稿",
-        "二辩稿",
-        "三辩稿",
-        "四辩稿",
-        "攻辩",
-        "立论稿",
-        "辩词",
-        "稿件",
-        "辩之竹",
-        "知乎",
-        "贴吧",
-        "论坛",
-        "blog",
-        "bbs",
-        "wenku",
-        "docin",
-        "doc88",
-        "360doc",
-    ]
-    low_value_hosts = {
-        "zhihu.com",
-        "www.zhihu.com",
-        "tieba.baidu.com",
-        "wenku.baidu.com",
-        "www.docin.com",
-        "www.doc88.com",
-        "www.360doc.com",
-        "www.bilibili.com",
-    }
-    return host in low_value_hosts or any(keyword in text for keyword in low_value_keywords)
+    return host in LOW_VALUE_HOSTS or any(keyword in text for keyword in LOW_VALUE_KEYWORDS)
+
+
+HIGH_AUTHORITY_SUFFIXES = (".gov", ".gov.cn", ".edu", ".edu.cn", ".ac.uk")
+HIGH_AUTHORITY_HOSTS = {
+    "www.oecd.org",
+    "www.unesco.org",
+    "www.unicef.org",
+    "www.worldbank.org",
+    "www.who.int",
+    "www.imf.org",
+}
 
 
 def _is_high_authority_host(host: str) -> bool:
-    authority_suffixes = (".gov", ".gov.cn", ".edu", ".edu.cn", ".ac.uk")
-    authority_hosts = {
-        "www.oecd.org",
-        "www.unesco.org",
-        "www.unicef.org",
-        "www.worldbank.org",
-        "www.who.int",
-        "www.imf.org",
-    }
-    return host.endswith(authority_suffixes) or host in authority_hosts
+    return host.endswith(HIGH_AUTHORITY_SUFFIXES) or host in HIGH_AUTHORITY_HOSTS
+
+
+RESEARCH_KEYWORDS = [
+    "research",
+    "study",
+    "journal",
+    "paper",
+    "report",
+    "研究",
+    "论文",
+    "期刊",
+    "报告",
+    "大学",
+    "研究院",
+]
+RESEARCH_HOST_SUFFIXES = (".org", ".edu", ".ac.uk")
 
 
 def _looks_like_research_source(text: str, host: str) -> bool:
-    research_keywords = [
-        "research",
-        "study",
-        "journal",
-        "paper",
-        "report",
-        "研究",
-        "论文",
-        "期刊",
-        "报告",
-        "大学",
-        "研究院",
-    ]
-    research_hosts = (".org", ".edu", ".ac.uk")
-    return any(keyword in text for keyword in research_keywords) or host.endswith(research_hosts)
+    return any(keyword in text for keyword in RESEARCH_KEYWORDS) or host.endswith(RESEARCH_HOST_SUFFIXES)
+
+
+INSTITUTIONAL_HOST_SUFFIXES = (
+    ".org",
+    ".int",
+    ".news",
+    ".cn",
+)
+TRUSTED_NEWS_HOSTS = {
+    "www.bbc.com",
+    "www.reuters.com",
+    "apnews.com",
+    "www.nytimes.com",
+    "www.theguardian.com",
+    "www.people.com.cn",
+    "www.xinhuanet.com",
+}
 
 
 def _looks_like_news_or_institutional_source(host: str) -> bool:
-    institutional_hosts = (
-        ".org",
-        ".int",
-        ".news",
-        ".cn",
-    )
-    trusted_hosts = {
-        "www.bbc.com",
-        "www.reuters.com",
-        "apnews.com",
-        "www.nytimes.com",
-        "www.theguardian.com",
-        "www.people.com.cn",
-        "www.xinhuanet.com",
-    }
-    return host in trusted_hosts or host.endswith(institutional_hosts)
+    return host in TRUSTED_NEWS_HOSTS or host.endswith(INSTITUTIONAL_HOST_SUFFIXES)
 
 
 def _ensure_str(value: object, default: str = "") -> str:

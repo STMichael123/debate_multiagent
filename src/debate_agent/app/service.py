@@ -88,6 +88,14 @@ class DebateApplication:
         self.preparation_coordinator = preparation_coordinator
 
     def create_session(self, request: NewSessionRequest) -> SessionActionResult:
+        if not request.topic or not request.topic.strip():
+            raise ValueError("topic 不能为空。")
+        if not request.user_side or not request.user_side.strip():
+            raise ValueError("user_side 不能为空。")
+        if not request.agent_side or not request.agent_side.strip():
+            raise ValueError("agent_side 不能为空。")
+        if request.user_side.strip() == request.agent_side.strip():
+            raise ValueError("user_side 和 agent_side 不能相同。")
         session = DebateSession(
             session_id=str(uuid4()),
             topic=request.topic,

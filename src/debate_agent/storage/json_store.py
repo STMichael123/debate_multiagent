@@ -1,22 +1,66 @@
 from __future__ import annotations
 
 import json
+import os
+import shutil
+import tempfile
 from dataclasses import asdict
 from pathlib import Path
 
 from debate_agent.domain.models import ArgumentUnit, ClashPoint, ClosingOutput, CoachFeedbackMode, CoachReport, DebatePhase, DebateSession, EvidenceRecord, InquiryOutput, OpeningArgumentCard, OpeningBrief, OpeningFramework, PreparationPacket, SessionOptions, SpeakerRole, TheoryPoint, TimerPlan, TurnRecord
+
+_MAX_BACKUPS_PER_SESSION = 5
 
 
 class JSONSessionStore:
     def __init__(self, session_dir: Path | None = None) -> None:
         self.session_dir = session_dir or self._default_session_dir()
         self.session_dir.mkdir(parents=True, exist_ok=True)
+        self._backup_dir = self.session_dir / ".backup"
+        self._backup_dir.mkdir(parents=True, exist_ok=True)
 
     def save_session(self, session: DebateSession) -> Path:
         file_path = self.session_dir / f"{session.session_id}.json"
+        self._backup_if_exists(file_path)
         payload = asdict(session)
-        file_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        content = json.dumps(payload, ensure_ascii=False, indent=2)
+        fd, tmp_path = tempfile.mkstemp(
+            suffix=".tmp",
+            prefix=f"{session.session_id}_",
+            dir=str(self.session_dir),
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as tmp_file:
+                tmp_file.write(content)
+                tmp_file.flush()
+                os.fsync(tmp_file.fileno())
+            os.replace(tmp_path, str(file_path))
+        except BaseException:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
         return file_path
+
+    def _backup_if_exists(self, file_path: Path) -> None:
+        if not file_path.exists():
+            return
+        import time
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        backup_name = f"{file_path.stem}_{timestamp}.json"
+        backup_path = self._backup_dir / backup_name
+        shutil.copy2(str(file_path), str(backup_path))
+        self._prune_backups(file_path.stem)
+
+    def _prune_backups(self, session_id: str) -> None:
+        backups = sorted(
+            self._backup_dir.glob(f"{session_id}_*.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        for old_backup in backups[_MAX_BACKUPS_PER_SESSION:]:
+            old_backup.unlink(missing_ok=True)
 
     def load_session(self, session_id: str) -> DebateSession:
         file_path = self.session_dir / f"{session_id}.json"

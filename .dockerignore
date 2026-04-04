@@ -1,9 +1,11 @@
-.env
+.venv/
 __pycache__/
 *.pyc
-.venv/
-.vscode/
-*.egg-info/
+.git/
+.env
 .pytest_cache/
+*.egg-info/
+data/sessions/
+docs/
 openspec/
 .claude/

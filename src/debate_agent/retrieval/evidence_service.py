@@ -32,7 +32,7 @@ class EvidenceService:
         limit: int | None = None,
         enable_web_search: bool = True,
     ) -> EvidenceRetrievalResult:
-        effective_limit = limit or self.default_limit
+        effective_limit = max(1, limit or self.default_limit)
         local_records = self.local_retriever.retrieve(topic, limit=min(effective_limit, 3))
         research_queries = self._build_query_plan(topic, latest_user_turn, clash_points or [])
 

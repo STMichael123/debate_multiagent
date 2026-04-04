@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -53,7 +54,14 @@ class LocalDossierRetriever:
 
         dossiers: list[Dossier] = []
         for file_path in sorted(self.dossier_dir.glob("*.json")):
-            payload = json.loads(file_path.read_text(encoding="utf-8"))
+            try:
+                payload = json.loads(file_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError) as error:
+                logging.warning("Skipping invalid dossier file %s: %s", file_path.name, error)
+                continue
+            if not isinstance(payload, dict) or "dossier_id" not in payload or "topic" not in payload:
+                logging.warning("Skipping malformed dossier file %s: missing required fields", file_path.name)
+                continue
             dossiers.append(
                 Dossier(
                     dossier_id=payload["dossier_id"],

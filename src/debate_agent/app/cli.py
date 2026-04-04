@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from dataclasses import asdict
 from pathlib import Path
-from uuid import uuid4
 
 from debate_agent.domain.models import DebatePhase, DebateSession
 from debate_agent.infrastructure.llm_client import DebateLLMClient

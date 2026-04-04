@@ -1,20 +1,33 @@
-from __future__ import annotations
-
 import json
+import logging
+from contextlib import asynccontextmanager
 from queue import Empty, Queue
 from pathlib import Path
 from threading import Thread
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from starlette.requests import Request as StarletteRequest
+from starlette.responses import JSONResponse as StarletteJSONResponse
 
 from debate_agent.app.service import DebateApplication, NewSessionRequest
 from debate_agent.domain.models import CoachFeedbackMode, DebatePhase, DebateProfile, DebateSession, OpeningArgumentCard, OpeningFramework
+from debate_agent.infrastructure.auth import check_api_key, load_api_keys
+from debate_agent.infrastructure.exceptions import (
+    DebateProjectError,
+    InvalidInputError,
+    LLMGenerationError,
+    SessionNotFoundError,
+)
 from debate_agent.infrastructure.llm_client import DebateLLMClient
+from debate_agent.infrastructure.logging_config import configure_logging
+from debate_agent.infrastructure.rate_limiter import InMemoryRateLimiter
+from debate_agent.infrastructure.security_headers import SecurityHeadersMiddleware
 from debate_agent.infrastructure.settings import load_settings
 from debate_agent.orchestration.pipeline import create_demo_profile
 from debate_agent.orchestration.preparation import PreparationCoordinator, ResearchScoutAgent, TheorySynthesisAgent
@@ -23,64 +36,64 @@ from debate_agent.storage.json_store import JSONSessionStore
 
 
 class SessionCreatePayload(BaseModel):
-    topic: str = Field(min_length=1)
-    user_side: str = Field(default="正方", min_length=1)
-    agent_side: str = Field(default="反方", min_length=1)
+    topic: str = Field(min_length=1, max_length=200)
+    user_side: str = Field(default="正方", min_length=1, max_length=20)
+    agent_side: str = Field(default="反方", min_length=1, max_length=20)
     coach_feedback_mode: str = Field(default=CoachFeedbackMode.MANUAL.value)
     web_search_enabled: bool = True
     default_closing_side: str = Field(default="opponent")
 
 
 class TurnPayload(BaseModel):
-    user_text: str = Field(min_length=1)
+    user_text: str = Field(min_length=1, max_length=5000)
     include_coach_feedback: bool | None = None
 
 
 class ClosingPayload(BaseModel):
     speaker_side: str | None = None
-    closing_focus: str | None = None
+    closing_focus: str | None = Field(default=None, max_length=500)
 
 
 class InquiryPayload(BaseModel):
     speaker_side: str | None = None
-    inquiry_focus: str | None = None
+    inquiry_focus: str | None = Field(default=None, max_length=500)
     max_questions: int = Field(default=4, ge=3, le=8)
 
 
 class TimerPlanPayload(BaseModel):
     speaker_side: str | None = None
     phase: str | None = None
-    note: str | None = None
+    note: str | None = Field(default=None, max_length=500)
 
 
 class PreparationPayload(BaseModel):
-    preparation_goal: str | None = None
-    focus: str | None = None
+    preparation_goal: str | None = Field(default=None, max_length=500)
+    focus: str | None = Field(default=None, max_length=500)
     limit: int = Field(default=6, ge=3, le=10)
 
 
 class OpeningBriefGeneratePayload(BaseModel):
     speaker_side: str | None = None
-    brief_focus: str | None = None
+    brief_focus: str | None = Field(default=None, max_length=500)
     target_duration_minutes: int = Field(default=3, ge=1, le=8)
 
 
 class OpeningFrameworkGeneratePayload(BaseModel):
     speaker_side: str | None = None
-    brief_focus: str | None = None
+    brief_focus: str | None = Field(default=None, max_length=500)
 
 
 class OpeningArgumentCardPayload(BaseModel):
-    claim: str = ""
-    data_support: str = ""
-    academic_support: str = ""
-    scenario_support: str = ""
+    claim: str = Field(default="", max_length=500)
+    data_support: str = Field(default="", max_length=1000)
+    academic_support: str = Field(default="", max_length=1000)
+    scenario_support: str = Field(default="", max_length=1000)
 
 
 class OpeningFrameworkPayload(BaseModel):
-    judge_standard: str = ""
-    framework_summary: str = ""
-    argument_cards: list[OpeningArgumentCardPayload] = Field(default_factory=list)
+    judge_standard: str = Field(default="", max_length=500)
+    framework_summary: str = Field(default="", max_length=1000)
+    argument_cards: list[OpeningArgumentCardPayload] = Field(default_factory=list, max_length=10)
 
 
 class OpeningBriefFromFrameworkPayload(OpeningBriefGeneratePayload):
@@ -89,9 +102,9 @@ class OpeningBriefFromFrameworkPayload(OpeningBriefGeneratePayload):
 
 class OpeningBriefImportPayload(BaseModel):
     speaker_side: str | None = None
-    spoken_text: str = Field(min_length=1)
-    strategy_summary: str | None = None
-    outline: list[str] | None = None
+    spoken_text: str = Field(min_length=1, max_length=10000)
+    strategy_summary: str | None = Field(default=None, max_length=500)
+    outline: list[str] | None = Field(default=None, max_length=20)
     framework: OpeningFrameworkPayload | None = None
     target_duration_minutes: int | None = Field(default=None, ge=1, le=8)
 
@@ -120,8 +133,64 @@ def create_app(
     debate_profile = profile or create_demo_profile()
     assets_dir = Path(__file__).resolve().parent / "web_assets"
 
-    app = FastAPI(title="Debate Project Web UI", version="0.1.0")
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        llm_client = debate_application.pipeline.llm_client
+        is_debug = llm_client is not None and getattr(llm_client.settings, "debug", False)
+        configure_logging(debug=is_debug)
+        logging.info("Debate application starting up", extra={"llm_enabled": llm_client is not None, "model": llm_client.settings.model if llm_client else None})
+        yield
+        logging.info("Debate application shutting down")
+
+    app = FastAPI(title="Debate Project Web UI", version="0.1.0", lifespan=lifespan)
+
+    rate_limiter = InMemoryRateLimiter(max_requests=30, window_seconds=60.0)
+    api_keys = load_api_keys()
+
+    @app.middleware("http")
+    async def rate_limit_middleware(request, call_next):
+        client_ip = request.client.host if request.client else "unknown"
+        if not rate_limiter.is_allowed(client_ip):
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=429, content={"detail": "请求过于频繁，请稍后再试。"})
+        response = await call_next(request)
+        return response
+
+    @app.middleware("http")
+    async def auth_middleware(request, call_next):
+        if api_keys and request.url.path.startswith("/api/"):
+            provided = request.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+            if not check_api_key(provided, api_keys):
+                from fastapi.responses import JSONResponse
+                return JSONResponse(status_code=401, content={"detail": "无效或缺失的 API Key。"})
+        response = await call_next(request)
+        return response
+
+    llm_client = debate_application.pipeline.llm_client
+    cors_origins = ["*"]
+    if llm_client is not None and llm_client.settings.cors_allowed_origins is not None:
+        cors_origins = llm_client.settings.cors_allowed_origins
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    app.add_middleware(SecurityHeadersMiddleware)
+
     app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+    @app.exception_handler(DebateProjectError)
+    async def debate_project_error_handler(request: Request, exc: DebateProjectError):
+        logging.error("Unhandled DebateProjectError: %s", exc, exc_info=True)
+        if isinstance(exc, SessionNotFoundError):
+            return StarletteJSONResponse(status_code=404, content={"detail": str(exc)})
+        if isinstance(exc, InvalidInputError):
+            return StarletteJSONResponse(status_code=400, content={"detail": str(exc)})
+        if isinstance(exc, LLMGenerationError):
+            return StarletteJSONResponse(status_code=502, content={"detail": "LLM 服务暂时不可用，请稍后重试。"})
+        return StarletteJSONResponse(status_code=500, content={"detail": str(exc)})
 
     @app.get("/")
     def index() -> FileResponse:
@@ -137,6 +206,16 @@ def create_app(
             "model": llm_client.settings.model if llm_enabled else None,
         }
 
+    @app.get("/api/sessions/{session_id}/usage")
+    def session_usage(session_id: str) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        turns = session.turns
+        return {
+            "session_id": session_id,
+            "turn_count": len(turns),
+            "total_token_usage": sum(t.token_usage or 0 for t in turns),
+        }
+
     @app.get("/api/sessions")
     def list_sessions() -> list[dict[str, object]]:
         sessions: list[dict[str, object]] = []
@@ -148,17 +227,20 @@ def create_app(
     @app.post("/api/sessions")
     def create_session(payload: SessionCreatePayload) -> dict[str, object]:
         mode = _parse_coach_mode(payload.coach_feedback_mode)
-        result = debate_application.create_session(
-            NewSessionRequest(
-                topic=payload.topic,
-                user_side=payload.user_side,
-                agent_side=payload.agent_side,
-                profile_id=debate_profile.profile_id,
-                coach_feedback_mode=mode,
-                web_search_enabled=payload.web_search_enabled,
-                default_closing_side=_normalize_closing_side(payload.default_closing_side),
+        try:
+            result = debate_application.create_session(
+                NewSessionRequest(
+                    topic=payload.topic,
+                    user_side=payload.user_side,
+                    agent_side=payload.agent_side,
+                    profile_id=debate_profile.profile_id,
+                    coach_feedback_mode=mode,
+                    web_search_enabled=payload.web_search_enabled,
+                    default_closing_side=_normalize_closing_side(payload.default_closing_side),
+                )
             )
-        )
+        except ValueError as error:
+            raise HTTPException(status_code=400, detail=str(error)) from error
         return _serialize_session_result(debate_application, result.session)
 
     @app.get("/api/sessions/{session_id}")
@@ -348,11 +430,19 @@ def create_app(
         def event_stream():
             worker_thread = Thread(target=worker, daemon=True)
             worker_thread.start()
+            max_idle_seconds = 120
+            idle_time = 0.0
             while True:
                 try:
                     event_name, data = event_queue.get(timeout=0.4)
+                    idle_time = 0.0
                 except Empty:
                     if not worker_thread.is_alive():
+                        break
+                    idle_time += 0.4
+                    if idle_time >= max_idle_seconds:
+                        logging.warning("SSE stream timed out after %.0f seconds", max_idle_seconds)
+                        yield _encode_sse_event("error", {"message": "流式生成超时，请重试。"})
                         break
                     yield ": keepalive\n\n"
                     continue
@@ -360,6 +450,8 @@ def create_app(
                 yield _encode_sse_event(event_name, data)
                 if event_name in {"completed", "error"}:
                     break
+
+            worker_thread.join(timeout=5.0)
 
         return StreamingResponse(
             event_stream(),
@@ -446,13 +538,25 @@ def create_app(
 
 def _build_application() -> DebateApplication:
     llm_client = _build_llm_client()
-    store = JSONSessionStore()
+    store = _build_store(llm_client)
     pipeline = TurnPipeline(llm_client=llm_client)
     preparation_coordinator = PreparationCoordinator(
         research_scout=ResearchScoutAgent(evidence_service=pipeline.evidence_service),
         theory_synthesis_agent=TheorySynthesisAgent(llm_client=llm_client, model_name=llm_client.settings.model if llm_client else None),
     )
     return DebateApplication(pipeline=pipeline, store=store, preparation_coordinator=preparation_coordinator)
+
+
+def _build_store(llm_client: DebateLLMClient | None):
+    store_type = "json"
+    if llm_client is not None:
+        store_type = getattr(llm_client.settings, "session_store_type", "json") or "json"
+    if store_type == "sqlite":
+        from debate_agent.storage.sqlite_store import SQLiteSessionStore
+        db_url = getattr(llm_client.settings, "database_url", "") if llm_client else ""
+        db_path = Path(db_url) if db_url else None
+        return SQLiteSessionStore(db_path=db_path)
+    return JSONSessionStore()
 
 
 def _build_llm_client() -> DebateLLMClient | None:
