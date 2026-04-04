@@ -6,6 +6,7 @@ from debate_agent.orchestration.agent_services import ClosingAgent, CoachAgent, 
 from debate_agent.orchestration.oversight import MatchTimerAutomation, OversightCoordinator
 from debate_agent.orchestration.session_state import SessionStateMutator
 from debate_agent.retrieval.evidence_service import EvidenceService
+from debate_agent.retrieval.example_bank import ExampleBank
 from debate_agent.retrieval.web_search import WebSearchRetriever
 
 
@@ -27,9 +28,10 @@ class PipelineRuntime:
         coach_model = llm_client.settings.coach_model if llm_client else None
         closing_model = llm_client.settings.closing_model if llm_client else None
         opening_model = llm_client.settings.model if llm_client else None
+        self.example_bank = ExampleBank()
         self.master_agent = MasterOrchestratorAgent()
-        self.opponent_agent = OpponentAgent(llm_client=llm_client, model_name=opponent_model)
-        self.coach_agent = CoachAgent(llm_client=llm_client, model_name=coach_model)
+        self.opponent_agent = OpponentAgent(llm_client=llm_client, model_name=opponent_model, example_bank=self.example_bank)
+        self.coach_agent = CoachAgent(llm_client=llm_client, model_name=coach_model, example_bank=self.example_bank)
         self.closing_agent = ClosingAgent(llm_client=llm_client, model_name=closing_model)
         self.opening_agent = OpeningAgent(llm_client=llm_client, model_name=opening_model)
         self.opening_coach_agent = OpeningCoachAgent(llm_client=llm_client, model_name=coach_model)

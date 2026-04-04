@@ -8,8 +8,9 @@ from uuid import uuid4
 
 from debate_agent.domain.models import AgentOutput, ArgumentUnit, ClashPoint, ClosingOutput, CoachReport, DebatePhase, DebateProfile, DebateSession, EvidenceRecord, InquiryOutput, MasterAgentPlan, MatchAgentType, OpeningArgumentCard, OpeningBrief, OpeningFramework, SpeakerRole, TurnAnalysis, TurnRecord
 from debate_agent.infrastructure.llm_client import DebateLLMClient
-from debate_agent.prompts.builders import build_closing_variables, build_coach_variables, build_opening_coach_variables, build_opening_draft_variables, build_opening_variables, build_opponent_variables
+from debate_agent.prompts.builders import build_closing_variables, build_coach_variables, build_opening_coach_variables, build_opening_draft_variables, build_opening_variables, build_opponent_variables, format_reference_examples
 from debate_agent.prompts.templates import ARGUMENT_ANALYSIS_TEMPLATE, CLOSING_TEMPLATE, COACH_TEMPLATE, OPENING_COACH_TEMPLATE, OPENING_DRAFT_STREAM_TEMPLATE, OPENING_DRAFT_TEMPLATE, OPENING_FRAMEWORK_TEMPLATE, OPPONENT_TEMPLATE
+from debate_agent.retrieval.example_bank import ExampleBank
 
 
 @dataclass(slots=True)
@@ -501,9 +502,10 @@ class InquiryAgent:
 
 
 class OpponentAgent:
-    def __init__(self, llm_client: DebateLLMClient | None = None, model_name: str | None = None) -> None:
+    def __init__(self, llm_client: DebateLLMClient | None = None, model_name: str | None = None, example_bank: ExampleBank | None = None) -> None:
         self.llm_client = llm_client
         self.model_name = model_name
+        self.example_bank = example_bank
 
     def generate(
         self,
@@ -526,6 +528,11 @@ class OpponentAgent:
             evidence_records=evidence_records,
         )
         prompt_variables["latest_user_turn"] = user_text
+        prompt_variables["reference_examples"] = self._retrieve_reference_examples(
+            topic=session.topic,
+            phase=session.current_phase.value,
+            preferred_attacks=profile.preferred_attack_patterns,
+        )
         prompt = OPPONENT_TEMPLATE.render(prompt_variables)
 
         if self.llm_client is None:
@@ -536,6 +543,24 @@ class OpponentAgent:
             return self._parse_opponent_payload(payload, target_argument_ids, evidence_records), prompt, response.model
         except RuntimeError:
             return self._mock_opponent_output(user_text, target_argument_ids, evidence_records), prompt, None
+
+    def _retrieve_reference_examples(
+        self,
+        topic: str,
+        phase: str,
+        preferred_attacks: list[str] | None = None,
+    ) -> str:
+        if self.example_bank is None:
+            return ""
+        attack_type = preferred_attacks[0] if preferred_attacks else None
+        examples = self.example_bank.retrieve(
+            task="opponent_response",
+            topic=topic,
+            phase=phase,
+            attack_type=attack_type,
+            limit=2,
+        )
+        return format_reference_examples(examples)
 
     def _mock_opponent_output(
         self,
@@ -588,9 +613,10 @@ class OpponentAgent:
 
 
 class CoachAgent:
-    def __init__(self, llm_client: DebateLLMClient | None = None, model_name: str | None = None) -> None:
+    def __init__(self, llm_client: DebateLLMClient | None = None, model_name: str | None = None, example_bank: ExampleBank | None = None) -> None:
         self.llm_client = llm_client
         self.model_name = model_name
+        self.example_bank = example_bank
 
     def generate(
         self,
@@ -611,6 +637,10 @@ class CoachAgent:
             evidence_records=evidence_records,
             latest_user_turn=latest_user_turn,
             latest_opponent_turn=latest_opponent_turn,
+        )
+        prompt_variables["reference_examples"] = self._retrieve_coach_examples(
+            topic=session.topic,
+            phase=session.current_phase.value,
         )
         prompt = COACH_TEMPLATE.render(prompt_variables)
         if self.llm_client is None:
@@ -633,6 +663,17 @@ class CoachAgent:
                 prompt=prompt,
                 model_name=None,
             )
+
+    def _retrieve_coach_examples(self, topic: str, phase: str) -> str:
+        if self.example_bank is None:
+            return ""
+        examples = self.example_bank.retrieve(
+            task="coach_feedback",
+            topic=topic,
+            phase=phase,
+            limit=2,
+        )
+        return format_reference_examples(examples)
 
     def _mock_coach_report(self, session: DebateSession, related_turn_ids: list[str]) -> CoachReport:
         return CoachReport(

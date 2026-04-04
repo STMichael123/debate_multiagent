@@ -100,6 +100,11 @@ OPPONENT_TEMPLATE = PromptTemplate(
 4. 是否只使用了可追溯证据。
 5. 若证据不足，是否改用逻辑攻击而不是捏造事实。
 """.strip(),
+        """
+[Reference Examples]
+{reference_examples}
+注意：以上示例仅供参考论证结构、攻击策略和表达风格。不要复制其论点或证据。
+""".strip(),
     ),
 )
 
@@ -185,6 +190,11 @@ COACH_TEMPLATE = PromptTemplate(
 2. 是否区分了逻辑失守和表达不足。
 3. 是否识别了对手输出本身的问题。
 4. 建议是否能直接转化为下一轮动作。
+""".strip(),
+        """
+[Coach Reference Examples]
+{reference_examples}
+注意：以上示例仅供参考教练诊断的结构和深度，不要复制其具体内容。
 """.strip(),
     ),
 )

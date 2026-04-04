@@ -1,0 +1,62 @@
+{
+  "version": "0.3.0",
+  "matches": {
+    "新国变2026精英辩手表演赛结构化_v2": {
+      "arguments": {
+        "A1": {"claim_role": "setup", "attack_type": "none", "response_to_argument_ids": []},
+        "A2": {"claim_role": "setup", "attack_type": "none", "response_to_argument_ids": []},
+        "A3": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A4": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A5": {"claim_role": "setup", "attack_type": "none", "response_to_argument_ids": []},
+        "A6": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A7": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A8": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A9": {"claim_role": "rebuttal", "attack_type": "definition_challenge", "response_to_argument_ids": ["A6", "A7", "A8"]},
+        "A10": {"claim_role": "setup", "attack_type": "none", "response_to_argument_ids": []},
+        "A11": {"claim_role": "rebuttal", "attack_type": "definition_challenge", "response_to_argument_ids": ["A6", "A7", "A8"]},
+        "A12": {"claim_role": "rebuttal", "attack_type": "causal_challenge", "response_to_argument_ids": ["A3", "A4"]},
+        "A13": {"claim_role": "rebuttal", "attack_type": "definition_challenge", "response_to_argument_ids": ["A9", "A11"]},
+        "A14": {"claim_role": "rebuttal", "attack_type": "threshold_challenge", "response_to_argument_ids": ["A3"]},
+        "A15": {"claim_role": "rebuttal", "attack_type": "threshold_challenge", "response_to_argument_ids": ["A3"]},
+        "A16": {"claim_role": "rebuttal", "attack_type": "framing_challenge", "response_to_argument_ids": ["A2", "A3"]},
+        "A17": {"claim_role": "rebuttal", "attack_type": "threshold_challenge", "response_to_argument_ids": ["A3"]},
+        "A18": {"claim_role": "rebuttal", "attack_type": "framing_challenge", "response_to_argument_ids": ["A16", "A17"]},
+        "A19": {"claim_role": "rebuttal", "attack_type": "threshold_challenge", "response_to_argument_ids": ["A17"]},
+        "A20": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A21": {"claim_role": "rebuttal", "attack_type": "framing_challenge", "response_to_argument_ids": ["A20"]},
+        "A22": {"claim_role": "setup", "attack_type": "none", "response_to_argument_ids": []},
+        "A23": {"claim_role": "rebuttal", "attack_type": "logical_challenge", "response_to_argument_ids": ["A22", "A3"]},
+        "A24": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A25": {"claim_role": "rebuttal", "attack_type": "causal_challenge", "response_to_argument_ids": ["A3", "A21"]},
+        "A26": {"claim_role": "weighing", "attack_type": "framing_challenge", "response_to_argument_ids": ["A24", "A25"]},
+        "A27": {"claim_role": "rebuttal", "attack_type": "impact_challenge", "response_to_argument_ids": ["A21", "A26"]},
+        "A28": {"claim_role": "weighing", "attack_type": "impact_challenge", "response_to_argument_ids": ["A24", "A27"]},
+        "A29": {"claim_role": "weighing", "attack_type": "weighing_challenge", "response_to_argument_ids": ["A24"]}
+      }
+    },
+    "新国辩2026决赛_结构化_v2": {
+      "arguments": {
+        "A01": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A02": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A03": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A04": {"claim_role": "setup", "attack_type": "none", "response_to_argument_ids": []},
+        "A05": {"claim_role": "setup", "attack_type": "none", "response_to_argument_ids": []},
+        "A06": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A07": {"claim_role": "rebuttal", "attack_type": "framing_challenge", "response_to_argument_ids": ["A04"]},
+        "A08": {"claim_role": "rebuttal", "attack_type": "causal_challenge", "response_to_argument_ids": ["A05"]},
+        "A09": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A10": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A11": {"claim_role": "offense", "attack_type": "none", "response_to_argument_ids": []},
+        "A12": {"claim_role": "rebuttal", "attack_type": "logical_challenge", "response_to_argument_ids": ["A09"]},
+        "A13": {"claim_role": "rebuttal", "attack_type": "impact_challenge", "response_to_argument_ids": ["A03"]},
+        "A14": {"claim_role": "weighing", "attack_type": "weighing_challenge", "response_to_argument_ids": ["A01", "A02"]},
+        "A15": {"claim_role": "weighing", "attack_type": "weighing_challenge", "response_to_argument_ids": ["A09"]},
+        "A16": {"claim_role": "rebuttal", "attack_type": "logical_challenge", "response_to_argument_ids": ["A12", "A11"]},
+        "A17": {"claim_role": "rebuttal", "attack_type": "framing_challenge", "response_to_argument_ids": ["A04"]},
+        "A18": {"claim_role": "rebuttal", "attack_type": "impact_challenge", "response_to_argument_ids": ["A04"]},
+        "A19": {"claim_role": "rebuttal", "attack_type": "causal_challenge", "response_to_argument_ids": ["A10", "A11"]},
+        "A20": {"claim_role": "rebuttal", "attack_type": "impact_challenge", "response_to_argument_ids": ["A10"]}
+      }
+    }
+  }
+}

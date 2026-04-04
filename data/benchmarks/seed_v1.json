@@ -1,0 +1,2662 @@
+{
+  "dataset_name": "benchmark_seed_v1",
+  "dataset_version": "0.1.0",
+  "created_at": "2026-03-28T08:07:23.231110+00:00",
+  "task_types": [
+    "argument_extraction",
+    "clash_identification",
+    "evidence_extraction"
+  ],
+  "sources": [
+    {
+      "match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_path": "c:\\Users\\夏圣宝\\.openclaw\\workspace\\辩论转录\\新国变2026精英辩手表演赛结构化_v2.json",
+      "topic": "我们需要/不需要足够擅长才能谈热爱",
+      "round_name": "精英辩手表演赛",
+      "turn_count": 31,
+      "argument_count": 29,
+      "evidence_count": 15,
+      "clash_count": 8
+    },
+    {
+      "match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_path": "c:\\Users\\夏圣宝\\.openclaw\\workspace\\辩论转录\\新国辩2026决赛_结构化_v2.json",
+      "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+      "round_name": "决赛",
+      "turn_count": 18,
+      "argument_count": 20,
+      "evidence_count": 10,
+      "clash_count": 6
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T2",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T2"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "constructive",
+        "speaker_label": "正方一辩殷硕",
+        "raw_excerpt": "先寻其本，爱和欲，类而不同；热爱与沉迷，貌似而神离……谈热爱，为的不是夸己之能以骄乡人。",
+        "normalized_text": "正方立论先区分热爱与沉迷，再把谈热爱的目的界定为传道、解惑、共建良性环境。核心主张是：只有主客观上都达到足够擅长之后再谈热爱，才更能避免误导、实现传承，并真正促进个人在所爱领域中的进步。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A1",
+            "claim": "热爱不同于沉迷，热爱包含清醒的精进意愿",
+            "warrant": "沉迷只享受即时对局与熟悉区域，热爱则愿意复盘失误、补足短板、承担攀登的痛苦",
+            "impact": "只有先把热爱和单纯沉溺区分开，后续关于是否应该谈热爱才不至于失焦",
+            "tags": [
+              "定义",
+              "热爱vs沉迷"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A2",
+            "claim": "谈热爱的目的在于传道、解惑与共建环境，而不是单纯抒情",
+            "warrant": "正方把谈理解为一种带有面向他人责任的表达活动，而不是随意聊天",
+            "impact": "一旦谈具有公共责任，就必须追问表达者是否具备足够内容支撑",
+            "tags": [
+              "谈的目的",
+              "公共性"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A3",
+            "claim": "足够擅长后再谈热爱，才能传道而非悔道",
+            "warrant": "低水平表达者容易错漏百出，既误导后辈，也可能引发外部反感，形成一粉顶十黑的反效果",
+            "impact": "热爱者若真希望同道增多、误解减少，就应先把自身理解磨到足够扎实",
+            "tags": [
+              "误导",
+              "传承",
+              "表达责任"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A4",
+            "claim": "擅长后再谈热爱，才更有利于真实提升自己",
+            "warrant": "低水平爱好者相互共振时容易制造回音壁，把不科学方法和错误标准反复放大",
+            "impact": "先把自己练到有内容，再进行公开交流，更能促进查漏补缺而非自我污染",
+            "tags": [
+              "自我提升",
+              "回音壁"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S1",
+        "speaker_label": "正方一辩殷硕",
+        "side": "affirmative",
+        "phase": "constructive"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T2",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T2"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "constructive",
+        "speaker_label": "正方一辩殷硕",
+        "raw_excerpt": "先寻其本，爱和欲，类而不同；热爱与沉迷，貌似而神离……谈热爱，为的不是夸己之能以骄乡人。",
+        "normalized_text": "正方立论先区分热爱与沉迷，再把谈热爱的目的界定为传道、解惑、共建良性环境。核心主张是：只有主客观上都达到足够擅长之后再谈热爱，才更能避免误导、实现传承，并真正促进个人在所爱领域中的进步。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E1",
+            "title_or_desc": "宋濂谈求学之艰与求教之法",
+            "source_ref": "《送东阳马生序》",
+            "quoted_data": "一谈求学之艰，二谈求教之法，三谈与后来学子共勉",
+            "use_purpose": "为正方界定谈热爱的三大目的提供经典参照",
+            "confidence": "high"
+          },
+          {
+            "evidence_id": "E2",
+            "title_or_desc": "王津谈文物修复与传统文化",
+            "source_ref": "《我在故宫修文物》纪录片",
+            "quoted_data": "结合精湛修复技术谈热爱，既吸引路人，也鼓舞后来者",
+            "use_purpose": "正面论证擅长后谈热爱更能有效传道",
+            "confidence": "high"
+          },
+          {
+            "evidence_id": "E3",
+            "title_or_desc": "格蕾塔环保表达引发反感的例子",
+            "source_ref": "公开舆论事件",
+            "quoted_data": "一句“你们怎敢”被正方举为年少、理解不足时高强度表达的反面教材",
+            "use_purpose": "反面论证内容储备不足时高调表达可能损害议题形象",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S1",
+        "speaker_label": "正方一辩殷硕",
+        "side": "affirmative",
+        "phase": "constructive"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T3",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T3"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "constructive",
+        "speaker_label": "反方一辩陈俊杰",
+        "raw_excerpt": "热爱其实是一种个人内心的向往……足够擅长才能够谈热爱，等于能力不达标就不配拥有热爱的权利。",
+        "normalized_text": "反方立论把热爱定义为投入时持续获得充盈感的内在体验，反对把擅长当作热爱的必要条件。其三层主张分别是：门槛会压缩普通爱好者的表达空间，会阻断领域标准的迭代创新，也会把热爱从内在体验扭成对外部评价的追逐。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A5",
+            "claim": "热爱首先是内在充盈感，而不是代表某领域发言的资格证",
+            "warrant": "人之所以热爱某事，是因为投入其中能获得持续的向往和充盈，而不是因为已被外界认证为老师或代表",
+            "impact": "若把热爱与表达资格直接绑定，就会把大量真实的情感体验排除出辩题",
+            "tags": [
+              "定义",
+              "内在体验"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A6",
+            "claim": "擅长门槛会扼杀大量普通爱好者，让热爱沦为精英特权",
+            "warrant": "不同人参与同一领域的方式不同，但不该因为没有顶尖能力就失去诉说热爱的资格",
+            "impact": "这种门槛会把人人心中的火花，改写成只有少数人才能举起的火炬",
+            "tags": [
+              "精英主义",
+              "社群包容"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A7",
+            "claim": "擅长门槛会阻断领域标准的迭代与创新",
+            "warrant": "所谓擅长往往依附于既有模板与当代认知，过早服从它会压制那些一开始不被看懂的新表达",
+            "impact": "领域会失去拓展边界的可能，创新被主流模板提前扼杀",
+            "tags": [
+              "创新",
+              "标准迭代"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A8",
+            "claim": "把擅长放在热爱之前，会把热爱从内在体验扭成外部评价竞赛",
+            "warrant": "一旦擅长成了先决条件，表达者追逐的就不再是事情本身，而是我是否被承认为够好",
+            "impact": "真正让人沉浸其中的热爱感会被功绩焦虑侵蚀",
+            "tags": [
+              "外部评价",
+              "体验"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S4",
+        "speaker_label": "反方一辩陈俊杰",
+        "side": "negative",
+        "phase": "constructive"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T3",
+      "task_type": "evidence_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T3"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "constructive",
+        "speaker_label": "反方一辩陈俊杰",
+        "raw_excerpt": "热爱其实是一种个人内心的向往……足够擅长才能够谈热爱，等于能力不达标就不配拥有热爱的权利。",
+        "normalized_text": "反方立论把热爱定义为投入时持续获得充盈感的内在体验，反对把擅长当作热爱的必要条件。其三层主张分别是：门槛会压缩普通爱好者的表达空间，会阻断领域标准的迭代创新，也会把热爱从内在体验扭成对外部评价的追逐。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E4",
+            "title_or_desc": "梵高作品初期不被理解",
+            "source_ref": "艺术史常识",
+            "quoted_data": "问世时被视为粗鄙、丑陋，不知道画的是什么",
+            "use_purpose": "说明既有擅长标准可能压制跨时代创新者",
+            "confidence": "medium"
+          },
+          {
+            "evidence_id": "E5",
+            "title_or_desc": "周杰伦早期作品遭遇听不懂评价",
+            "source_ref": "流行音乐公共记忆",
+            "quoted_data": "初期被不少人否定，不知道在唱什么",
+            "use_purpose": "进一步论证主流模板不应过早封死热爱与表达",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S4",
+        "speaker_label": "反方一辩陈俊杰",
+        "side": "negative",
+        "phase": "constructive"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T4",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T4"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "rebuttal",
+        "speaker_label": "正方指派辩手张依燃",
+        "raw_excerpt": "我方认为擅长其实是一个过程……从来不是一个功利主义的判断。",
+        "normalized_text": "正方驳论主要做三件事：第一，把擅长重述为长期攀登形成的过程，而非静态结果；第二，强调题目是在叩问参与者应以何种姿态发声，而不是管制他人能不能说话；第三，把擅长解释为可以包含超越昨天自我的卓越，而不必狭隘等于领奖台上的功绩。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A9",
+            "claim": "擅长是漫长积累形成的过程，而非天赋化的静态结果",
+            "warrant": "任何看似天才的表现背后都有长期练习、伤病、挫折和继续攀登的轨迹",
+            "impact": "正方借此回应反方的精英主义指控，说明擅长未必意味着少数人先天垄断",
+            "tags": [
+              "过程论",
+              "反天赋论"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A10",
+            "claim": "这道题主要是在叩问自己发声的姿态，而不是替他人设立言论禁令",
+            "warrant": "正方强调题目主语是我们，关注的是参与者应如何要求自己，而非如何审查别人",
+            "impact": "这样一来，正方试图把门槛叙事从他律的压迫，改写为自律的要求",
+            "tags": [
+              "题眼",
+              "自律"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A11",
+            "claim": "擅长不必只等于赢别人，也可以是超越昨天的自己",
+            "warrant": "正方引入卓越的概念，认为被忽略的优秀者、尚未夺冠的人也可能在其阶段上足够擅长",
+            "impact": "这使正方的擅长标准从纯竞技排名转向更宽的成长尺度",
+            "tags": [
+              "卓越",
+              "自我超越"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S3",
+        "speaker_label": "正方指派辩手张依燃",
+        "side": "affirmative",
+        "phase": "rebuttal"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T4",
+      "task_type": "evidence_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T4"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "rebuttal",
+        "speaker_label": "正方指派辩手张依燃",
+        "raw_excerpt": "我方认为擅长其实是一个过程……从来不是一个功利主义的判断。",
+        "normalized_text": "正方驳论主要做三件事：第一，把擅长重述为长期攀登形成的过程，而非静态结果；第二，强调题目是在叩问参与者应以何种姿态发声，而不是管制他人能不能说话；第三，把擅长解释为可以包含超越昨天自我的卓越，而不必狭隘等于领奖台上的功绩。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E6",
+            "title_or_desc": "画家由全部作品总和构成",
+            "source_ref": "萨特《存在主义是一种人道主义》",
+            "quoted_data": "没有什么天生的画家，你的所有作品总和才体现你画得好",
+            "use_purpose": "支撑正方关于擅长是过程而非天赋结果的定义修正",
+            "confidence": "high"
+          },
+          {
+            "evidence_id": "E7",
+            "title_or_desc": "安洗莹与戴资颖的长期投入与伤病",
+            "source_ref": "运动员个案举例",
+            "quoted_data": "安洗莹带着膝盖积水继续拼搏，戴资颖经历伤病与心理压力",
+            "use_purpose": "说明看似天赋型的擅长，实则建立在长期痛苦与投入之上",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S3",
+        "speaker_label": "正方指派辩手张依燃",
+        "side": "affirmative",
+        "phase": "rebuttal"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T5",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T5"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "rebuttal",
+        "speaker_label": "反方指派辩手王晨宇",
+        "raw_excerpt": "在你还确实不够好的时候，告诉你还有机会的那个声音，是热爱的声音，还是擅长的声音呢？",
+        "normalized_text": "反方驳论集中反打正方的定义体系：继续精进的动力来自热爱而非擅长，擅长本身总是比较性的和外部评价性的，因此永远会留下大量不够擅长的人；而真正热爱的人越投入，越容易觉得自己永不足够。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A12",
+            "claim": "当人还不够好时，支撑其继续努力的是热爱而不是擅长",
+            "warrant": "真正能在失败中告诉人还有机会、还有资格继续走下去的，是对该事物的投入和欲望，而不是外部能力判定",
+            "impact": "反方借此说明，把擅长设成前提会错误切断成长初期最关键的动力来源",
+            "tags": [
+              "动力",
+              "成长"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A13",
+            "claim": "擅长本质上是比较概念和外部评价概念",
+            "warrant": "只要世界总体水平变化，谁算擅长就会随之改写，因此擅长永远是相对的、可变的",
+            "impact": "既然擅长总是比较性的，就不适合作为人人都能稳定满足的热爱门槛",
+            "tags": [
+              "比较概念",
+              "外部评价"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A14",
+            "claim": "对真正热爱的人来说，足够擅长往往是永不足够的",
+            "warrant": "越在乎某件事，越会不断提高对自己的要求，因此足够更像一种持续逼问自我的状态",
+            "impact": "如果把足够擅长设成许可线，反而会把最真诚的热爱者长期排除在外",
+            "tags": [
+              "永不足够",
+              "自我要求"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S6",
+        "speaker_label": "反方指派辩手王晨宇",
+        "side": "negative",
+        "phase": "rebuttal"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T6",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T6"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "cross_examination",
+        "speaker_label": "反方二辩王春生",
+        "raw_excerpt": "您觉得对比起您来说，我算足够擅长辩论吗？……任何一个辩手在场上的时刻，总觉得自己不够擅长。",
+        "normalized_text": "反方质询先用辩手普遍会觉得自己准备不足的经验，攻击正方同时要求主观认可与客观认可的标准，指出如果主观标准严格适用，连台上的成熟辩手也会被排除在谈热爱之外。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A15",
+            "claim": "连成熟辩手也会在上场时觉得自己准备不足，因此主观足够标准并不稳定",
+            "warrant": "比赛具有不可预判的攻防变化，备赛者往往都会感到自己还不够好",
+            "impact": "正方若坚持主观认可必须成立，就会无意间把大量实践者排除出谈热爱之列",
+            "tags": [
+              "主观标准",
+              "质询"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S5",
+        "speaker_label": "反方二辩王春生",
+        "side": "negative",
+        "phase": "cross_examination"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T7",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T7"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "cross_examination",
+        "speaker_label": "反方二辩王春生",
+        "raw_excerpt": "很多小同学……他说出一些朴素的、笨拙的理解。这个叫求学，不叫谈热爱。",
+        "normalized_text": "反方把新手向前辈请教、表达笨拙理解的场景拉进辩题，逼正方说明为何求学过程不能同时被视为谈热爱的实践，并质疑正方是否把热爱偷换成只有老师才配拥有的话语资格。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A16",
+            "claim": "新手求学式表达也可能是谈热爱的组成部分",
+            "warrant": "学生向前辈讲述自己的笨拙理解与投入，本身就体现了他如何在热爱中寻找位置",
+            "impact": "若把这类表达一律排除为只是求学，会过度收缩热爱的实践空间",
+            "tags": [
+              "求学",
+              "表达资格"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S5",
+        "speaker_label": "反方二辩王春生",
+        "side": "negative",
+        "phase": "cross_examination"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T8",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T8"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "cross_examination",
+        "speaker_label": "反方二辩王春生",
+        "raw_excerpt": "你方知道有电竞解说这个行业吗？……社会上认可他打游戏都没有被社会认可，他们都在谈论自己的热爱，为什么不行？",
+        "normalized_text": "反方继续用电竞解说案例质问：若解说者可能不擅长实战，却仍能围绕游戏公开表达，那么正方为何坚持谈热爱必须以更高的能力门槛为前提。这里的重点是区分热爱对象与执行水平，并迫使正方细化所谓足够的外部标准。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A17",
+            "claim": "能公开谈论某个热爱对象，不必以成为该对象的顶尖执行者为前提",
+            "warrant": "反方通过电竞解说案例质疑：如果表达围绕的是游戏本身或热爱本身，而不是伪装成顶级选手授课，能力要求就不应被无限抬高",
+            "impact": "这为反方争取了谈热爱与谈技艺、谈热爱与做专家之间的区分空间",
+            "tags": [
+              "场景区分",
+              "电竞解说"
+            ],
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S5",
+        "speaker_label": "反方二辩王春生",
+        "side": "negative",
+        "phase": "cross_examination"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T10",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T10"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "cross_examination",
+        "speaker_label": "正方二辩刘熹燃",
+        "raw_excerpt": "国际数学家大会每年都会收到几千封邮件……这几千个人都要被邀请到国际数学家大会上面谈吗？",
+        "normalized_text": "正方质询先用国际数学家大会说明公开发言场域天然存在层级和筛选，不同能力阶段的人可以继续热爱，但应进入与其知识储备、表达责任相匹配的交流空间。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A18",
+            "claim": "不同层级的人应进入不同层级的交流场合",
+            "warrant": "从初等数学到高等数学，讨论平台与对象天然不同，公共表达并非完全无门槛",
+            "impact": "正方借此把继续热爱和公开代表性发言切开处理",
+            "tags": [
+              "分层交流",
+              "公共场域"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S2",
+        "speaker_label": "正方二辩刘熹燃",
+        "side": "affirmative",
+        "phase": "cross_examination"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T11",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T11"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "cross_examination",
+        "speaker_label": "正方二辩刘熹燃",
+        "raw_excerpt": "为什么KPL不请我去当解说呢？……电竞解说有没有它的职业门槛？",
+        "normalized_text": "正方继而用 KPL 解说例子要求反方承认：一旦谈热爱进入具有代表性、影响力或职业性的公共输出场景，专业门槛就不可回避。正方试图借此把辩题中的谈，从闲聊重新定义为有责任后果的表达。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A19",
+            "claim": "谈热爱的公开输出需要尊重相应领域的专业门槛",
+            "warrant": "像 KPL 解说这类高影响力场景，不会从所有爱好者中随机抽签，而会考虑专业知识与表达能力",
+            "impact": "正方通过职业门槛例子强化谈热爱在公共场域中的责任后果",
+            "tags": [
+              "职业门槛",
+              "专业性"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S2",
+        "speaker_label": "正方二辩刘熹燃",
+        "side": "affirmative",
+        "phase": "cross_examination"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T13",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T13"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "free_speech",
+        "speaker_label": "反方二辩王春生",
+        "raw_excerpt": "有两个时刻击中了我……请帮我守护他们谈起自己热爱时的那份滚烫。",
+        "normalized_text": "反方自由陈词一完全转向社群情感与人物故事，强调那些不够成熟、甚至屡屡失败的人在表达热爱时，恰恰可能重新点燃旁观者和教练对这项事业的感情。核心结论是：社群不该羞辱这类表达，而该保护它。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A20",
+            "claim": "社群需要守护不够擅长者谈起热爱时的滚烫时刻",
+            "warrant": "这些脆弱又真诚的表达，不只对当事人重要，也可能重新点燃旁观者与教练的感情",
+            "impact": "反方把低成熟度表达从风险源，重塑成社群温度与传承的重要来源",
+            "tags": [
+              "社群感召",
+              "脆弱表达"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S5",
+        "speaker_label": "反方二辩王春生",
+        "side": "negative",
+        "phase": "free_speech"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T13",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T13"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "free_speech",
+        "speaker_label": "反方二辩王春生",
+        "raw_excerpt": "有两个时刻击中了我……请帮我守护他们谈起自己热爱时的那份滚烫。",
+        "normalized_text": "反方自由陈词一完全转向社群情感与人物故事，强调那些不够成熟、甚至屡屡失败的人在表达热爱时，恰恰可能重新点燃旁观者和教练对这项事业的感情。核心结论是：社群不该羞辱这类表达，而该保护它。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E8",
+            "title_or_desc": "天大学弟模辩磕巴后仍说自己热爱辩论",
+            "source_ref": "个人经历",
+            "quoted_data": "两分钟陈词磕巴 32 次，半个月后再次输掉比赛时含泪说“我想我还是热爱辩论的”",
+            "use_purpose": "论证不够成熟者谈热爱会成为社群内部极强的情感感召",
+            "confidence": "high"
+          },
+          {
+            "evidence_id": "E9",
+            "title_or_desc": "教练王彤在复盘会上落泪",
+            "source_ref": "个人经历",
+            "quoted_data": "她自觉不够擅长，却是叙述者见过立论深度最深的人；折戟后哭得像孩子",
+            "use_purpose": "强化“滚烫表达值得被守护”的论证",
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S5",
+        "speaker_label": "反方二辩王春生",
+        "side": "negative",
+        "phase": "free_speech"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T14",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T14"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "free_speech",
+        "speaker_label": "正方二辩刘熹燃",
+        "raw_excerpt": "如果今天只是聊天当然可以聊……我有几分的实力，我就说几分的话。",
+        "normalized_text": "正方自由陈词一承认聊天式表达没有问题，但坚持辩题讨论的不是闲谈，而是当热爱成为一种对外说明、建议和影响时，表达者应与自身能力相称，否则就会误导他人，也会耽误真正的成长。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A21",
+            "claim": "聊天式谈没有争议，问题在于越级输出可能误导他人",
+            "warrant": "正方承认篝火边聊天、朋友间分享当然可以，但若开始向外解释方法、经验、意义，就要承担内容准确性的责任",
+            "impact": "正方试图限制辩题争议的适用范围，只把矛头对准具有外部效果的表达场景",
+            "tags": [
+              "聊天vs输出",
+              "误导风险"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S2",
+        "speaker_label": "正方二辩刘熹燃",
+        "side": "affirmative",
+        "phase": "free_speech"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T14",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T14"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "free_speech",
+        "speaker_label": "正方二辩刘熹燃",
+        "raw_excerpt": "如果今天只是聊天当然可以聊……我有几分的实力，我就说几分的话。",
+        "normalized_text": "正方自由陈词一承认聊天式表达没有问题，但坚持辩题讨论的不是闲谈，而是当热爱成为一种对外说明、建议和影响时，表达者应与自身能力相称，否则就会误导他人，也会耽误真正的成长。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E10",
+            "title_or_desc": "攀岩 V2 与 V4/V5 的例子",
+            "source_ref": "个人经历",
+            "quoted_data": "刚入门时可以谈入门装备和准备，但不能越级谈更高难线路的经验",
+            "use_purpose": "具体化正方“有一分谈一分”的边界论",
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S2",
+        "speaker_label": "正方二辩刘熹燃",
+        "side": "affirmative",
+        "phase": "free_speech"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T15",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T15"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "free_speech",
+        "speaker_label": "正方三辩张依燃",
+        "raw_excerpt": "只有你在做这件事情的时候想要提高自己的水平……这才叫热爱。",
+        "normalized_text": "正方自由陈词二进一步收紧定义：只享受过程而不愿精进，只能算喜欢；愿意为提升与环境建设持续吃苦，才叫热爱。因此热爱者的谈应面向分享经验、感动他人、建设圈子，而不是把错漏理解轻率地推出去。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A22",
+            "claim": "热爱不是单纯喜欢，而是愿意持续精进、建设环境",
+            "warrant": "若只享受过程、不愿复盘、不愿吃苦，就更接近喜欢；热爱则要求为了事情本身承担长期投入",
+            "impact": "正方借此继续提高热爱的定义门槛，为后续表达门槛提供前提支撑",
+            "tags": [
+              "热爱vs喜欢",
+              "精进"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S3",
+        "speaker_label": "正方三辩张依燃",
+        "side": "affirmative",
+        "phase": "free_speech"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T16",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T16"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "free_speech",
+        "speaker_label": "反方三辩王晨宇",
+        "raw_excerpt": "热爱的事情你要想办法让它变得擅长，可没说擅长是热爱的必要条件。",
+        "normalized_text": "反方自由陈词二正面澄清逻辑：反方从未反对热爱之后追求进步，只是否认擅长是热爱的前置资格。同时反方强调谈热爱与谈技战术不同，前者主要是表达意义感、情感来源和人生定位。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A23",
+            "claim": "热爱后追求进步，不等于擅长是热爱的必要条件",
+            "warrant": "反方用生孩子与挣钱的逻辑类比说明，结果导向的改善要求不能倒推出起点资格",
+            "impact": "这一点直接攻击正方把后续成长义务偷换成前置资格要求的逻辑结构",
+            "tags": [
+              "必要条件",
+              "逻辑类比"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A24",
+            "claim": "健康社群不仅需要方法传递，也需要真诚感召",
+            "warrant": "很多人被吸引进入一个领域，不是因为先听懂了高级方法，而是先被真实的爱打动",
+            "impact": "反方把低门槛谈热爱塑造成维系共同体的重要情感机制",
+            "tags": [
+              "社群",
+              "感召"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S6",
+        "speaker_label": "反方三辩王晨宇",
+        "side": "negative",
+        "phase": "free_speech"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T16",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T16"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "free_speech",
+        "speaker_label": "反方三辩王晨宇",
+        "raw_excerpt": "热爱的事情你要想办法让它变得擅长，可没说擅长是热爱的必要条件。",
+        "normalized_text": "反方自由陈词二正面澄清逻辑：反方从未反对热爱之后追求进步，只是否认擅长是热爱的前置资格。同时反方强调谈热爱与谈技战术不同，前者主要是表达意义感、情感来源和人生定位。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E11",
+            "title_or_desc": "电梯里讲述辩论重要性的学弟",
+            "source_ref": "个人经历",
+            "quoted_data": "学弟在讲到辩论是生命中不可磨灭的一部分时眼中有光，随后又因羞耻感低下头",
+            "use_purpose": "用来论证“我不够擅长所以不配谈”的羞耻感应被打破",
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S6",
+        "speaker_label": "反方三辩王晨宇",
+        "side": "negative",
+        "phase": "free_speech"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T20",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T20"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "moderator_qna",
+        "speaker_label": "反方二辩王春生",
+        "raw_excerpt": "不管任何时刻，只要在我热爱的这条路上，我永远是不足够擅长的……这个时候我的心态是谦卑的、是交流的。",
+        "normalized_text": "当主席进一步追问不擅长者误导他人的风险时，反方把问题归结为姿态而非能力。反方认为只要把自己摆在交流和学习的位置，就不会自然滑向布道式的霸凌，因此不应把低水平表达和高傲误导直接画等号。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A25",
+            "claim": "低水平表达是否有害，关键取决于姿态是否谦卑，而不只取决于能力高低",
+            "warrant": "若表达者把自己摆在学习和交流的位置，就不会自动形成广师布道的霸凌结构",
+            "impact": "反方以此对冲正方的误导叙事，提出另一条治理标准：约束傲慢，而非压制未成熟表达",
+            "tags": [
+              "姿态",
+              "谦卑"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S5",
+        "speaker_label": "反方二辩王春生",
+        "side": "negative",
+        "phase": "moderator_qna"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T26",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T26"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "moderator_qna",
+        "speaker_label": "正方二辩刘熹燃",
+        "raw_excerpt": "爱不爱是我的事，怎么谈爱是专业的事，是想要这个圈子变不变得更好的事。",
+        "normalized_text": "主席提问收束时，正方把整场最核心的区分再次压缩为一句话：爱不爱属于个人内心，但怎么谈、向谁谈、在什么位置谈，则属于专业责任和社群建设问题。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A26",
+            "claim": "爱不爱是个人问题，怎么谈爱则是专业和社群问题",
+            "warrant": "正方区分了私人情感存在与公共表达责任，认为后者必须接受更严格的边界审查",
+            "impact": "这是正方全场最凝练的总结句，把题目从情感判断转向表达规范判断",
+            "tags": [
+              "题眼",
+              "表达规范"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S2",
+        "speaker_label": "正方二辩刘熹燃",
+        "side": "affirmative",
+        "phase": "moderator_qna"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T27",
+      "task_type": "argument_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T27"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "closing",
+        "speaker_label": "反方三辩王晨宇",
+        "raw_excerpt": "谈是一个双向的过程……真正热爱的人永远不会觉得自己足够擅长。",
+        "normalized_text": "反方总结陈词从四层收束：第一，谈不是单向灌输而是双向探究；第二，谈热爱主要是在说情感、意义与自我定义，而非方法教学；第三，真正热爱的人并不会轻易以为自己已经足够，因此最容易夸夸其谈的反而是不够热爱的人；第四，每个人都需要在某个时刻和自己谈谈热爱。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A27",
+            "claim": "真正热爱的人会保有学徒心态，而不轻易自认已经足够擅长",
+            "warrant": "越热爱越会意识到自身不足，因此最容易夸夸其谈的往往恰恰是不够热爱、只想装作会的人",
+            "impact": "反方借此反转正方的风险判断，把热爱者塑造成更谦卑、更不容易误导他人的一方",
+            "tags": [
+              "学徒心态",
+              "谦卑"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S6",
+        "speaker_label": "反方三辩王晨宇",
+        "side": "negative",
+        "phase": "closing"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T27",
+      "task_type": "evidence_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T27"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "negative",
+        "phase": "closing",
+        "speaker_label": "反方三辩王晨宇",
+        "raw_excerpt": "谈是一个双向的过程……真正热爱的人永远不会觉得自己足够擅长。",
+        "normalized_text": "反方总结陈词从四层收束：第一，谈不是单向灌输而是双向探究；第二，谈热爱主要是在说情感、意义与自我定义，而非方法教学；第三，真正热爱的人并不会轻易以为自己已经足够，因此最容易夸夸其谈的反而是不够热爱的人；第四，每个人都需要在某个时刻和自己谈谈热爱。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E12",
+            "title_or_desc": "张泽民关于探戈的比喻",
+            "source_ref": "个人交流",
+            "quoted_data": "探戈里没有唯一正确的舞步，向前、向后、向左、向右跨出一步都不算错",
+            "use_purpose": "把热爱比作可以勇敢迈步而不必先拿到完美许可的行动",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S6",
+        "speaker_label": "反方三辩王晨宇",
+        "side": "negative",
+        "phase": "closing"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T28",
+      "task_type": "argument_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T28"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "closing",
+        "speaker_label": "正方三辩张依燃",
+        "raw_excerpt": "面对困境你往往拥有三把钥匙：接受、改变、离开……当你不擅长的时候，你往往谈的是你自己。",
+        "normalized_text": "正方总结陈词把战场拆成两块：一是不擅长时要不要继续热爱，二是不擅长时能不能继续谈热爱。正方承认坚持不是唯一答案，还包括改变与离开；但在谈热爱的比较上，正方坚持认为不够擅长时的表达往往更多是在证明自我，而更成熟的表达才更能转向活动本身、辩题本身和公共意义本身。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A28",
+            "claim": "不擅长时的谈往往更偏向证明自我，擅长后才更能谈活动本身的意义",
+            "warrant": "能力不足时，人更容易围绕自己付出了多少、承受了多少而说话；能力更成熟后，才更可能转向辩题、方法、社会意义与活动价值本身",
+            "impact": "这使正方把表达质量差异解释为视角层级差异，而不仅仅是知识量差异",
+            "tags": [
+              "自我vs活动",
+              "表达层次"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A29",
+            "claim": "面对挫折并不只有坚持一种答案，还包括改变与离开",
+            "warrant": "不是每段痛苦关系都应该被热爱理由无条件延长，人也可以通过改变方法或离开场域来回应现实",
+            "impact": "正方用这一点避免自己被塑造成只会用门槛压人的立场，同时强调其关切包含保护熄火者",
+            "tags": [
+              "困境回应",
+              "接受改变离开"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S3",
+        "speaker_label": "正方三辩张依燃",
+        "side": "affirmative",
+        "phase": "closing"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T28",
+      "task_type": "evidence_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T28"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "side": "affirmative",
+        "phase": "closing",
+        "speaker_label": "正方三辩张依燃",
+        "raw_excerpt": "面对困境你往往拥有三把钥匙：接受、改变、离开……当你不擅长的时候，你往往谈的是你自己。",
+        "normalized_text": "正方总结陈词把战场拆成两块：一是不擅长时要不要继续热爱，二是不擅长时能不能继续谈热爱。正方承认坚持不是唯一答案，还包括改变与离开；但在谈热爱的比较上，正方坚持认为不够擅长时的表达往往更多是在证明自我，而更成熟的表达才更能转向活动本身、辩题本身和公共意义本身。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E13",
+            "title_or_desc": "张依燃从大一到全国赛的表达变化",
+            "source_ref": "个人经历",
+            "quoted_data": "早期谈“我为它熬了多少夜”，后期开始谈论证义务、战略失误、辩题相通之处和活动意义",
+            "use_purpose": "支撑正方关于表达层次会随能力成熟而升级的主张",
+            "confidence": "high"
+          },
+          {
+            "evidence_id": "E14",
+            "title_or_desc": "澳大、北大、思涵姐等人的赛后表达",
+            "source_ref": "朋友圈观察",
+            "quoted_data": "她们更多谈无障碍通道、满意的论证、对贫困女童的捐助等活动带来的外部意义，而非重复“我很爱”",
+            "use_purpose": "说明更成熟的热爱表达能够转向活动本身与公共价值",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "speaker_id": "S3",
+        "speaker_label": "正方三辩张依燃",
+        "side": "affirmative",
+        "phase": "closing"
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:clash_identification:match",
+      "task_type": "clash_identification",
+      "difficulty": "hard",
+      "source_match_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱",
+      "source_label": "新国变2026精英辩手表演赛结构化_v2",
+      "source_turn_ids": [
+        "T10",
+        "T11",
+        "T13",
+        "T14",
+        "T15",
+        "T16",
+        "T2",
+        "T20",
+        "T26",
+        "T27",
+        "T28",
+        "T3",
+        "T4",
+        "T5",
+        "T6",
+        "T8"
+      ],
+      "input": {
+        "topic": "我们需要/不需要足够擅长才能谈热爱",
+        "sides": {
+          "affirmative": "我们需要足够擅长才能谈热爱",
+          "negative": "我们不需要足够擅长才能谈热爱",
+          "unknown_labels": []
+        },
+        "arguments": [
+          {
+            "argument_id": "A1",
+            "turn_id": "T2",
+            "speaker_id": "S1",
+            "claim": "热爱不同于沉迷，热爱包含清醒的精进意愿",
+            "tags": [
+              "定义",
+              "热爱vs沉迷"
+            ]
+          },
+          {
+            "argument_id": "A2",
+            "turn_id": "T2",
+            "speaker_id": "S1",
+            "claim": "谈热爱的目的在于传道、解惑与共建环境，而不是单纯抒情",
+            "tags": [
+              "谈的目的",
+              "公共性"
+            ]
+          },
+          {
+            "argument_id": "A3",
+            "turn_id": "T2",
+            "speaker_id": "S1",
+            "claim": "足够擅长后再谈热爱，才能传道而非悔道",
+            "tags": [
+              "误导",
+              "传承",
+              "表达责任"
+            ]
+          },
+          {
+            "argument_id": "A4",
+            "turn_id": "T2",
+            "speaker_id": "S1",
+            "claim": "擅长后再谈热爱，才更有利于真实提升自己",
+            "tags": [
+              "自我提升",
+              "回音壁"
+            ]
+          },
+          {
+            "argument_id": "A5",
+            "turn_id": "T3",
+            "speaker_id": "S4",
+            "claim": "热爱首先是内在充盈感，而不是代表某领域发言的资格证",
+            "tags": [
+              "定义",
+              "内在体验"
+            ]
+          },
+          {
+            "argument_id": "A6",
+            "turn_id": "T3",
+            "speaker_id": "S4",
+            "claim": "擅长门槛会扼杀大量普通爱好者，让热爱沦为精英特权",
+            "tags": [
+              "精英主义",
+              "社群包容"
+            ]
+          },
+          {
+            "argument_id": "A7",
+            "turn_id": "T3",
+            "speaker_id": "S4",
+            "claim": "擅长门槛会阻断领域标准的迭代与创新",
+            "tags": [
+              "创新",
+              "标准迭代"
+            ]
+          },
+          {
+            "argument_id": "A8",
+            "turn_id": "T3",
+            "speaker_id": "S4",
+            "claim": "把擅长放在热爱之前，会把热爱从内在体验扭成外部评价竞赛",
+            "tags": [
+              "外部评价",
+              "体验"
+            ]
+          },
+          {
+            "argument_id": "A9",
+            "turn_id": "T4",
+            "speaker_id": "S3",
+            "claim": "擅长是漫长积累形成的过程，而非天赋化的静态结果",
+            "tags": [
+              "过程论",
+              "反天赋论"
+            ]
+          },
+          {
+            "argument_id": "A10",
+            "turn_id": "T4",
+            "speaker_id": "S3",
+            "claim": "这道题主要是在叩问自己发声的姿态，而不是替他人设立言论禁令",
+            "tags": [
+              "题眼",
+              "自律"
+            ]
+          },
+          {
+            "argument_id": "A11",
+            "turn_id": "T4",
+            "speaker_id": "S3",
+            "claim": "擅长不必只等于赢别人，也可以是超越昨天的自己",
+            "tags": [
+              "卓越",
+              "自我超越"
+            ]
+          },
+          {
+            "argument_id": "A12",
+            "turn_id": "T5",
+            "speaker_id": "S6",
+            "claim": "当人还不够好时，支撑其继续努力的是热爱而不是擅长",
+            "tags": [
+              "动力",
+              "成长"
+            ]
+          },
+          {
+            "argument_id": "A13",
+            "turn_id": "T5",
+            "speaker_id": "S6",
+            "claim": "擅长本质上是比较概念和外部评价概念",
+            "tags": [
+              "比较概念",
+              "外部评价"
+            ]
+          },
+          {
+            "argument_id": "A14",
+            "turn_id": "T5",
+            "speaker_id": "S6",
+            "claim": "对真正热爱的人来说，足够擅长往往是永不足够的",
+            "tags": [
+              "永不足够",
+              "自我要求"
+            ]
+          },
+          {
+            "argument_id": "A15",
+            "turn_id": "T6",
+            "speaker_id": "S5",
+            "claim": "连成熟辩手也会在上场时觉得自己准备不足，因此主观足够标准并不稳定",
+            "tags": [
+              "主观标准",
+              "质询"
+            ]
+          },
+          {
+            "argument_id": "A16",
+            "turn_id": "T7",
+            "speaker_id": "S5",
+            "claim": "新手求学式表达也可能是谈热爱的组成部分",
+            "tags": [
+              "求学",
+              "表达资格"
+            ]
+          },
+          {
+            "argument_id": "A17",
+            "turn_id": "T8",
+            "speaker_id": "S5",
+            "claim": "能公开谈论某个热爱对象，不必以成为该对象的顶尖执行者为前提",
+            "tags": [
+              "场景区分",
+              "电竞解说"
+            ]
+          },
+          {
+            "argument_id": "A18",
+            "turn_id": "T10",
+            "speaker_id": "S2",
+            "claim": "不同层级的人应进入不同层级的交流场合",
+            "tags": [
+              "分层交流",
+              "公共场域"
+            ]
+          },
+          {
+            "argument_id": "A19",
+            "turn_id": "T11",
+            "speaker_id": "S2",
+            "claim": "谈热爱的公开输出需要尊重相应领域的专业门槛",
+            "tags": [
+              "职业门槛",
+              "专业性"
+            ]
+          },
+          {
+            "argument_id": "A20",
+            "turn_id": "T13",
+            "speaker_id": "S5",
+            "claim": "社群需要守护不够擅长者谈起热爱时的滚烫时刻",
+            "tags": [
+              "社群感召",
+              "脆弱表达"
+            ]
+          },
+          {
+            "argument_id": "A21",
+            "turn_id": "T14",
+            "speaker_id": "S2",
+            "claim": "聊天式谈没有争议，问题在于越级输出可能误导他人",
+            "tags": [
+              "聊天vs输出",
+              "误导风险"
+            ]
+          },
+          {
+            "argument_id": "A22",
+            "turn_id": "T15",
+            "speaker_id": "S3",
+            "claim": "热爱不是单纯喜欢，而是愿意持续精进、建设环境",
+            "tags": [
+              "热爱vs喜欢",
+              "精进"
+            ]
+          },
+          {
+            "argument_id": "A23",
+            "turn_id": "T16",
+            "speaker_id": "S6",
+            "claim": "热爱后追求进步，不等于擅长是热爱的必要条件",
+            "tags": [
+              "必要条件",
+              "逻辑类比"
+            ]
+          },
+          {
+            "argument_id": "A24",
+            "turn_id": "T16",
+            "speaker_id": "S6",
+            "claim": "健康社群不仅需要方法传递，也需要真诚感召",
+            "tags": [
+              "社群",
+              "感召"
+            ]
+          },
+          {
+            "argument_id": "A25",
+            "turn_id": "T20",
+            "speaker_id": "S5",
+            "claim": "低水平表达是否有害，关键取决于姿态是否谦卑，而不只取决于能力高低",
+            "tags": [
+              "姿态",
+              "谦卑"
+            ]
+          },
+          {
+            "argument_id": "A26",
+            "turn_id": "T26",
+            "speaker_id": "S2",
+            "claim": "爱不爱是个人问题，怎么谈爱则是专业和社群问题",
+            "tags": [
+              "题眼",
+              "表达规范"
+            ]
+          },
+          {
+            "argument_id": "A27",
+            "turn_id": "T27",
+            "speaker_id": "S6",
+            "claim": "真正热爱的人会保有学徒心态，而不轻易自认已经足够擅长",
+            "tags": [
+              "学徒心态",
+              "谦卑"
+            ]
+          },
+          {
+            "argument_id": "A28",
+            "turn_id": "T28",
+            "speaker_id": "S3",
+            "claim": "不擅长时的谈往往更偏向证明自我，擅长后才更能谈活动本身的意义",
+            "tags": [
+              "自我vs活动",
+              "表达层次"
+            ]
+          },
+          {
+            "argument_id": "A29",
+            "turn_id": "T28",
+            "speaker_id": "S3",
+            "claim": "面对挫折并不只有坚持一种答案，还包括改变与离开",
+            "tags": [
+              "困境回应",
+              "接受改变离开"
+            ]
+          }
+        ]
+      },
+      "gold": {
+        "clash_points": [
+          {
+            "clash_point_id": "C1",
+            "topic_label": "热爱的定义",
+            "summary": "正方把热爱界定为愿意持续精进、承担建设责任的状态；反方则把热爱界定为内在充盈、持续投入和意义确认。双方的分歧不只在程度，更在热爱是否天然带有公共责任。",
+            "related_argument_ids": [
+              "A1",
+              "A5",
+              "A22"
+            ]
+          },
+          {
+            "clash_point_id": "C2",
+            "topic_label": "擅长的本质",
+            "summary": "正方努力把擅长从奖杯和强者话语权中解放出来，改写为过程性、可自我超越的卓越；反方则坚持擅长终究带有比较性、评价性和永不稳定性。",
+            "related_argument_ids": [
+              "A9",
+              "A11",
+              "A13",
+              "A14"
+            ]
+          },
+          {
+            "clash_point_id": "C3",
+            "topic_label": "谈到底是什么意思",
+            "summary": "正方把谈理解为对外说明、分享经验、影响他人的公共表达；反方则坚持谈首先是双向交流、情感表达和意义叙述，不应默认等同于教学和布道。",
+            "related_argument_ids": [
+              "A2",
+              "A17",
+              "A21",
+              "A24",
+              "A26"
+            ]
+          },
+          {
+            "clash_point_id": "C4",
+            "topic_label": "门槛与包容",
+            "summary": "正方认为公共输出必须有层级和门槛，以避免误导；反方则担心这会压缩普通爱好者的表达空间，让热爱向精英主义滑去。",
+            "related_argument_ids": [
+              "A6",
+              "A18",
+              "A19",
+              "A20"
+            ]
+          },
+          {
+            "clash_point_id": "C5",
+            "topic_label": "误导风险与社群收益",
+            "summary": "正方强调低水平公开输出会制造回音壁、误导后辈；反方强调不成熟但真诚的表达也可能成为社群重要的情感来源和托举力量。",
+            "related_argument_ids": [
+              "A3",
+              "A4",
+              "A20",
+              "A24"
+            ]
+          },
+          {
+            "clash_point_id": "C6",
+            "topic_label": "继续热爱与谈论热爱是否被混淆",
+            "summary": "反方不断指控正方把“热爱后要不要提升”偷换成“擅长是不是热爱的必要条件”；正方则试图回应自己主要在讨论公开谈论热爱的边界。",
+            "related_argument_ids": [
+              "A12",
+              "A18",
+              "A23",
+              "A26"
+            ]
+          },
+          {
+            "clash_point_id": "C7",
+            "topic_label": "谦卑姿态能否替代能力门槛",
+            "summary": "反方认为真正应被规范的是傲慢姿态，谦卑学习的表达即使不成熟也有空间；正方则认为仅靠姿态不足以消除公共输出的实际误导风险。",
+            "related_argument_ids": [
+              "A15",
+              "A21",
+              "A25",
+              "A27"
+            ]
+          },
+          {
+            "clash_point_id": "C8",
+            "topic_label": "表达层次是否会随能力成熟升级",
+            "summary": "正方认为能力成熟后，表达会从诉说我有多爱，升级为对活动意义、方法与公共价值的理解；反方则认为即便不成熟，真诚表达本身也已足够构成正当的谈热爱。",
+            "related_argument_ids": [
+              "A20",
+              "A24",
+              "A28",
+              "A29"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "精英辩手表演赛",
+        "argument_count": 29,
+        "clash_count": 8
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T01",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T01"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "opening",
+        "speaker_label": "正方一辩",
+        "raw_excerpt": "何为平凡，何为不凡？如果采纳社会客观的尺度...",
+        "normalized_text": "何为平凡，何为不凡？如果采纳社会客观的尺度，那翘楚巨擘永远只是社会中的凤毛麟角，我们中的绝大多数人只能是社会中最平凡的背景板。但是在个人视角，哪怕我只是一个无名小卒，也可以坚信天生我材必有用；也可能觉得自己终其一生只是碌碌无为。平凡与否其实是自我价值的审视，心气与热爱会让你有期待，让我成为自己人生的英雄。\n\n那什么样的人会在什么时刻突然发现自己终究只是平凡的人？有两种人。第一种人曾经自命不凡，曾经相信心中的热爱可以移山填海，但或不逢时、不逢天时地利人和，或棋差一招，或实力不济，总之遭遇了自己的至暗时刻。第二种人本甘当平庸，却突然在某个机遇之下，惊觉自己此前的生活随波逐流，未曾有过热爱和热烈的色彩，他觉醒了不平凡的期待。\n\n\"终究只是平凡\"是当下期待落空后对自我和境遇的重叠审视。在感叹\"终究\"时，遗憾其实已经悄然爬上了心头。但我方认为我们应该遗憾，接纳遗憾。\n\n第一，对于经历至暗时刻的人，即便发现了自己的平凡，遗憾和不甘仍然可以促使他们再度出发。我们八个人站在这个舞台上，谁没有经历过折戟沉沙，谁又没有自我怀疑过？也许某次失败就已经证明了\"终究平凡\"，可是\"终究\"毕竟只是当下。无论是台上的我们还是台下各位，我们仍然可以怀揣着这份遗憾和不甘继续前行。\n\n遗憾——想象比现实更好的结果——这些心理特征在心理学上与\"上行反事实\"的概念对应。心理学家Roese在实验室的研究表明，感到遗憾的受试者在随后的类似任务中会表现出更加深思熟虑的决策，还有更高的执行力。你甚至可以改换一条赛道，继续带着遗憾前行。在辩论殿堂之外，体坛有多少的教练，曾经都是因为伤病或者天赋不佳退役的职业运动员？他们怀揣着遗憾，把自己的经验教训传递给后辈，又制造了一个又一个的传奇。比如飞人博尔特的教练米尔斯，比如羽生结弦的教练布莱恩·奥瑟。遗憾恰恰是心中热爱走向卓越的起点。\n\n第二，对于那些意识到自己过往在热爱和意义上苍白的人，遗憾可以让他们自省并寻求热爱，找寻自己的价值支点。当下媒介的感官刺激无孔不入，物质社会在把金钱昂贵的吃穿用度标为你的价值，错杂的人际关系中又有无数身边人的期待构成了漩涡。那你的价值又在哪里呢？既然已经在纷繁复杂的社会中惊觉了自己的平庸，那么你就需要用遗憾鞭策自己，找寻自己的热爱。毕竟找寻热爱最好的时间就是十年之前，其次就是现在。\n\n总之，即便前路尚未可知，即便至暗和迷茫时刻可能会重演，但遗憾也成为了你认为未来人生的注脚。毕竟如果人生无悔，那该有多无趣呀。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A01",
+            "claim": "遗憾和不甘可以促使经历至暗时刻的人再度出发",
+            "warrant": "心理学研究（Roese）表明感到遗憾的受试者在后续任务中表现出更深思熟虑的决策和更高的执行力",
+            "impact": "遗憾是心中热爱走向卓越的起点",
+            "tags": [
+              "心理学依据",
+              "行为动力"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A02",
+            "claim": "遗憾可以让人自省并寻求热爱",
+            "warrant": "当意识到过往在热爱和意义上苍白时，遗憾能鞭策自己找寻价值支点",
+            "impact": "找寻热爱最好的时间是十年之前，其次就是现在",
+            "tags": [
+              "自省",
+              "价值支点"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A03",
+            "claim": "教练将遗憾传递给后辈可以制造传奇",
+            "warrant": "博尔特的教练米尔斯、羽生结弦的教练布莱恩·奥瑟都是因伤病或天赋不佳退役的运动员",
+            "impact": "他们怀揣着遗憾把经验传递给后辈，制造传奇",
+            "tags": [
+              "案例论证",
+              "教练传承"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "zheng1",
+        "speaker_label": "正方一辩",
+        "side": "affirmative",
+        "phase": "opening"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T01",
+      "task_type": "evidence_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T01"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "opening",
+        "speaker_label": "正方一辩",
+        "raw_excerpt": "何为平凡，何为不凡？如果采纳社会客观的尺度...",
+        "normalized_text": "何为平凡，何为不凡？如果采纳社会客观的尺度，那翘楚巨擘永远只是社会中的凤毛麟角，我们中的绝大多数人只能是社会中最平凡的背景板。但是在个人视角，哪怕我只是一个无名小卒，也可以坚信天生我材必有用；也可能觉得自己终其一生只是碌碌无为。平凡与否其实是自我价值的审视，心气与热爱会让你有期待，让我成为自己人生的英雄。\n\n那什么样的人会在什么时刻突然发现自己终究只是平凡的人？有两种人。第一种人曾经自命不凡，曾经相信心中的热爱可以移山填海，但或不逢时、不逢天时地利人和，或棋差一招，或实力不济，总之遭遇了自己的至暗时刻。第二种人本甘当平庸，却突然在某个机遇之下，惊觉自己此前的生活随波逐流，未曾有过热爱和热烈的色彩，他觉醒了不平凡的期待。\n\n\"终究只是平凡\"是当下期待落空后对自我和境遇的重叠审视。在感叹\"终究\"时，遗憾其实已经悄然爬上了心头。但我方认为我们应该遗憾，接纳遗憾。\n\n第一，对于经历至暗时刻的人，即便发现了自己的平凡，遗憾和不甘仍然可以促使他们再度出发。我们八个人站在这个舞台上，谁没有经历过折戟沉沙，谁又没有自我怀疑过？也许某次失败就已经证明了\"终究平凡\"，可是\"终究\"毕竟只是当下。无论是台上的我们还是台下各位，我们仍然可以怀揣着这份遗憾和不甘继续前行。\n\n遗憾——想象比现实更好的结果——这些心理特征在心理学上与\"上行反事实\"的概念对应。心理学家Roese在实验室的研究表明，感到遗憾的受试者在随后的类似任务中会表现出更加深思熟虑的决策，还有更高的执行力。你甚至可以改换一条赛道，继续带着遗憾前行。在辩论殿堂之外，体坛有多少的教练，曾经都是因为伤病或者天赋不佳退役的职业运动员？他们怀揣着遗憾，把自己的经验教训传递给后辈，又制造了一个又一个的传奇。比如飞人博尔特的教练米尔斯，比如羽生结弦的教练布莱恩·奥瑟。遗憾恰恰是心中热爱走向卓越的起点。\n\n第二，对于那些意识到自己过往在热爱和意义上苍白的人，遗憾可以让他们自省并寻求热爱，找寻自己的价值支点。当下媒介的感官刺激无孔不入，物质社会在把金钱昂贵的吃穿用度标为你的价值，错杂的人际关系中又有无数身边人的期待构成了漩涡。那你的价值又在哪里呢？既然已经在纷繁复杂的社会中惊觉了自己的平庸，那么你就需要用遗憾鞭策自己，找寻自己的热爱。毕竟找寻热爱最好的时间就是十年之前，其次就是现在。\n\n总之，即便前路尚未可知，即便至暗和迷茫时刻可能会重演，但遗憾也成为了你认为未来人生的注脚。毕竟如果人生无悔，那该有多无趣呀。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E01",
+            "title_or_desc": "上行反事实与遗憾的心理特征研究",
+            "source_ref": "心理学家Roese的实验室研究",
+            "quoted_data": "感到遗憾的受试者在随后的类似任务中会表现出更加深思熟虑的决策，还有更高的执行力",
+            "use_purpose": "论证遗憾具有积极影响",
+            "confidence": "medium"
+          },
+          {
+            "evidence_id": "E02",
+            "title_or_desc": "博尔特的教练米尔斯、羽生结弦的教练布莱恩·奥瑟",
+            "source_ref": "体坛案例",
+            "quoted_data": "因伤病或天赋不佳退役的运动员，怀揣着遗憾把经验传递给后辈，制造传奇",
+            "use_purpose": "论证遗憾是卓越的起点",
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "zheng1",
+        "speaker_label": "正方一辩",
+        "side": "affirmative",
+        "phase": "opening"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T03",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T03"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "negative",
+        "phase": "opening",
+        "speaker_label": "反方一辩",
+        "raw_excerpt": "各位好。我方想和大家分享八组数据...",
+        "normalized_text": "各位好。我方想和大家分享八组数据。\n\n在当代，90%以上的员工都认为自己的工作表现比同事更杰出；多数人会认为自己比同龄人更健康；大部分的商人都认为自己比一般的商人更有良心。美国甚至做过一个民意调查：认为当时的总统克林顿可以上天堂的支持率是52%，迈克尔·乔丹的支持率是65%，德蕾莎修女一辈子积德行善，支持率也只有79%。但有一个人，她的支持率高达85%，全世界最高——那个人就是\"我自己\"。数据有很多，结论只有一个：自命不凡是一种常态，平凡是多数人生活的真相。\n\n我平凡不意味着我在虚度光阴，平凡的我也在脚踏实地地工作，照顾好家庭。我方选择不遗憾，是我对过去的自己是满意的，我不想让我因为想象中的我来苛责我自己。这个世界上没有那么多的天才，放下遗憾、接纳平凡，是我们每个人人生都要学会面对的课题。\n\n当然对方会说\"我命由我不由天\"，我的努力就是我的天赋，我为什么要遗憾？就是因为我要有努力的动力。你不信命。是的，你越不信命，你就越不是这道题在讨论的这群人。\n\n各位，什么是\"终究\"？它不是在我还纠结自己会不会成功、我会不会活得不一样的阶段，而是我已经拼尽全力了，但我发现我只能止步于此了。对于他们而言，不需要对方辩友来告诉我\"你还可以更努力\"，因为我们已经够努力了。我们需要的是可以允许自己停下来。\n\n我们这一代人都有平凡的焦虑。小的时候跟同学比，进入职场了之后跟同事比，结婚了还要跟女朋友闺蜜的老公比。追求不凡的人一直活在比较里，可当我的眼睛盯着不凡的时候，我就没有办法在平凡的生活中汲取到快乐了。\n\n在决定一个人幸福感的来源调查中，78%的年轻人都认为人生的意义在于家庭的幸福。可现状却是我们不敢回家，不敢回归于平凡的生活。七成的打工人不敢把自己的假期用完，近九成的人在休闲的时候会有负罪感。我方不希望大家在平凡当中再有遗憾跟负罪感了，因为只有这样，我们才能够拥抱自己的生活。它可以是你把周末的时间不用来加班，来这里看一看新国辩；它也可以是爱欲未死，你可以把自己的生命托付给一个重要的他者，去谈一段有趣的恋情。\n\n接纳平凡的人，不是一个差劲的人，而是从外界的评价叙事当中解放的人。我们不需要再跟那些人比了，因为该打的仗我们已经打过了，该走的路我们也走到了尽头。接下来的人生，我方希望大家可以让自己快乐。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A04",
+            "claim": "自命不凡是一种常态，平凡是多数人生活的真相",
+            "warrant": "多项数据显示90%以上员工认为自己比同事杰出，美国民意调查显示\"我自己\"上天堂支持率85%最高",
+            "impact": "放下遗憾、接纳平凡是人生要学会面对的课题",
+            "tags": [
+              "数据论证",
+              "社会心理"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A05",
+            "claim": "\"终究\"意味着已拼尽全力但仍止步于此",
+            "warrant": "对于这群人，不需要被告知\"你还可以更努力\"，因为他们已经够努力了",
+            "impact": "他们需要的是可以允许自己停下来",
+            "tags": [
+              "终究定义",
+              "努力极限"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A06",
+            "claim": "追求不凡的人一直活在比较里，无法在平凡生活中汲取快乐",
+            "warrant": "78%年轻人认为人生意义在于家庭幸福，但七成打工人不敢用完假期，近九成休闲时有负罪感",
+            "impact": "我方不希望大家在平凡中再有遗憾和负罪感",
+            "tags": [
+              "幸福调查",
+              "社会比较"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "fan1",
+        "speaker_label": "反方一辩",
+        "side": "negative",
+        "phase": "opening"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T03",
+      "task_type": "evidence_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T03"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "negative",
+        "phase": "opening",
+        "speaker_label": "反方一辩",
+        "raw_excerpt": "各位好。我方想和大家分享八组数据...",
+        "normalized_text": "各位好。我方想和大家分享八组数据。\n\n在当代，90%以上的员工都认为自己的工作表现比同事更杰出；多数人会认为自己比同龄人更健康；大部分的商人都认为自己比一般的商人更有良心。美国甚至做过一个民意调查：认为当时的总统克林顿可以上天堂的支持率是52%，迈克尔·乔丹的支持率是65%，德蕾莎修女一辈子积德行善，支持率也只有79%。但有一个人，她的支持率高达85%，全世界最高——那个人就是\"我自己\"。数据有很多，结论只有一个：自命不凡是一种常态，平凡是多数人生活的真相。\n\n我平凡不意味着我在虚度光阴，平凡的我也在脚踏实地地工作，照顾好家庭。我方选择不遗憾，是我对过去的自己是满意的，我不想让我因为想象中的我来苛责我自己。这个世界上没有那么多的天才，放下遗憾、接纳平凡，是我们每个人人生都要学会面对的课题。\n\n当然对方会说\"我命由我不由天\"，我的努力就是我的天赋，我为什么要遗憾？就是因为我要有努力的动力。你不信命。是的，你越不信命，你就越不是这道题在讨论的这群人。\n\n各位，什么是\"终究\"？它不是在我还纠结自己会不会成功、我会不会活得不一样的阶段，而是我已经拼尽全力了，但我发现我只能止步于此了。对于他们而言，不需要对方辩友来告诉我\"你还可以更努力\"，因为我们已经够努力了。我们需要的是可以允许自己停下来。\n\n我们这一代人都有平凡的焦虑。小的时候跟同学比，进入职场了之后跟同事比，结婚了还要跟女朋友闺蜜的老公比。追求不凡的人一直活在比较里，可当我的眼睛盯着不凡的时候，我就没有办法在平凡的生活中汲取到快乐了。\n\n在决定一个人幸福感的来源调查中，78%的年轻人都认为人生的意义在于家庭的幸福。可现状却是我们不敢回家，不敢回归于平凡的生活。七成的打工人不敢把自己的假期用完，近九成的人在休闲的时候会有负罪感。我方不希望大家在平凡当中再有遗憾跟负罪感了，因为只有这样，我们才能够拥抱自己的生活。它可以是你把周末的时间不用来加班，来这里看一看新国辩；它也可以是爱欲未死，你可以把自己的生命托付给一个重要的他者，去谈一段有趣的恋情。\n\n接纳平凡的人，不是一个差劲的人，而是从外界的评价叙事当中解放的人。我们不需要再跟那些人比了，因为该打的仗我们已经打过了，该走的路我们也走到了尽头。接下来的人生，我方希望大家可以让自己快乐。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E03",
+            "title_or_desc": "关于\"谁有资格上天堂\"的美国民意调查",
+            "source_ref": "多项民意调查数据",
+            "quoted_data": "克林顿52%、乔丹65%、德蕾莎修女79%、\"我自己\"85%",
+            "use_purpose": "论证自命不凡是一种常态",
+            "confidence": "medium"
+          },
+          {
+            "evidence_id": "E04",
+            "title_or_desc": "幸福感来源调查",
+            "source_ref": "调查数据",
+            "quoted_data": "78%的年轻人认为人生的意义在于家庭的幸福；七成打工人不敢把假期用完；近九成人在休闲时会有负罪感",
+            "use_purpose": "论证当代人的平凡焦虑与幸福观冲突",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "fan1",
+        "speaker_label": "反方一辩",
+        "side": "negative",
+        "phase": "opening"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T05",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T05"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "opening",
+        "speaker_label": "正方二辩",
+        "raw_excerpt": "对方辩友告诉我们说这个世界上有很多人高估自己...",
+        "normalized_text": "对方辩友告诉我们说这个世界上有很多人高估自己，说明他们也知道这个高估自己不平凡是一种主观的感受，所以我们双方达成一个共识：今天自己发现自己平凡与否是一个主观的判定。\n\n但是对方完全切错了人群。他们说那些主观感受高估自己的人，比如说你们知不知道在那个社交媒体上有很多\"普信男\"，他们发自己的照片在评论区里面说自己是帅哥。可是这些人努力了吗？他们天生就觉得自己不平凡，所以不符合今天说我经过了很多努力、尝试了很多方法以后，我顿然发现自己终究还是平凡。您方只是说有些人终于发现了自己平凡，可是不是\"终究只是平凡\"。而这个\"终究只是\"意味着什么？意味着他们之前试过了很多的途径都没有达到自己的期待。这个时候期待落空了，我才会说我终究只是平凡。\n\n第二点，当我们发现我们终究只是平凡，试过很多方法的时候，有没有可能只是\"山重水复疑无路\"呢？我们有可能只是一叶障目，我们不知道我们使用错了方法，或者我们只是等待一个应该能够成功的机会，只不过我还没有等到而已。这个时候如果您方放弃了遗憾，不要这个遗憾，您就只能够停在那个山重水复的困境里面，停在那个低谷里面。只有我们要遗憾，我们继续走下去，才有可能\"柳暗花明\"。\n\n所以今天其实谈遗憾这个词啊，我们觉得它跟期待完全就是一体两面的，它有很大的积极影响，甚至是一种美好的感受。\n\n比如说，我其实12年前就已经站在了新国辩决赛的舞台上。那个时候我刚打了两年辩论，对于辩论的理解非常的懵懂。坐在那个四辩位置的就是詹青云，我的队友。我相信任何一个跟詹青云当队友的人都会觉得自己是一个平凡的人。所以在那之后呢，我虽然那一年夺得了新国辩的冠军，但是我觉得那场烟花不是为我绽放的，我回到了我的生活里，我仍然是一个平凡的人。之后我还参加过很多国际赛，但是只有一次出现，就是10年之前我出现在复赛上遇到了陈凌岳，那就是我国际赛在本科阶段最高的一个成绩了。在那之后我打了四五年的辩论，直到我本科毕业，我都没有一个更好的成绩。所以在我离开辩论圈的时候，我以为我终究就只是一个平凡的人了。\n\n但是当我19年入读香港大学的时候，其实那个时候我感觉我已经不觉得这是一件遗憾的事情了，所以我根本就没有联系香港大学的辩论队。在疫情期间，我从事了一些线上的评赛工作。在评香港中学生的一场辩论比赛的时候呢，我听到一个评委，他的评赛思路跟我完全一模一样，他就是来自香港大学的我的队友戴纳川。这个时候我心中的那个遗憾就产生了，我觉得似乎那个火苗出现了，我遇到了我人生的邀请。如果我来到香港大学的辩论队，我觉得我可以有可能实现一个不凡的可能性。\n\n所以如果我一开始就觉得我不要遗憾，我就封闭了所有这些人生的邀请。后来当我知道子凡来到这个学校的时候，我问子凡说要不要一起打辩论，他说如果你们需要我的话我就来吧，我以为他对辩论已经放下了。可是直到昨天晚上，他给我们看了一个本子，这个本子上签满了他认为不凡的辩手的名字，以及他从大一开始就抄的所有的辩词，我才知道他是带着他的遗憾一直走到现在的。\n\n所以我们双方八位辩手其实加起来已经200多岁了，我们为什么站在今天这个舞台上，就是因为我们一直有遗憾呢，不然我们在这里打什么呢？如果您方不遗憾的话，您方就给我们冠军就好了。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A07",
+            "claim": "对方切错人群，\"普信男\"并非经过努力后发现平凡的人",
+            "warrant": "\"终究只是平凡\"意味着之前试过很多途径都没有达到期待，期待落空才会说\"终究\"",
+            "impact": "您方只是说有些人终于发现了自己平凡，可是不是\"终究只是平凡\"",
+            "tags": [
+              "人群界定",
+              "终究含义"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A08",
+            "claim": "山重水复疑无路时，只有保持遗憾才能柳暗花明",
+            "warrant": "可能只是一叶障目，使用错方法或等待机会，放弃遗憾只能停在困境",
+            "impact": "只有我们要遗憾，继续走下去，才有可能\"柳暗花明\"",
+            "tags": [
+              "山重水复",
+              "可能性论证"
+            ],
+            "confidence": "medium"
+          },
+          {
+            "argument_id": "A09",
+            "claim": "遗憾与期待是一体两面的",
+            "warrant": "以个人经历论证：12年前新国辩冠军后仍觉平凡，19年入读港大后因遇到辩论队而重燃遗憾",
+            "impact": "八位辩手站在舞台正是因为有遗憾",
+            "tags": [
+              "个人经历",
+              "期待关联"
+            ],
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "zheng2",
+        "speaker_label": "正方二辩",
+        "side": "affirmative",
+        "phase": "opening"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T07",
+      "task_type": "argument_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T07"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "negative",
+        "phase": "opening",
+        "speaker_label": "反方二辩（丁启翔）",
+        "raw_excerpt": "大家好。我觉得正方有点搞错题目了...",
+        "normalized_text": "大家好。我觉得正方有点搞错题目了。正方在告诉大家说他们有没有选择独特的幸福，但题目聊的不是这个，题目代表的是\"就算选择了平凡且甘于平凡之后，我能不能够达到同样的幸福\"。两个价值观不一样。\n\n那同样的方式去解释一下正方二辩的例子：哪怕今天你没有站到新国辩的舞台，你依然热爱辩论的话，那即使你没有拿到这个奖杯、没有封神，你就因此会觉得自己是个遗憾和糟糕的人吗？相信也不会，因为对你来说，辩论就是个独特的热爱，喜欢沉浸在这里，就是您方最好的动力。\n\n第二件事情跟大家沟通一下什么是\"终究\"。其实我不知道大家知不知道现在的社会环境是什么——是个压力锅。我们在准备复赛的时候，在讨论卷学历也好，或在准备考公考研也好，会发现有很多的案例：考2.8次平均才能考上一个公，考了三次四次五次考研都考不上，他必须要脱产去考一个他自己都不知道能不能考上的研究所的时候，这个时代是我们用尽了全力在车道之间奔波，发现了其实做到了之后，我也只能在小小的楼地板的面积当中苟活的人。他做不到大人物他该怎么办？他用尽了力气他该怎么办？他有没有办法接受自己其实在大城市他也没办法打听到更多的事情，他愿意回家，我觉得可以没有那么困扰。这是第二个你不敢讨论的人群。\n\n最后我想跟大家聊一聊我的生活。对方聊辩论，我觉得在辩论场聊辩论是特别煽情的事情，我的生活不一样。我今年33岁，我经历过大家可能现在年轻人不一定经历过的事情——我爸过世了。\n\n我爸过世之前，我非常害怕。我害怕的是，在传统的父亲当中，爸爸过世前一定会握着长子的手，告诉说\"你要照顾好你妈，你妹还小，我们家有很多的财产不能让别人分割出去，你要扛得起爸爸的责任\"。爸爸的担心在那一刻，他放不下。我很害怕。\n\n在他住到重症病房ICU的时候，有一刻他回光返照，他突然可以讲话了。我去看他，我像个传统的长子一样问我爸说\"你有没有什么遗憾的地方\"。我爸给了我一个答案，他说\"我没留什么遗产给你，我没给什么答案，我一生走到这里已经很幸福了\"。\n\n他宽恕了自己，他也同时解救了我。\n\n所以如果说人生走到最后，什么是平凡的？其实你会发现你现在所经历的一切、有过的念想、有过的功业，在死亡面前不值得一提。带着遗憾走入死亡，就是与自己过不去。我爸爸宽恕了他自己，我也期待大家不管在什么困难之上，也可以宽恕你自己。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A10",
+            "claim": "当代社会是压力锅，用尽全力仍只能平凡的人不该被要求继续遗憾",
+            "warrant": "考2.8次平均才能考上公，考研多次不成功，脱产备考不知能否考上",
+            "impact": "他做不到大人物，用尽力气，应该可以接受自己愿意回家",
+            "tags": [
+              "社会现实",
+              "压力锅"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A11",
+            "claim": "带着遗憾走入死亡是与自己过不去",
+            "warrant": "父亲临终前说\"我一生走到这里已经很幸福了\"，他宽恕了自己也解救了我",
+            "impact": "应该宽恕自己，不要带着遗憾走入死亡",
+            "tags": [
+              "死亡视角",
+              "父亲案例"
+            ],
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "fan2",
+        "speaker_label": "反方二辩（丁启翔）",
+        "side": "negative",
+        "phase": "opening"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T07",
+      "task_type": "evidence_extraction",
+      "difficulty": "medium",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T07"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "negative",
+        "phase": "opening",
+        "speaker_label": "反方二辩（丁启翔）",
+        "raw_excerpt": "大家好。我觉得正方有点搞错题目了...",
+        "normalized_text": "大家好。我觉得正方有点搞错题目了。正方在告诉大家说他们有没有选择独特的幸福，但题目聊的不是这个，题目代表的是\"就算选择了平凡且甘于平凡之后，我能不能够达到同样的幸福\"。两个价值观不一样。\n\n那同样的方式去解释一下正方二辩的例子：哪怕今天你没有站到新国辩的舞台，你依然热爱辩论的话，那即使你没有拿到这个奖杯、没有封神，你就因此会觉得自己是个遗憾和糟糕的人吗？相信也不会，因为对你来说，辩论就是个独特的热爱，喜欢沉浸在这里，就是您方最好的动力。\n\n第二件事情跟大家沟通一下什么是\"终究\"。其实我不知道大家知不知道现在的社会环境是什么——是个压力锅。我们在准备复赛的时候，在讨论卷学历也好，或在准备考公考研也好，会发现有很多的案例：考2.8次平均才能考上一个公，考了三次四次五次考研都考不上，他必须要脱产去考一个他自己都不知道能不能考上的研究所的时候，这个时代是我们用尽了全力在车道之间奔波，发现了其实做到了之后，我也只能在小小的楼地板的面积当中苟活的人。他做不到大人物他该怎么办？他用尽了力气他该怎么办？他有没有办法接受自己其实在大城市他也没办法打听到更多的事情，他愿意回家，我觉得可以没有那么困扰。这是第二个你不敢讨论的人群。\n\n最后我想跟大家聊一聊我的生活。对方聊辩论，我觉得在辩论场聊辩论是特别煽情的事情，我的生活不一样。我今年33岁，我经历过大家可能现在年轻人不一定经历过的事情——我爸过世了。\n\n我爸过世之前，我非常害怕。我害怕的是，在传统的父亲当中，爸爸过世前一定会握着长子的手，告诉说\"你要照顾好你妈，你妹还小，我们家有很多的财产不能让别人分割出去，你要扛得起爸爸的责任\"。爸爸的担心在那一刻，他放不下。我很害怕。\n\n在他住到重症病房ICU的时候，有一刻他回光返照，他突然可以讲话了。我去看他，我像个传统的长子一样问我爸说\"你有没有什么遗憾的地方\"。我爸给了我一个答案，他说\"我没留什么遗产给你，我没给什么答案，我一生走到这里已经很幸福了\"。\n\n他宽恕了自己，他也同时解救了我。\n\n所以如果说人生走到最后，什么是平凡的？其实你会发现你现在所经历的一切、有过的念想、有过的功业，在死亡面前不值得一提。带着遗憾走入死亡，就是与自己过不去。我爸爸宽恕了他自己，我也期待大家不管在什么困难之上，也可以宽恕你自己。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E05",
+            "title_or_desc": "父亲临终前的对话",
+            "source_ref": "个人经历",
+            "quoted_data": "\"我没留什么遗产给你，我没给什么答案，我一生走到这里已经很幸福了\"",
+            "use_purpose": "论证宽恕自己、不带遗憾走入死亡",
+            "confidence": "high"
+          },
+          {
+            "evidence_id": "E06",
+            "title_or_desc": "考公考研现状",
+            "source_ref": "社会案例",
+            "quoted_data": "考2.8次平均才能考上一个公，考了三次四次五次考研都考不上",
+            "use_purpose": "论证当代社会是压力锅",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "fan2",
+        "speaker_label": "反方二辩（丁启翔）",
+        "side": "negative",
+        "phase": "opening"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T09",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T09"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "negative",
+        "phase": "summary",
+        "speaker_label": "反方三辩（肖博文）",
+        "raw_excerpt": "各位好。我先来整理对方可能会出现的两层矛盾...",
+        "normalized_text": "各位好。我先来整理对方可能会出现的两层矛盾。\n\n第一件事情：对方接质询的时候告诉大家\"我方也可以悦纳遗憾啊，我方也可以理解遗憾啊\"。可是我方很好奇的是，如果一个人一边觉得自己遗憾，一边又悦纳了自己的遗憾，这个人怎么会去努力呢？这个人怎么会想要去上进呢？按照对方讲的，想要让这个人进取、想要让这个人拼搏，对方的利好就不要了。这是第一个矛盾。\n\n第二个矛盾：如果一个人觉得他自己的平凡和不平凡都来自于自己的感受，那这个人如果他觉得自己不平凡就不平凡，他可能去网上当键盘侠，他觉得他喷了这场比赛、打了那条弹幕，自己就已然不平凡了。那这个时候他会去做什么呢？他什么也不会做。这就是我方想跟大家讲的：所以平凡与否还是某种意义上一个外界客观的概念的时候，才有讨论的价值。这是第二个对方可能会存在的矛盾。\n\n而我方事实上想要跟大家做三个层次的比较。\n\n第一个部分：当你有遗憾的时候，按照对方讲的，你希望用你的遗憾去影响更多人、去改变更多人。可是我方觉得不要。就如我讲的那个《摔跤吧爸爸》的例子——当你把你的遗憾寄托在其他人身上的时候，你只会想尽办法让它成为你弥补遗憾的工具，你只会想办法尽可能地至于他受到什么伤害、受到什么压迫，谁在乎？只要我能弥补遗憾，这就已经足够了。我方觉得不要这样子，不要总是想着用你的遗憾去影响其他人，这是第一件事情。\n\n第二件事情：这场比赛一定不是一个正方是努力的、反方是不努力的。我举个最简单的例子：我方二辩刚刚跟大家讲，他来打这场比赛是为了期待，是为了某种意义上对自己来说我已经能打了，我已经很开心了，我开开心心地享受比赛。可是还有一种人是我方四辩这种，他从不觉得自己平凡，他当初找我们的时候就说\"我们就是要努力打上更大的平台，我们就是要站到那个冠军的舞台\"。任何一种情况，只要你足够适配，都有得选。可什么样的人是痛苦的、什么样的人是纠结的？就是那个半吊子的人，他会纠结，就是我一边觉得自己已然\"终究\"了，我努力过了这一切了，我可能已经是个平凡人了，可是我一边遗憾，我一边放不下。这两种观念把我夹在中间的时候，我才会感受到撕裂，我才会感受到痛苦。所以这场比赛从来都不是卷和不卷的比较、努力和不努力的比较，而是适配和不适配的比较。这就是我方告诉大家的更适配的生活观念。\n\n第三件事情：我方当然不是想要吃对方的豆腐，好像听起来很像是把努力这个部分对方都消化掉了。我方当然承认，对于一些人来说，他可能确实看到了那个结果的时候，他确实没有那么努力了，他确实可能会放下一点。那往下的第三个层次的比较，就是我们想跟大家分享的一种所谓平凡的幸福观是什么样的。\n\n在对方的世界底下，对方告诉我们\"我们只有努力站上更大的舞台，我才是特别的，我才是有价值的\"。可是反方觉得不是。反方觉得任何人某种意义上在生活当中，你最后回归到更大的世界，你可能过去的时候在那个小小的环境当中，你觉得自己不一样，你觉得自己特别，可是你看到了更大的世界，你发现自己好像终究够不到那个结果。在对方的视角底下，他要你什么？他逼着你告诉你\"必须得去追求一个好故事\"。可是我方觉得不要，任何人的故事都是一个好故事，你可以追求一个完整的故事，你不用追求一个好故事。\n\n各位，这场比赛打完，无论输还是赢，我都要回去到我的生活当中了。我可能要去忙我的工作，我可能要去找我的朋友，我可能要去爱我想爱的人。而我会记得这场比赛，因为这是好像某种意义上我过去曾经特别过的证明，可是我也不会记得这场比赛记得太久，因为这就是我平凡的开始。\n\n所以各位，哪有什么粉红色的雪？在我们东北，雪就是落在沙地上。可是当雪一层一层地积累起来的时候，那个就是平凡的力量。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A12",
+            "claim": "正方存在两层矛盾：既说悦纳遗憾又说遗憾带来动力",
+            "warrant": "如果一个人一边觉得自己遗憾一边又悦纳了自己的遗憾，这个人怎么会去努力呢？",
+            "impact": "想要让这个人进取，对方的利好就不要了",
+            "tags": [
+              "逻辑矛盾",
+              "悦纳vs动力"
+            ],
+            "confidence": "medium"
+          },
+          {
+            "argument_id": "A13",
+            "claim": "遗憾强加于人会伤害他人",
+            "warrant": "《摔跤吧爸爸》例子：把遗憾寄托在下一代身上，会让人成为弥补遗憾的工具",
+            "impact": "不要总是想着用遗憾去影响其他人",
+            "tags": [
+              "摔跤吧爸爸",
+              "伤害性"
+            ],
+            "confidence": "medium"
+          },
+          {
+            "argument_id": "A14",
+            "claim": "这场比赛不是卷和不卷的比较，而是适配和不适配的比较",
+            "warrant": "半吊子最痛苦：一边觉得自己\"终究\"了，一边又遗憾放不下",
+            "impact": "两种观念夹在中间会感受到撕裂和痛苦",
+            "tags": [
+              "适配论",
+              "半吊子"
+            ],
+            "confidence": "medium"
+          },
+          {
+            "argument_id": "A15",
+            "claim": "任何人的故事都是好故事，不用追求\"好故事\"",
+            "warrant": "正方逼着人追求好故事，反方认为可以追求完整的故事",
+            "impact": "平凡的力量如雪一层一层积累",
+            "tags": [
+              "故事观",
+              "平凡力量"
+            ],
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "fan3",
+        "speaker_label": "反方三辩（肖博文）",
+        "side": "negative",
+        "phase": "summary"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T10",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T10"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "summary",
+        "speaker_label": "正方三辩",
+        "raw_excerpt": "我先解三个对方扣的帽子...",
+        "normalized_text": "我先解三个对方扣的帽子。\n\n第一，他说键盘侠我方会让他更加的普信，因为他相信自己不平凡就好了。可是这件事情双方都没法解决，你要怎么解决键盘侠呢？你告诉他\"你就是一个普通人\"，他会听吗？所以这部分人群双方都无法解决。\n\n第二件事情，他说你有遗憾，所以有时候会走向极端，你会把它发泄在别人的身上。可是这是方式的问题，而不是要不要遗憾本身的问题，在推极端去论证你方的立场。\n\n第三件事情，你的\"适配\"也是不成立的。因为我质询问的那个问题：我今天输了这场比赛，于是我说我终究是一个平凡人吗？我心中可能就是有一个遗憾，有一点不甘，我觉得我不要带队呢，我要不要再试一次呢？所以为什么你方让我直接回归平凡生活的观念跟我是适配的？你的适配也没有证明。\n\n所以回忆起来，我方今天有两个部分要跟各位讲的。\n\n第一个部分是到底什么是遗憾。他方说他方自洽，你知道吗？他方一点也不自洽。因为今天这个题目从来不是有遗憾和没遗憾，而是有了遗憾之后，他方是要压制遗憾。他方对于遗憾是一种羞耻的态度，他方是在抑制负面想法的。比如我们说\"子欲养而亲不待\"，这件事情要不要遗憾？要遗憾。而他方说\"你不要\"，在你压制这个观念的时候，你就不自洽了，这是他方为什么不自洽的部分。\n\n而为什么我方是一个更自洽的立场？刚刚我们也讲了，如果你有遗憾，意味着你还相信可能。可是遗憾除了意味着你还有可能之外，还有第二件事情：它意味着你还活着。\n\n你知道吗？有很多的歌手，有一些喜欢音乐的人，他确实会因为自己目前的生活而选择把那个吉他放在角落。可是你知道吗，他把那个吉他放在角落的时候，他也会忍不住去偷瞟几眼。就像我们各位的辩论梦想也是一样的，它永远是心里面那个深处的净土。\n\n所以柴子凡有可能他前几年已经在当律师了，可是他看到那个记满笔记的本子的时候，还是会叹气。换言之，你只是暂时不做理想，但是理想不只是我想要做的那件事，更是我想要做的那种意愿、冲动和决心。所以我方是给各位留一个可能。而如果你真的有一天看到你的那个辩论的西装脱下来挂在那，你一点不会心动的时候，我方觉得你亲手把自己杀死了。这是为什么我方更自洽的地方，也是对于遗憾的第二层解读。\n\n最后是平凡这件事情。我方觉得真的很可怕：在对方的标准底下，平凡是由常态分布的。可是你知道吗，常态分布就意味着像他方所说的，没有任何人有完成突破的可能，因为你觉得就是常态分布决定了你的上限。而更进一步，我今天有查到一个数据，中国月薪超过1万的人其实只有2%到3%，已经是这个金字塔尖尖上了，可是你会评价这样的人为不平凡吗？不会的。\n\n所以在你方那个结构底下真的特别可怕，你方的结构是什么样的结构呢？你方的结构是一个和别人比较出来的结构，到2%和3%都不够的结构，是一个精英和老百姓、富有和贫穷来框定自己的结构。所以在这样的结构底下，你永远只可能是你自己生活里面的那个NPC。\n\n所以我真的希望等会当金鱼落下来的时候，你捡一片金片放在自己的胸口，你把这份遗憾带得久一点，你把这个英雄梦想在生活当中给自己的不凡定位久一点，我觉得这样更好。\n\n所以最后一件事情，我方觉得哪怕是对于你方所要讲的那种小确幸的生态、平凡人的幸福，我以为跟你进行比较，因为你根本不知道当你以这个平凡去定义他们的时候，平凡就是庸常，就是不要跟每一个人都一样。你根本不知道他们具体的生活到底是什么，而我们会发现当你越走近一个人的时候，他就越是不平凡的。比如说我方一辩，他会给我讲这个不羁索纳索法的总统是谁，给我讲克鲁夫恒量；一个小幸福的人可能赶个40分钟去一个他一直想吃的地方吃早餐，也可能像那个外卖小哥王继斌一样，在等电梯的时候用语音输入他的文字。所以这些人按你方的视角就是千篇一律，而按我方的视角，哪怕是那种小确幸，也有不平凡的小确幸，他用自己的价值支点去对抗你方那套社会话语。这是我的比较。"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A16",
+            "claim": "正方的承认遗憾比反方的压制遗憾更自洽",
+            "warrant": "反方对遗憾持羞耻态度，是在抑制负面想法",
+            "impact": "遗憾意味着还相信可能，也意味着还活着",
+            "tags": [
+              "自洽性",
+              "压制vs承认"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A17",
+            "claim": "反方的常态分布标准剥夺了大多数人不凡的理由",
+            "warrant": "中国月薪超过1万的人只有2%-3%，已属金字塔尖，但仍不被认为不平凡",
+            "impact": "在反方结构下，人永远只是生活里的NPC",
+            "tags": [
+              "常态分布批判",
+              "NPC论证"
+            ],
+            "confidence": "high"
+          },
+          {
+            "argument_id": "A18",
+            "claim": "越走近一个人，就越不会形容他是平凡的",
+            "warrant": "如正方一辩讲不羁索纳索法、克鲁夫恒量，外卖小哥王继斌用语音输入文字",
+            "impact": "小确幸也有不平凡的小确幸",
+            "tags": [
+              "走近观察",
+              "不平凡发现"
+            ],
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "zheng3",
+        "speaker_label": "正方三辩",
+        "side": "affirmative",
+        "phase": "summary"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T10",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T10"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "summary",
+        "speaker_label": "正方三辩",
+        "raw_excerpt": "我先解三个对方扣的帽子...",
+        "normalized_text": "我先解三个对方扣的帽子。\n\n第一，他说键盘侠我方会让他更加的普信，因为他相信自己不平凡就好了。可是这件事情双方都没法解决，你要怎么解决键盘侠呢？你告诉他\"你就是一个普通人\"，他会听吗？所以这部分人群双方都无法解决。\n\n第二件事情，他说你有遗憾，所以有时候会走向极端，你会把它发泄在别人的身上。可是这是方式的问题，而不是要不要遗憾本身的问题，在推极端去论证你方的立场。\n\n第三件事情，你的\"适配\"也是不成立的。因为我质询问的那个问题：我今天输了这场比赛，于是我说我终究是一个平凡人吗？我心中可能就是有一个遗憾，有一点不甘，我觉得我不要带队呢，我要不要再试一次呢？所以为什么你方让我直接回归平凡生活的观念跟我是适配的？你的适配也没有证明。\n\n所以回忆起来，我方今天有两个部分要跟各位讲的。\n\n第一个部分是到底什么是遗憾。他方说他方自洽，你知道吗？他方一点也不自洽。因为今天这个题目从来不是有遗憾和没遗憾，而是有了遗憾之后，他方是要压制遗憾。他方对于遗憾是一种羞耻的态度，他方是在抑制负面想法的。比如我们说\"子欲养而亲不待\"，这件事情要不要遗憾？要遗憾。而他方说\"你不要\"，在你压制这个观念的时候，你就不自洽了，这是他方为什么不自洽的部分。\n\n而为什么我方是一个更自洽的立场？刚刚我们也讲了，如果你有遗憾，意味着你还相信可能。可是遗憾除了意味着你还有可能之外，还有第二件事情：它意味着你还活着。\n\n你知道吗？有很多的歌手，有一些喜欢音乐的人，他确实会因为自己目前的生活而选择把那个吉他放在角落。可是你知道吗，他把那个吉他放在角落的时候，他也会忍不住去偷瞟几眼。就像我们各位的辩论梦想也是一样的，它永远是心里面那个深处的净土。\n\n所以柴子凡有可能他前几年已经在当律师了，可是他看到那个记满笔记的本子的时候，还是会叹气。换言之，你只是暂时不做理想，但是理想不只是我想要做的那件事，更是我想要做的那种意愿、冲动和决心。所以我方是给各位留一个可能。而如果你真的有一天看到你的那个辩论的西装脱下来挂在那，你一点不会心动的时候，我方觉得你亲手把自己杀死了。这是为什么我方更自洽的地方，也是对于遗憾的第二层解读。\n\n最后是平凡这件事情。我方觉得真的很可怕：在对方的标准底下，平凡是由常态分布的。可是你知道吗，常态分布就意味着像他方所说的，没有任何人有完成突破的可能，因为你觉得就是常态分布决定了你的上限。而更进一步，我今天有查到一个数据，中国月薪超过1万的人其实只有2%到3%，已经是这个金字塔尖尖上了，可是你会评价这样的人为不平凡吗？不会的。\n\n所以在你方那个结构底下真的特别可怕，你方的结构是什么样的结构呢？你方的结构是一个和别人比较出来的结构，到2%和3%都不够的结构，是一个精英和老百姓、富有和贫穷来框定自己的结构。所以在这样的结构底下，你永远只可能是你自己生活里面的那个NPC。\n\n所以我真的希望等会当金鱼落下来的时候，你捡一片金片放在自己的胸口，你把这份遗憾带得久一点，你把这个英雄梦想在生活当中给自己的不凡定位久一点，我觉得这样更好。\n\n所以最后一件事情，我方觉得哪怕是对于你方所要讲的那种小确幸的生态、平凡人的幸福，我以为跟你进行比较，因为你根本不知道当你以这个平凡去定义他们的时候，平凡就是庸常，就是不要跟每一个人都一样。你根本不知道他们具体的生活到底是什么，而我们会发现当你越走近一个人的时候，他就越是不平凡的。比如说我方一辩，他会给我讲这个不羁索纳索法的总统是谁，给我讲克鲁夫恒量；一个小幸福的人可能赶个40分钟去一个他一直想吃的地方吃早餐，也可能像那个外卖小哥王继斌一样，在等电梯的时候用语音输入他的文字。所以这些人按你方的视角就是千篇一律，而按我方的视角，哪怕是那种小确幸，也有不平凡的小确幸，他用自己的价值支点去对抗你方那套社会话语。这是我的比较。"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E07",
+            "title_or_desc": "中国月薪超过1万的人占比",
+            "source_ref": "薪资数据",
+            "quoted_data": "只有2%到3%，已是金字塔尖，但仍不被评价为不平凡",
+            "use_purpose": "论证反方常态分布标准的荒谬",
+            "confidence": "low"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "zheng3",
+        "speaker_label": "正方三辩",
+        "side": "affirmative",
+        "phase": "summary"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T13",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T13"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "free_debate",
+        "speaker_label": "正方",
+        "raw_excerpt": "中青报的调查就显示...",
+        "normalized_text": "正方：中青报的调查就显示，54%的年轻人都说未来生活的五年认为都应该是拼搏进取的，为什么你要让那些人不可以努力？\n\n反方：很有可能预判错了，就不符合今天题目的讨论。题目讲的是\"终究\"，你的意思是这个题目一点都不算数？\n\n正方：所以很有可能至少那些已经真的发现的部分，对方已经认下来。我们来看看对方没有认下来的部分——电竞选手他的黄金年龄可能是14到16岁，我29岁了还在打瓦罗兰特，还会练身法、练枪法，一定是因为我遗憾吗？"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E08",
+            "title_or_desc": "年轻人对未来生活的态度调查",
+            "source_ref": "中青报调查",
+            "quoted_data": "54%的年轻人说未来生活的五年认为都应该是拼搏进取的",
+            "use_purpose": "论证多数年轻人有进取意愿",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "multiple",
+        "speaker_label": "正方",
+        "side": "affirmative",
+        "phase": "free_debate"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T14",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T14"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "negative",
+        "phase": "free_debate",
+        "speaker_label": "反方",
+        "raw_excerpt": "我来讲我最喜欢的电竞选手...",
+        "normalized_text": "反方：我来讲我最喜欢的电竞选手，中国星际选手李培南。他是中国最后一位星际争霸选手，2018年到2020年到2022年的时候可以说是颗粒无收，甚至这个游戏从中国退出了国服。但他仍然坚持了下来，他那个时候一度想要退役，很多人都别打了，他自己也说别打，但是就改了个名字，重新打到了IEM的冠军。你告诉他\"你遗憾你做个凡人可以了\"，后面哪有这些故事？\n\n正方：李培南有几个？对于多数的普通人而言，你让他知道如何面对自己的生活。\n\n反方：我觉得你很可怕的事情是你方自己告诉他所有人的极限都是那条正态分布的曲线，每个人到正态分布的曲线就到你的极限了，不用再努力了。您告诉我一个曲线可以定义我的人生吗？"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A20",
+            "claim": "遗憾可以带来突破可能（李培南案例）",
+            "warrant": "中国星际选手李培南2018-2022年颗粒无收，游戏退出中国国服，但仍坚持，最终改名为打到IEM冠军",
+            "impact": "你告诉他\"你遗憾你做个凡人可以了\"，后面哪有这些故事？",
+            "tags": [
+              "电竞案例",
+              "突破可能"
+            ],
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "multiple",
+        "speaker_label": "反方",
+        "side": "negative",
+        "phase": "free_debate"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T14",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T14"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "negative",
+        "phase": "free_debate",
+        "speaker_label": "反方",
+        "raw_excerpt": "我来讲我最喜欢的电竞选手...",
+        "normalized_text": "反方：我来讲我最喜欢的电竞选手，中国星际选手李培南。他是中国最后一位星际争霸选手，2018年到2020年到2022年的时候可以说是颗粒无收，甚至这个游戏从中国退出了国服。但他仍然坚持了下来，他那个时候一度想要退役，很多人都别打了，他自己也说别打，但是就改了个名字，重新打到了IEM的冠军。你告诉他\"你遗憾你做个凡人可以了\"，后面哪有这些故事？\n\n正方：李培南有几个？对于多数的普通人而言，你让他知道如何面对自己的生活。\n\n反方：我觉得你很可怕的事情是你方自己告诉他所有人的极限都是那条正态分布的曲线，每个人到正态分布的曲线就到你的极限了，不用再努力了。您告诉我一个曲线可以定义我的人生吗？"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E09",
+            "title_or_desc": "中国星际选手李培南",
+            "source_ref": "电竞赛事案例",
+            "quoted_data": "2018-2022年颗粒无收，游戏退出中国国服，但仍坚持，最终改名为打到IEM冠军",
+            "use_purpose": "论证遗憾带来的突破可能",
+            "confidence": "high"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "multiple",
+        "speaker_label": "反方",
+        "side": "negative",
+        "phase": "free_debate"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T15",
+      "task_type": "argument_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T15"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "free_debate",
+        "speaker_label": "正方",
+        "raw_excerpt": "李培南不会觉得自己是个普通人...",
+        "normalized_text": "正方：李培南不会觉得自己是个普通人。现在是我方四辩，他打到29岁了，手速还就是点鼠标都费劲，他觉得自己是个普通人，你觉得他要继续在瓦罗兰特上奋斗吗？\n\n反方：我们都经过竞技体育或者竞技辩论中的至暗时刻，在那个至暗时刻的当下，你就觉得自己终究只是平凡了，完全没有问题。但是我们就是劝大家要更遗憾一点。\n\n正方：所以这些您方说的，虽然有一些人可能是幸存者偏差，但是对于这部分人来讲，继续遗憾是有很大的价值的。我们再来看普通人：我们大脑这个区域中有一个负责感受遗憾的区域，当这个区域受伤了以后，你是不会感觉到任何遗憾的情绪的，而研究发现你没有遗憾的情绪的时候，你不可能从错误中学会价值。是不是普通人也可以从遗憾中学会价值？"
+      },
+      "gold": {
+        "arguments": [
+          {
+            "argument_id": "A19",
+            "claim": "普通人也可以从遗憾中学会价值",
+            "warrant": "大脑有负责感受遗憾的区域，该区域受伤后不会感觉遗憾情绪，研究发现没有遗憾情绪时不可能从错误中学会价值",
+            "impact": "遗憾对普通人也有学习价值",
+            "tags": [
+              "神经科学",
+              "学习价值"
+            ],
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "multiple",
+        "speaker_label": "正方",
+        "side": "affirmative",
+        "phase": "free_debate"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T15",
+      "task_type": "evidence_extraction",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T15"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "side": "affirmative",
+        "phase": "free_debate",
+        "speaker_label": "正方",
+        "raw_excerpt": "李培南不会觉得自己是个普通人...",
+        "normalized_text": "正方：李培南不会觉得自己是个普通人。现在是我方四辩，他打到29岁了，手速还就是点鼠标都费劲，他觉得自己是个普通人，你觉得他要继续在瓦罗兰特上奋斗吗？\n\n反方：我们都经过竞技体育或者竞技辩论中的至暗时刻，在那个至暗时刻的当下，你就觉得自己终究只是平凡了，完全没有问题。但是我们就是劝大家要更遗憾一点。\n\n正方：所以这些您方说的，虽然有一些人可能是幸存者偏差，但是对于这部分人来讲，继续遗憾是有很大的价值的。我们再来看普通人：我们大脑这个区域中有一个负责感受遗憾的区域，当这个区域受伤了以后，你是不会感觉到任何遗憾的情绪的，而研究发现你没有遗憾的情绪的时候，你不可能从错误中学会价值。是不是普通人也可以从遗憾中学会价值？"
+      },
+      "gold": {
+        "evidence_mentions": [
+          {
+            "evidence_id": "E10",
+            "title_or_desc": "大脑负责感受遗憾的区域研究",
+            "source_ref": "神经科学研究",
+            "quoted_data": "当该区域受伤后不会感觉遗憾情绪，研究发现没有遗憾情绪时不可能从错误中学会价值",
+            "use_purpose": "论证遗憾对普通人也有学习价值",
+            "confidence": "medium"
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "speaker_id": "multiple",
+        "speaker_label": "正方",
+        "side": "affirmative",
+        "phase": "free_debate"
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:clash_identification:match",
+      "task_type": "clash_identification",
+      "difficulty": "hard",
+      "source_match_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾",
+      "source_label": "新国辩2026决赛_结构化_v2",
+      "source_turn_ids": [
+        "T01",
+        "T03",
+        "T05",
+        "T07",
+        "T09",
+        "T10"
+      ],
+      "input": {
+        "topic": "发现自己终究只是一个平凡人，我该/不该感到遗憾",
+        "sides": {
+          "affirmative": "该遗憾",
+          "negative": "不该遗憾",
+          "unknown_labels": []
+        },
+        "arguments": [
+          {
+            "argument_id": "A01",
+            "turn_id": "T01",
+            "speaker_id": "zheng1",
+            "claim": "遗憾和不甘可以促使经历至暗时刻的人再度出发",
+            "tags": [
+              "心理学依据",
+              "行为动力"
+            ]
+          },
+          {
+            "argument_id": "A02",
+            "turn_id": "T01",
+            "speaker_id": "zheng1",
+            "claim": "遗憾可以让人自省并寻求热爱",
+            "tags": [
+              "自省",
+              "价值支点"
+            ]
+          },
+          {
+            "argument_id": "A03",
+            "turn_id": "T01",
+            "speaker_id": "zheng1",
+            "claim": "教练将遗憾传递给后辈可以制造传奇",
+            "tags": [
+              "案例论证",
+              "教练传承"
+            ]
+          },
+          {
+            "argument_id": "A04",
+            "turn_id": "T03",
+            "speaker_id": "fan1",
+            "claim": "自命不凡是一种常态，平凡是多数人生活的真相",
+            "tags": [
+              "数据论证",
+              "社会心理"
+            ]
+          },
+          {
+            "argument_id": "A05",
+            "turn_id": "T03",
+            "speaker_id": "fan1",
+            "claim": "\"终究\"意味着已拼尽全力但仍止步于此",
+            "tags": [
+              "终究定义",
+              "努力极限"
+            ]
+          },
+          {
+            "argument_id": "A06",
+            "turn_id": "T03",
+            "speaker_id": "fan1",
+            "claim": "追求不凡的人一直活在比较里，无法在平凡生活中汲取快乐",
+            "tags": [
+              "幸福调查",
+              "社会比较"
+            ]
+          },
+          {
+            "argument_id": "A07",
+            "turn_id": "T05",
+            "speaker_id": "zheng2",
+            "claim": "对方切错人群，\"普信男\"并非经过努力后发现平凡的人",
+            "tags": [
+              "人群界定",
+              "终究含义"
+            ]
+          },
+          {
+            "argument_id": "A08",
+            "turn_id": "T05",
+            "speaker_id": "zheng2",
+            "claim": "山重水复疑无路时，只有保持遗憾才能柳暗花明",
+            "tags": [
+              "山重水复",
+              "可能性论证"
+            ]
+          },
+          {
+            "argument_id": "A09",
+            "turn_id": "T05",
+            "speaker_id": "zheng2",
+            "claim": "遗憾与期待是一体两面的",
+            "tags": [
+              "个人经历",
+              "期待关联"
+            ]
+          },
+          {
+            "argument_id": "A10",
+            "turn_id": "T07",
+            "speaker_id": "fan2",
+            "claim": "当代社会是压力锅，用尽全力仍只能平凡的人不该被要求继续遗憾",
+            "tags": [
+              "社会现实",
+              "压力锅"
+            ]
+          },
+          {
+            "argument_id": "A11",
+            "turn_id": "T07",
+            "speaker_id": "fan2",
+            "claim": "带着遗憾走入死亡是与自己过不去",
+            "tags": [
+              "死亡视角",
+              "父亲案例"
+            ]
+          },
+          {
+            "argument_id": "A12",
+            "turn_id": "T09",
+            "speaker_id": "fan3",
+            "claim": "正方存在两层矛盾：既说悦纳遗憾又说遗憾带来动力",
+            "tags": [
+              "逻辑矛盾",
+              "悦纳vs动力"
+            ]
+          },
+          {
+            "argument_id": "A13",
+            "turn_id": "T09",
+            "speaker_id": "fan3",
+            "claim": "遗憾强加于人会伤害他人",
+            "tags": [
+              "摔跤吧爸爸",
+              "伤害性"
+            ]
+          },
+          {
+            "argument_id": "A14",
+            "turn_id": "T09",
+            "speaker_id": "fan3",
+            "claim": "这场比赛不是卷和不卷的比较，而是适配和不适配的比较",
+            "tags": [
+              "适配论",
+              "半吊子"
+            ]
+          },
+          {
+            "argument_id": "A15",
+            "turn_id": "T09",
+            "speaker_id": "fan3",
+            "claim": "任何人的故事都是好故事，不用追求\"好故事\"",
+            "tags": [
+              "故事观",
+              "平凡力量"
+            ]
+          },
+          {
+            "argument_id": "A16",
+            "turn_id": "T10",
+            "speaker_id": "zheng3",
+            "claim": "正方的承认遗憾比反方的压制遗憾更自洽",
+            "tags": [
+              "自洽性",
+              "压制vs承认"
+            ]
+          },
+          {
+            "argument_id": "A17",
+            "turn_id": "T10",
+            "speaker_id": "zheng3",
+            "claim": "反方的常态分布标准剥夺了大多数人不凡的理由",
+            "tags": [
+              "常态分布批判",
+              "NPC论证"
+            ]
+          },
+          {
+            "argument_id": "A18",
+            "turn_id": "T10",
+            "speaker_id": "zheng3",
+            "claim": "越走近一个人，就越不会形容他是平凡的",
+            "tags": [
+              "走近观察",
+              "不平凡发现"
+            ]
+          },
+          {
+            "argument_id": "A19",
+            "turn_id": "T15",
+            "speaker_id": "multiple",
+            "claim": "普通人也可以从遗憾中学会价值",
+            "tags": [
+              "神经科学",
+              "学习价值"
+            ]
+          },
+          {
+            "argument_id": "A20",
+            "turn_id": "T14",
+            "speaker_id": "multiple",
+            "claim": "遗憾可以带来突破可能（李培南案例）",
+            "tags": [
+              "电竞案例",
+              "突破可能"
+            ]
+          }
+        ]
+      },
+      "gold": {
+        "clash_points": [
+          {
+            "clash_point_id": "C01",
+            "topic_label": "平凡的定义",
+            "summary": "正方认为平凡是主观判断，每个人可以主观认定自己不凡；反方认为平凡有客观标准（正态分布），是多数人生活的真相。",
+            "related_argument_ids": [
+              "A04",
+              "A17"
+            ]
+          },
+          {
+            "clash_point_id": "C02",
+            "topic_label": "\"终究\"的含义",
+            "summary": "正方认为\"终究\"可能只是暂时误判，还有改变空间；反方认为\"终究\"意味着已拼尽全力但止步于此，不需要被告知\"你还可以更努力\"。",
+            "related_argument_ids": [
+              "A05",
+              "A07",
+              "A08"
+            ]
+          },
+          {
+            "clash_point_id": "C03",
+            "topic_label": "遗憾的功能",
+            "summary": "正方认为遗憾能带来动力、促进反思、证明曾鲜活活着；反方认为遗憾会带来痛苦、可能转嫁伤害给下一代。",
+            "related_argument_ids": [
+              "A01",
+              "A02",
+              "A09",
+              "A13",
+              "A16"
+            ]
+          },
+          {
+            "clash_point_id": "C04",
+            "topic_label": "幸福观的比较",
+            "summary": "正方的幸福观是\"带着遗憾继续攀登\"；反方的幸福观是\"接纳平凡、享受当下\"。正方认为反方压制遗憾不自洽，反方认为正方\"卷下去\"会造成痛苦。",
+            "related_argument_ids": [
+              "A06",
+              "A10",
+              "A11",
+              "A14",
+              "A15"
+            ]
+          },
+          {
+            "clash_point_id": "C05",
+            "topic_label": "自洽性之争",
+            "summary": "正方认为自己承认遗憾更自洽，反方是压制负面想法；反方指出正方既说悦纳遗憾又说遗憾带来动力存在矛盾。",
+            "related_argument_ids": [
+              "A12",
+              "A16"
+            ]
+          },
+          {
+            "clash_point_id": "C06",
+            "topic_label": "适配论vs半吊子",
+            "summary": "反方提出这场比赛不是卷和不卷的比较，而是适配和不适配的比较，半吊子（一边觉得终究平凡一边又遗憾）最痛苦。正方质疑适配论未证明。",
+            "related_argument_ids": [
+              "A14"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "round_name": "决赛",
+        "argument_count": 20,
+        "clash_count": 6
+      }
+    }
+  ],
+  "summary": {
+    "match_count": 2,
+    "case_count": 42,
+    "task_breakdown": {
+      "argument_extraction": 25,
+      "evidence_extraction": 15,
+      "clash_identification": 2
+    },
+    "difficulty_breakdown": {
+      "hard": 32,
+      "medium": 10
+    }
+  },
+  "notes": [
+    "当前 seed 只覆盖基于现有 v2 标注可稳定构建的任务：argument_extraction、evidence_extraction、clash_identification。",
+    "尚未构建 rebuttal_targeting 或 unanswered_point_tracking，因为源标注尚未提供 response_to_argument_id 一类的金标链接。"
+  ]
+}

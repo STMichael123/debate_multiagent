@@ -1,0 +1,301 @@
+{
+  "submission_name": "submission_template_v1",
+  "dataset_name": "benchmark_seed_v1",
+  "dataset_version": "0.1.0",
+  "cases": [
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T2",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T2",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T3",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T3",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T4",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T4",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T5",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T6",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T7",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T8",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T10",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T11",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T13",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T13",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T14",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T14",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T15",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T16",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T16",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T20",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T26",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T27",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T27",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:argument_extraction:T28",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:evidence_extraction:T28",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国变2026精英辩手表演赛结构化-v2-精英辩手表演赛-我们需要-不需要足够擅长才能谈热爱:clash_identification:match",
+      "task_type": "clash_identification",
+      "prediction": {
+        "clash_points": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T01",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T01",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T03",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T03",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T05",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T07",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T07",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T09",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T10",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T10",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T13",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T14",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T14",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:argument_extraction:T15",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:evidence_extraction:T15",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": []
+      }
+    },
+    {
+      "case_id": "新国辩2026决赛-结构化-v2-决赛-发现自己终究只是一个平凡人-我该-不该感到遗憾:clash_identification:match",
+      "task_type": "clash_identification",
+      "prediction": {
+        "clash_points": []
+      }
+    }
+  ]
+}

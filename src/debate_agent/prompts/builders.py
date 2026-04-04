@@ -473,3 +473,77 @@ def format_preparation_packet(preparation_packet: PreparationPacket | None) -> s
         f"风险提示={counterplay_risks}\n"
         f"推荐开篇方向={preparation_packet.recommended_opening_frame or '未提供'}"
     )
+
+
+def format_reference_examples(examples: list) -> str:
+    """Format benchmark examples for few-shot injection into prompts.
+
+    Accepts a list of DebateExample objects from the ExampleBank.
+    Returns a formatted string for the [Reference Examples] prompt section.
+    """
+    if not examples:
+        return ""
+
+    sections: list[str] = []
+    for index, example in enumerate(examples, start=1):
+        lines = [f"【示例 {index}】"]
+
+        # Speaker context
+        role_label = "正方" if example.side == "affirmative" else "反方"
+        lines.append(f"辩手：{example.speaker_label or role_label}")
+        lines.append(f"辩题：{example.topic}")
+        lines.append(f"阶段：{example.phase}")
+
+        # Raw text
+        if example.raw_excerpt:
+            excerpt_preview = example.raw_excerpt[:300]
+            if len(example.raw_excerpt) > 300:
+                excerpt_preview += "…"
+            lines.append(f"原话片段：{excerpt_preview}")
+
+        # Argument annotations
+        if example.arguments:
+            for arg_index, arg in enumerate(example.arguments[:3], start=1):
+                arg_lines = [f"论证 {arg_index}："]
+                if arg.claim:
+                    arg_lines.append(f"  Claim（主张）：{arg.claim}")
+                if arg.warrant:
+                    arg_lines.append(f"  Warrant（依据）：{arg.warrant}")
+                if arg.impact:
+                    arg_lines.append(f"  Impact（影响）：{arg.impact}")
+                if arg.tags:
+                    arg_lines.append(f"  标签：{'、'.join(arg.tags)}")
+                lines.append("\n".join(arg_lines))
+
+        # Attack pattern
+        if example.attack_type:
+            attack_labels = {
+                "definition_challenge": "定义攻击 — 重新界定核心概念",
+                "causal_challenge": "因果攻击 — 质疑因果链条",
+                "threshold_challenge": "门槛攻击 — 质疑标准是否达到",
+                "framing_challenge": "框架攻击 — 重塑讨论框架",
+                "logical_challenge": "逻辑攻击 — 指出推理漏洞",
+                "impact_challenge": "影响攻击 — 削弱或翻转后果",
+            }
+            label = attack_labels.get(example.attack_type, example.attack_type)
+            lines.append(f"攻击策略：{label}")
+
+        # Claim role
+        if example.claim_role:
+            role_labels = {
+                "setup": "铺垫 — 为后续论证建立前提",
+                "offense": "进攻 — 主动提出主张",
+                "rebuttal": "反驳 — 回应对方论点",
+                "weighing": "权衡 — 比较双方论点的重要性",
+            }
+            role_text = role_labels.get(example.claim_role, example.claim_role)
+            lines.append(f"角色：{role_text}")
+
+        sections.append("\n".join(lines))
+
+    header = (
+        "以下摘自真实高水平辩赛的结构化标注，供你学习论证深度、攻击策略和表达风格：\n"
+        "请注意这些示例的论证结构（claim → warrant → impact 的清晰链条）、"
+        "攻击的精确性（不是泛泛而谈而是精准打击）、以及表达的简洁力度。"
+    )
+    return header + "\n\n" + "\n\n---\n\n".join(sections)

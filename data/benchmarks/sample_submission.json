@@ -1,0 +1,40 @@
+{
+  "submission_name": "sample_submission_v1",
+  "dataset_name": "benchmark_seed_v1",
+  "cases": [
+    {
+      "case_id": "example:argument_extraction:T1",
+      "task_type": "argument_extraction",
+      "prediction": {
+        "arguments": [
+          {
+            "claim": "示例主张"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "example:evidence_extraction:T1",
+      "task_type": "evidence_extraction",
+      "prediction": {
+        "evidence_mentions": [
+          {
+            "title_or_desc": "示例证据",
+            "source_ref": "示例来源"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "example:clash_identification:match",
+      "task_type": "clash_identification",
+      "prediction": {
+        "clash_points": [
+          {
+            "topic_label": "示例争点"
+          }
+        ]
+      }
+    }
+  ]
+}
