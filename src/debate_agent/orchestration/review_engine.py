@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from uuid import uuid4
 
 from debate_agent.domain.models import DebatePhase, DebateProfile, DebateSession, OpeningBrief, OpeningFramework, TimerPlan
@@ -32,7 +33,8 @@ class ReviewEngine:
             limit=2 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
-        available_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        merged_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        available_evidence_records = self.runtime.state_mutator.apply_evidence_workbench(session, merged_evidence_records, evidence_result.research_query)
         oversight_result = self.runtime.oversight_coordinator.review_turn(
             session=session,
             profile=profile,
@@ -74,7 +76,8 @@ class ReviewEngine:
             limit=3 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
-        available_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        merged_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        available_evidence_records = self.runtime.state_mutator.apply_evidence_workbench(session, merged_evidence_records, evidence_result.research_query)
         oversight_result = self.runtime.oversight_coordinator.review_opening_brief(
             session=session,
             profile=profile,
@@ -108,7 +111,7 @@ class ReviewEngine:
         return timer_plan
 
     def update_opening_framework(self, session: DebateSession, framework: OpeningFramework | None) -> None:
-        self.runtime.state_mutator.set_opening_framework(session, framework)
+        self.runtime.state_mutator.set_opening_framework(session, framework, source_mode="manual", label="用户编辑")
 
     def inject_opening_brief(
         self,
@@ -134,6 +137,7 @@ class ReviewEngine:
             framework=framework,
             target_duration_minutes=normalized_duration,
             target_word_count=normalized_duration * 300,
+            created_at=time.time(),
         )
         self.runtime.state_mutator.add_opening_brief(session, opening_brief)
         return opening_brief

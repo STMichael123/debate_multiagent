@@ -124,6 +124,25 @@ class SessionPhasePayload(BaseModel):
     phase: str = Field(min_length=1)
 
 
+class EvidencePinPayload(BaseModel):
+    evidence_id: str = Field(min_length=1)
+
+
+class SourceTypePayload(BaseModel):
+    source_type: str = Field(min_length=1, max_length=100)
+
+
+class UserSuppliedEvidencePayload(BaseModel):
+    title: str = Field(min_length=1, max_length=300)
+    snippet: str = Field(min_length=1, max_length=2000)
+    source_ref: str = Field(default="user://manual", max_length=500)
+    user_explanation: str | None = Field(default=None, max_length=1000)
+
+
+class EvidenceExplanationPayload(BaseModel):
+    user_explanation: str = Field(default="", max_length=1000)
+
+
 def create_app(
     application: DebateApplication | None = None,
     profile: DebateProfile | None = None,
@@ -490,6 +509,97 @@ def create_app(
             "session": _serialize_session_result(debate_application, result.session),
             "coach_result": jsonable_encoder(result.coach_result),
             "saved_path": str(result.saved_path),
+        }
+
+    @app.get("/api/sessions/{session_id}/opening/history")
+    def get_opening_history(session_id: str) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "history": debate_application.get_opening_history(session),
+        }
+
+    @app.get("/api/sessions/{session_id}/opening-briefs/diff")
+    def get_opening_brief_diff(session_id: str, from_brief_id: str, to_brief_id: str) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        diff_payload = debate_application.get_opening_brief_diff(session, from_brief_id, to_brief_id)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "diff": diff_payload,
+        }
+
+    @app.get("/api/sessions/{session_id}/evidence-workbench")
+    def get_evidence_workbench(session_id: str) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "evidence_workbench": jsonable_encoder(debate_application.get_evidence_workbench(session)),
+        }
+
+    @app.post("/api/sessions/{session_id}/evidence/pin")
+    def pin_evidence(session_id: str, payload: EvidencePinPayload) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        saved_path = debate_application.pin_evidence(session, payload.evidence_id)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "evidence_workbench": jsonable_encoder(debate_application.get_evidence_workbench(session)),
+            "saved_path": str(saved_path),
+        }
+
+    @app.delete("/api/sessions/{session_id}/evidence/{evidence_id}/pin")
+    def unpin_evidence(session_id: str, evidence_id: str) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        saved_path = debate_application.unpin_evidence(session, evidence_id)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "evidence_workbench": jsonable_encoder(debate_application.get_evidence_workbench(session)),
+            "saved_path": str(saved_path),
+        }
+
+    @app.post("/api/sessions/{session_id}/evidence/blacklist-source-type")
+    def blacklist_source_type(session_id: str, payload: SourceTypePayload) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        saved_path = debate_application.blacklist_source_type(session, payload.source_type)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "evidence_workbench": jsonable_encoder(debate_application.get_evidence_workbench(session)),
+            "saved_path": str(saved_path),
+        }
+
+    @app.delete("/api/sessions/{session_id}/evidence/blacklist-source-type/{source_type}")
+    def remove_blacklisted_source_type(session_id: str, source_type: str) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        saved_path = debate_application.remove_blacklisted_source_type(session, source_type)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "evidence_workbench": jsonable_encoder(debate_application.get_evidence_workbench(session)),
+            "saved_path": str(saved_path),
+        }
+
+    @app.post("/api/sessions/{session_id}/evidence/user-supplied")
+    def add_user_supplied_evidence(session_id: str, payload: UserSuppliedEvidencePayload) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        saved_path = debate_application.add_user_supplied_evidence(
+            session=session,
+            title=payload.title,
+            snippet=payload.snippet,
+            source_ref=payload.source_ref,
+            user_explanation=payload.user_explanation or "",
+        )
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "evidence_workbench": jsonable_encoder(debate_application.get_evidence_workbench(session)),
+            "saved_path": str(saved_path),
+        }
+
+    @app.patch("/api/sessions/{session_id}/evidence/{evidence_id}/explanation")
+    def update_evidence_explanation(session_id: str, evidence_id: str, payload: EvidenceExplanationPayload) -> dict[str, object]:
+        session = _load_session_or_404(debate_application, session_id)
+        saved_path = debate_application.update_evidence_explanation(session, evidence_id, payload.user_explanation)
+        return {
+            "session": _serialize_session_result(debate_application, session),
+            "evidence_workbench": jsonable_encoder(debate_application.get_evidence_workbench(session)),
+            "saved_path": str(saved_path),
         }
 
     @app.patch("/api/sessions/{session_id}/options")

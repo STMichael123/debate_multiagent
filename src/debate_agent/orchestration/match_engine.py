@@ -32,7 +32,8 @@ class MatchEngine:
             clash_points=clash_points,
             enable_web_search=session.options.web_search_enabled,
         )
-        available_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        merged_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        available_evidence_records = self.runtime.state_mutator.apply_evidence_workbench(session, merged_evidence_records, evidence_result.research_query)
         opponent_output, opponent_prompt, model_name = self.runtime.debate_match_agent.generate_response(
             session=session,
             profile=profile,
@@ -111,7 +112,8 @@ class MatchEngine:
             limit=3 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
-        available_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        merged_evidence_records = self.runtime.merge_upstream_evidence(session, evidence_result.records)
+        available_evidence_records = self.runtime.state_mutator.apply_evidence_workbench(session, merged_evidence_records, evidence_result.research_query)
         speaker = self.runtime.resolve_session_speaker(session, speaker_side, default_side="opponent")
         master_plan = self.runtime.master_agent.plan_inquiry(session=session, inquiry_focus=inquiry_focus, speaker_side=speaker)
         timer_plan = self.runtime.oversight_coordinator.build_timer_plan(

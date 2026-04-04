@@ -68,7 +68,9 @@ class PipelineRuntime:
             limit=3 if not session.options.web_search_enabled else None,
             enable_web_search=session.options.web_search_enabled,
         )
-        return self.merge_upstream_evidence(session, evidence_result.records), evidence_result.research_query
+        merged_records = self.merge_upstream_evidence(session, evidence_result.records)
+        available_records = self.state_mutator.apply_evidence_workbench(session, merged_records, evidence_result.research_query)
+        return available_records, evidence_result.research_query
 
     def resolve_session_speaker(self, session: DebateSession, speaker_side: str | None, default_side: str = "user") -> str:
         requested_speaker = speaker_side or default_side

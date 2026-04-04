@@ -155,7 +155,7 @@ class SpeechEngine:
             progress_callback=progress_callback,
         )
         self.runtime.state_mutator.add_timer_plan(session, timer_plan)
-        self.runtime.state_mutator.set_opening_framework(session, result.framework)
+        self.runtime.state_mutator.set_opening_framework(session, result.framework, source_mode="generated", label="系统生成")
         return OpeningFrameworkResult(
             framework=result.framework,
             master_plan=master_plan,

@@ -448,6 +448,132 @@ class WebAppTests(unittest.TestCase):
         self.assertIn("event: error", body)
         self.assertIn("当前会话还没有可用框架稿", body)
 
+    def test_opening_history_and_diff_endpoints(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "user",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        framework_payload = {
+            "judge_standard": "比较哪一方更能稳定提升学生 AI 基础能力并控制资源挤出。",
+            "framework_summary": "先定标准，再比较基础能力、教育公平与执行成本。",
+            "argument_cards": [
+                {
+                    "claim": "AI 通识教育能补齐全体学生的基础识读能力。",
+                    "data_support": "当前缺少可直接上场的硬证据。",
+                    "academic_support": "通识教育的目标是建立跨专业的基本认知能力。",
+                    "scenario_support": "学生面对 AI 生成内容时，若没有基础识读能力，就更容易误判信息。"
+                }
+            ]
+        }
+        first_import = self.client.post(
+            f"/api/sessions/{session_id}/opening-briefs/import",
+            json={
+                "speaker_side": "user",
+                "spoken_text": "各位评判，本题先比较哪一方更能补齐学生 AI 基础能力。",
+                "framework": framework_payload,
+                "target_duration_minutes": 3,
+            },
+        )
+        first_brief_id = first_import.json()["opening_brief"]["brief_id"]
+        self.client.post(f"/api/sessions/{session_id}/opening-briefs/coach")
+
+        second_import = self.client.post(
+            f"/api/sessions/{session_id}/opening-briefs/import",
+            json={
+                "speaker_side": "user",
+                "spoken_text": "各位评判，本题应先比较哪一方更能补齐学生 AI 基础能力，并把资源挤出压到最低。",
+                "framework": framework_payload,
+                "target_duration_minutes": 3,
+            },
+        )
+        second_brief_id = second_import.json()["opening_brief"]["brief_id"]
+        self.client.post(f"/api/sessions/{session_id}/opening-briefs/coach")
+
+        history_response = self.client.get(f"/api/sessions/{session_id}/opening/history")
+        self.assertEqual(history_response.status_code, 200)
+        history = history_response.json()["history"]
+        self.assertEqual(len(history["briefs"]), 2)
+        self.assertEqual(history["current_opening_brief_id"], second_brief_id)
+        self.assertEqual(sum(1 for item in history["briefs"] if item["is_current"]), 1)
+
+        diff_response = self.client.get(
+            f"/api/sessions/{session_id}/opening-briefs/diff",
+            params={"from_brief_id": first_brief_id, "to_brief_id": second_brief_id},
+        )
+        self.assertEqual(diff_response.status_code, 200)
+        diff_payload = diff_response.json()["diff"]
+        self.assertEqual(diff_payload["from_brief"]["brief_id"], first_brief_id)
+        self.assertEqual(diff_payload["to_brief"]["brief_id"], second_brief_id)
+        self.assertIn(first_brief_id, diff_payload["unified_diff"])
+        self.assertIn("score_comparison", diff_payload)
+
+    def test_evidence_workbench_endpoints(self) -> None:
+        create_response = self.client.post(
+            "/api/sessions",
+            json={
+                "topic": "人工智能是否应当被强制纳入高中通识教育",
+                "user_side": "正方",
+                "agent_side": "反方",
+                "coach_feedback_mode": "manual",
+                "web_search_enabled": True,
+                "default_closing_side": "user",
+            },
+        )
+        session_id = create_response.json()["session_id"]
+
+        get_response = self.client.get(f"/api/sessions/{session_id}/evidence-workbench")
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(get_response.json()["evidence_workbench"]["session_id"], session_id)
+
+        add_response = self.client.post(
+            f"/api/sessions/{session_id}/evidence/user-supplied",
+            json={
+                "title": "地方试点课程数据",
+                "source_ref": "manual://pilot-program",
+                "snippet": "试点学校已把 AI 素养纳入信息技术课程，学生参与率持续提升。",
+                "user_explanation": "用于证明课程推广已有现实基础。",
+            },
+        )
+        self.assertEqual(add_response.status_code, 200)
+        evidence_id = add_response.json()["evidence_workbench"]["user_supplied_evidence"][0]["evidence_id"]
+
+        pin_response = self.client.post(
+            f"/api/sessions/{session_id}/evidence/pin",
+            json={"evidence_id": evidence_id},
+        )
+        self.assertEqual(pin_response.status_code, 200)
+        self.assertEqual(pin_response.json()["evidence_workbench"]["pinned_evidence"][0]["evidence_id"], evidence_id)
+
+        update_response = self.client.patch(
+            f"/api/sessions/{session_id}/evidence/{evidence_id}/explanation",
+            json={"user_explanation": "改为强调试点已经验证课程可执行。"},
+        )
+        self.assertEqual(update_response.status_code, 200)
+        self.assertEqual(
+            update_response.json()["evidence_workbench"]["user_supplied_evidence"][0]["user_explanation"],
+            "改为强调试点已经验证课程可执行。",
+        )
+
+        blacklist_response = self.client.post(
+            f"/api/sessions/{session_id}/evidence/blacklist-source-type",
+            json={"source_type": "web_search"},
+        )
+        self.assertEqual(blacklist_response.status_code, 200)
+        self.assertIn("web_search", blacklist_response.json()["evidence_workbench"]["blacklisted_source_types"])
+
+        remove_response = self.client.delete(f"/api/sessions/{session_id}/evidence/blacklist-source-type/web_search")
+        self.assertEqual(remove_response.status_code, 200)
+        self.assertNotIn("web_search", remove_response.json()["evidence_workbench"]["blacklisted_source_types"])
+
 
 if __name__ == "__main__":
     unittest.main()

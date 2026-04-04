@@ -40,9 +40,11 @@ def format_evidence_packet(evidence_records: list[EvidenceRecord]) -> str:
             credibility = f"{evidence.credibility_score:.2f}" if evidence.credibility_score is not None else "未知"
             relevance = f"{evidence.relevance_score:.2f}" if evidence.relevance_score is not None else "未知"
             source_tier = _classify_source_authority(evidence)
+            note = f"；用户备注={evidence.user_explanation}" if evidence.user_explanation else ""
+            pinned = "；状态=已钉住" if evidence.is_pinned else ""
             lines.append(
                 f"{evidence.evidence_id}: 标题={evidence.title}；来源={evidence.source_ref}；"
-                f"摘要={evidence.snippet}；来源位阶={source_tier}；相关性={relevance}；可信度={credibility}；校验状态={evidence.verification_state}"
+                f"摘要={evidence.snippet}；来源位阶={source_tier}；相关性={relevance}；可信度={credibility}；校验状态={evidence.verification_state}{pinned}{note}"
             )
     return "\n".join(lines)
 
@@ -94,7 +96,7 @@ def build_base_prompt_variables(
     evidence_records: list[EvidenceRecord],
 ) -> dict[str, str]:
     phase_policy = profile.phase_policies.get(session.current_phase.value, {})
-    opening_brief = session.opening_briefs[-1] if session.opening_briefs else None
+    opening_brief = _resolve_current_opening_brief(session)
     preparation_packet = session.preparation_packets[-1] if session.preparation_packets else None
     return {
         "topic": session.topic,
@@ -473,6 +475,16 @@ def format_preparation_packet(preparation_packet: PreparationPacket | None) -> s
         f"风险提示={counterplay_risks}\n"
         f"推荐开篇方向={preparation_packet.recommended_opening_frame or '未提供'}"
     )
+
+
+def _resolve_current_opening_brief(session: DebateSession) -> OpeningBrief | None:
+    if session.current_opening_brief_id:
+        for opening_brief in reversed(session.opening_briefs):
+            if opening_brief.brief_id == session.current_opening_brief_id:
+                return opening_brief
+    if not session.opening_briefs:
+        return None
+    return session.opening_briefs[-1]
 
 
 def format_reference_examples(examples: list) -> str:

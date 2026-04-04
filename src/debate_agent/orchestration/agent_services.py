@@ -1254,6 +1254,8 @@ class OpeningAgent:
             framework=framework,
             target_duration_minutes=target_duration_minutes,
             target_word_count=target_word_count,
+            created_at=time.time(),
+            based_on_brief_id=session.current_opening_brief_id,
         )
 
     def _mock_opening_brief_from_framework(
@@ -1277,6 +1279,8 @@ class OpeningAgent:
             framework=framework,
             target_duration_minutes=target_duration_minutes,
             target_word_count=target_word_count,
+            created_at=time.time(),
+            based_on_brief_id=session.current_opening_brief_id,
         )
 
     def _parse_opening_framework(self, payload: dict[str, object], profile: DebateProfile) -> OpeningFramework:
@@ -1321,6 +1325,8 @@ class OpeningAgent:
             framework=framework,
             target_duration_minutes=target_duration_minutes,
             target_word_count=target_duration_minutes * 300,
+            created_at=time.time(),
+            based_on_brief_id=session.current_opening_brief_id,
         )
 
     def _build_stream_opening_brief(
@@ -1344,6 +1350,8 @@ class OpeningAgent:
             framework=framework,
             target_duration_minutes=target_duration_minutes,
             target_word_count=target_duration_minutes * 300,
+            created_at=time.time(),
+            based_on_brief_id=session.current_opening_brief_id,
         )
 
     def _build_framework_retry_prompt(self, base_prompt: str, validation_errors: list[str], framework: OpeningFramework | None) -> str:

@@ -455,6 +455,75 @@ class DebateApplicationTests(unittest.TestCase):
         self.assertEqual(import_action.opening_brief.target_duration_minutes, 4)
         self.assertEqual(import_action.opening_brief.outline, ["平台端限制比家庭零散管理更稳定地降低..."])
 
+    def test_generating_new_framework_clears_current_opening_brief_but_keeps_history(self) -> None:
+        session_result = self.application.create_session(
+            NewSessionRequest(
+                topic="人工智能是否应当被强制纳入高中通识教育",
+                user_side="正方",
+                agent_side="反方",
+                profile_id=self.profile.profile_id,
+            )
+        )
+
+        first_framework_action = self.application.generate_opening_framework(
+            session=session_result.session,
+            profile=self.profile,
+            speaker_side="user",
+        )
+        import_action = self.application.inject_opening_brief(
+            session=session_result.session,
+            speaker_side="正方",
+            spoken_text="各位评判，本题应先比较哪一方更能提升学生 AI 基础能力并控制实施成本。",
+            framework=first_framework_action.framework_result.framework,
+        )
+
+        self.assertEqual(session_result.session.current_opening_brief_id, import_action.opening_brief.brief_id)
+
+        regenerated_framework_action = self.application.generate_opening_framework(
+            session=session_result.session,
+            profile=self.profile,
+            speaker_side="user",
+        )
+
+        self.assertIsNone(regenerated_framework_action.session.current_opening_brief_id)
+        history = self.application.get_opening_history(regenerated_framework_action.session)
+        self.assertIsNone(history["current_opening_brief_id"])
+        self.assertGreaterEqual(len(history["frameworks"]), 2)
+
+        preserved_brief = next(item for item in history["briefs"] if item["brief_id"] == import_action.opening_brief.brief_id)
+        self.assertFalse(preserved_brief["is_current"])
+
+    def test_evidence_workbench_operations_persist_on_session(self) -> None:
+        session_result = self.application.create_session(
+            NewSessionRequest(
+                topic="人工智能是否应当被强制纳入高中通识教育",
+                user_side="正方",
+                agent_side="反方",
+                profile_id=self.profile.profile_id,
+            )
+        )
+
+        self.application.add_user_supplied_evidence(
+            session=session_result.session,
+            title="教育部试点数据",
+            snippet="部分地区已在信息技术课程中试行 AI 素养模块，学生参与率显著提升。",
+            source_ref="manual://trial-data",
+            user_explanation="这条证据用来支撑 AI 通识教育具备现实落地基础。",
+        )
+        evidence_id = session_result.session.evidence_workbench.user_supplied_evidence[0].evidence_id
+
+        self.application.pin_evidence(session_result.session, evidence_id)
+        self.application.blacklist_source_type(session_result.session, "web_search")
+        self.application.update_evidence_explanation(session_result.session, evidence_id, "改为强调先行试点已经证明课程可执行。")
+
+        loaded = self.application.load_session(session_result.session.session_id)
+        workbench = self.application.get_evidence_workbench(loaded)
+
+        self.assertIn("web_search", workbench.blacklisted_source_types)
+        self.assertEqual(len(workbench.user_supplied_evidence), 1)
+        self.assertEqual(workbench.user_supplied_evidence[0].user_explanation, "改为强调先行试点已经证明课程可执行。")
+        self.assertEqual(workbench.pinned_evidence[0].evidence_id, evidence_id)
+
 
 if __name__ == "__main__":
     unittest.main()

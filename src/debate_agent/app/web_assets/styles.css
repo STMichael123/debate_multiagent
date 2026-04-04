@@ -567,13 +567,17 @@ button {
 }
 
 .opening-workbench {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
   align-items: start;
 }
 
 .opening-workbench .column-main {
   min-width: 0;
   width: 100%;
+}
+
+.opening-workbench .column-side {
+  min-width: 0;
 }
 
 .opening-workbench .meta-panel,
@@ -874,6 +878,88 @@ textarea {
   gap: 14px;
 }
 
+.history-group {
+  display: grid;
+  gap: 10px;
+}
+
+.history-card {
+  gap: 10px;
+}
+
+.history-card.is-current {
+  border-color: var(--active-border);
+  box-shadow: 0 10px 24px var(--active-shadow);
+}
+
+.history-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.opening-diff-layout,
+.diff-coach-grid,
+.diff-score-grid,
+.evidence-tool-forms {
+  display: grid;
+  gap: 12px;
+}
+
+.diff-score-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.diff-score-card {
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  background: var(--surface-strong);
+}
+
+.diff-score-card p {
+  margin: 8px 0 0;
+}
+
+.diff-pre {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+  background: var(--input-bg);
+  color: var(--text);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.inline-action-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.badge-action {
+  cursor: pointer;
+}
+
+.evidence-workbench-card {
+  display: grid;
+  gap: 12px;
+}
+
+.evidence-note-field textarea {
+  min-height: 88px;
+}
+
+.evidence-actions {
+  justify-content: flex-end;
+}
+
 .opening-framework-card,
 .opening-framework-summary {
   border: 1px solid var(--card-border);
@@ -1062,6 +1148,11 @@ textarea {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .diff-score-grid,
+  .inline-action-row {
+    grid-template-columns: 1fr;
   }
 }
 

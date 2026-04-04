@@ -7,7 +7,7 @@ import tempfile
 from dataclasses import asdict
 from pathlib import Path
 
-from debate_agent.domain.models import ArgumentUnit, ClashPoint, ClosingOutput, CoachFeedbackMode, CoachReport, DebatePhase, DebateSession, EvidenceRecord, InquiryOutput, OpeningArgumentCard, OpeningBrief, OpeningFramework, PreparationPacket, SessionOptions, SpeakerRole, TheoryPoint, TimerPlan, TurnRecord
+from debate_agent.domain.models import ArgumentUnit, ClashPoint, ClosingOutput, CoachFeedbackMode, CoachReport, DebatePhase, DebateSession, EvidenceRecord, EvidenceWorkbenchState, InquiryOutput, OpeningArgumentCard, OpeningBrief, OpeningFramework, OpeningFrameworkVersion, PreparationPacket, SessionOptions, SpeakerRole, TheoryPoint, TimerPlan, TurnRecord
 
 _MAX_BACKUPS_PER_SESSION = 5
 
@@ -86,6 +86,11 @@ class JSONSessionStore:
         closing_outputs = [self._build_closing_output(item) for item in self._ensure_list_of_dicts(payload.get("closing_outputs"))]
         opening_briefs = [self._build_opening_brief(item) for item in self._ensure_list_of_dicts(payload.get("opening_briefs"))]
         current_opening_framework = self._build_opening_framework(payload.get("current_opening_framework"))
+        opening_framework_versions = [self._build_opening_framework_version(item) for item in self._ensure_list_of_dicts(payload.get("opening_framework_versions"))]
+        evidence_workbench = self._build_evidence_workbench(payload.get("evidence_workbench"), self._ensure_str(payload.get("session_id")))
+        current_opening_brief_id = self._ensure_optional_str(payload.get("current_opening_brief_id"))
+        if current_opening_brief_id is None and opening_briefs:
+            current_opening_brief_id = opening_briefs[-1].brief_id
         return DebateSession(
             session_id=self._ensure_str(payload.get("session_id")),
             topic=self._ensure_str(payload.get("topic")),
@@ -109,7 +114,11 @@ class JSONSessionStore:
             inquiry_outputs=inquiry_outputs,
             closing_outputs=closing_outputs,
             current_opening_framework=current_opening_framework,
+            opening_framework_versions=opening_framework_versions,
+            current_opening_framework_version_id=self._ensure_optional_str(payload.get("current_opening_framework_version_id")),
             opening_briefs=opening_briefs,
+            current_opening_brief_id=current_opening_brief_id,
+            evidence_workbench=evidence_workbench,
         )
 
     def _build_session_options(self, payload: object) -> SessionOptions:
@@ -255,6 +264,20 @@ class JSONSessionStore:
             credibility_score=self._ensure_optional_float(payload.get("credibility_score")),
             used_by_turn_ids=self._ensure_list_of_str(payload.get("used_by_turn_ids")),
             verification_state=self._ensure_str(payload.get("verification_state"), default="unverified"),
+            user_explanation=self._ensure_str(payload.get("user_explanation")),
+            is_pinned=self._ensure_bool(payload.get("is_pinned"), default=False),
+        )
+
+    def _build_evidence_workbench(self, payload: object, session_id: str) -> EvidenceWorkbenchState | None:
+        if not isinstance(payload, dict):
+            return None
+        return EvidenceWorkbenchState(
+            session_id=session_id,
+            available_evidence=[self._build_evidence_record(item) for item in self._ensure_list_of_dicts(payload.get("available_evidence"))],
+            pinned_evidence=[self._build_evidence_record(item) for item in self._ensure_list_of_dicts(payload.get("pinned_evidence"))],
+            user_supplied_evidence=[self._build_evidence_record(item) for item in self._ensure_list_of_dicts(payload.get("user_supplied_evidence"))],
+            blacklisted_source_types=self._ensure_list_of_str(payload.get("blacklisted_source_types")),
+            last_research_query=self._ensure_str(payload.get("last_research_query")),
         )
 
     def _build_theory_point(self, payload: dict[str, object]) -> TheoryPoint:
@@ -280,6 +303,19 @@ class JSONSessionStore:
             framework=self._build_opening_framework(framework_payload),
             target_duration_minutes=self._ensure_optional_int(payload.get("target_duration_minutes")) or 3,
             target_word_count=self._ensure_optional_int(payload.get("target_word_count")) or 900,
+            created_at=self._ensure_optional_float(payload.get("created_at")) or 0.0,
+            based_on_brief_id=self._ensure_optional_str(payload.get("based_on_brief_id")),
+        )
+
+    def _build_opening_framework_version(self, payload: dict[str, object]) -> OpeningFrameworkVersion:
+        framework = self._build_opening_framework(payload.get("framework"))
+        return OpeningFrameworkVersion(
+            version_id=self._ensure_str(payload.get("version_id")),
+            session_id=self._ensure_str(payload.get("session_id")),
+            framework=framework or OpeningFramework(judge_standard="", framework_summary="", argument_cards=[]),
+            created_at=self._ensure_optional_float(payload.get("created_at")) or 0.0,
+            source_mode=self._ensure_str(payload.get("source_mode"), default="generated"),
+            label=self._ensure_str(payload.get("label")),
         )
 
     def _build_opening_framework(self, payload: object) -> OpeningFramework | None:

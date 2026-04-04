@@ -255,6 +255,74 @@
               </section>
             </section>
           </div>
+
+          <div class="column column-side">
+            <section class="panel analysis-panel">
+              <div class="panel-head">
+                <h2>改稿历史</h2>
+              </div>
+              <div id="openingHistoryList" class="stack-list empty-state">当前还没有框架稿或一辩稿历史。</div>
+            </section>
+
+            <section class="panel analysis-panel">
+              <div class="panel-head">
+                <h2>版本对比</h2>
+              </div>
+              <div class="inline-grid">
+                <label>
+                  <span>从版本</span>
+                  <select id="openingDiffFromSelect">
+                    <option value="">暂无版本</option>
+                  </select>
+                </label>
+                <label>
+                  <span>到版本</span>
+                  <select id="openingDiffToSelect">
+                    <option value="">暂无版本</option>
+                  </select>
+                </label>
+              </div>
+              <div class="toolbar">
+                <button id="compareOpeningBtn" class="ghost-button" type="button" disabled>比较两个版本</button>
+              </div>
+              <div id="openingDiffPanel" class="stack-list empty-state">选择两个一辩稿版本后，可以在这里查看文本 diff 和教练评分前后变化。</div>
+            </section>
+
+            <section class="panel analysis-panel">
+              <div class="panel-head">
+                <h2>证据工作台</h2>
+              </div>
+              <div class="stack-list evidence-tool-forms">
+                <label>
+                  <span>拉黑来源类型</span>
+                  <div class="inline-action-row">
+                    <input id="blacklistSourceTypeInput" type="text" placeholder="例如：web_search 或 local_dossier" />
+                    <button id="addBlacklistSourceTypeBtn" class="ghost-button" type="button">加入黑名单</button>
+                  </div>
+                </label>
+                <label>
+                  <span>手动补充证据标题</span>
+                  <input id="manualEvidenceTitleInput" type="text" placeholder="例如：教育部 2024 AI 通识课程试点数据" />
+                </label>
+                <label>
+                  <span>证据来源</span>
+                  <input id="manualEvidenceSourceRefInput" type="text" placeholder="链接、书名、文件名或自定义备注" />
+                </label>
+                <label>
+                  <span>证据内容</span>
+                  <textarea id="manualEvidenceSnippetInput" rows="4" placeholder="粘贴你要保留的关键事实、引文或数据。"></textarea>
+                </label>
+                <label>
+                  <span>你的解释</span>
+                  <textarea id="manualEvidenceExplanationInput" rows="3" placeholder="说明这条证据要支撑哪个论点、准备怎么用。"></textarea>
+                </label>
+                <div class="toolbar">
+                  <button id="addManualEvidenceBtn" class="primary-button" type="button">加入手动证据</button>
+                </div>
+              </div>
+              <div id="evidenceWorkbenchOutput" class="stack-list empty-state">这里会显示当前证据池、钉住证据和来源黑名单。</div>
+            </section>
+          </div>
         </section>
 
         <section id="debateWorkbench" class="workspace-grid debate-workbench hidden">

@@ -78,6 +78,8 @@ class EvidenceRecord:
     credibility_score: float | None = None
     used_by_turn_ids: list[str] = field(default_factory=list)
     verification_state: str = "unverified"
+    user_explanation: str = ""
+    is_pinned: bool = False
 
 
 @dataclass(slots=True)
@@ -231,6 +233,16 @@ class OpeningFramework:
 
 
 @dataclass(slots=True)
+class OpeningFrameworkVersion:
+    version_id: str
+    session_id: str
+    framework: OpeningFramework
+    created_at: float
+    source_mode: str = "generated"
+    label: str = ""
+
+
+@dataclass(slots=True)
 class OpeningBrief:
     brief_id: str
     session_id: str
@@ -244,6 +256,18 @@ class OpeningBrief:
     framework: OpeningFramework | None = None
     target_duration_minutes: int = 3
     target_word_count: int = 900
+    created_at: float = 0.0
+    based_on_brief_id: str | None = None
+
+
+@dataclass(slots=True)
+class EvidenceWorkbenchState:
+    session_id: str
+    available_evidence: list[EvidenceRecord] = field(default_factory=list)
+    pinned_evidence: list[EvidenceRecord] = field(default_factory=list)
+    user_supplied_evidence: list[EvidenceRecord] = field(default_factory=list)
+    blacklisted_source_types: list[str] = field(default_factory=list)
+    last_research_query: str = ""
 
 
 @dataclass(slots=True)
@@ -279,4 +303,8 @@ class DebateSession:
     inquiry_outputs: list[InquiryOutput] = field(default_factory=list)
     closing_outputs: list[ClosingOutput] = field(default_factory=list)
     current_opening_framework: OpeningFramework | None = None
+    opening_framework_versions: list[OpeningFrameworkVersion] = field(default_factory=list)
+    current_opening_framework_version_id: str | None = None
     opening_briefs: list[OpeningBrief] = field(default_factory=list)
+    current_opening_brief_id: str | None = None
+    evidence_workbench: EvidenceWorkbenchState | None = None
