@@ -1,30 +1,56 @@
 # Benchmarks
 
-这里存放最小 benchmark seed 数据与后续生成产物。
+这里存放当前项目的最小 benchmark 数据、标注覆盖层和 submission 模板。
 
-当前策略：
+## Benchmark 在当前产品里的定位
+
+当前产品已经扩展到 preparation、opening、turn、coach、closing 等多条链路，但 benchmark 仍然主要服务于“结构化分析与攻防对齐”的回归，而不是直接评价完整用户体验。
+
+它当前最适合回答的问题是：
+
+1. argument analysis 有没有退化。
+2. evidence / clash 抽取协议有没有变差。
+3. response targeting 等结构化攻防字段是否比上一版更稳定。
+
+它暂时不直接评价：
+
+1. opening brief 的说服力。
+2. closing 的朗读质量。
+3. coach 建议的训练价值。
+4. Web 交互和 SSE 体验。
+
+## 当前数据版本
+
+基础策略：
 
 1. 先从少量高精度比赛结构化 JSON 构建 seed。
-2. 当前只覆盖可稳定金标化的三类任务：
-   - `argument_extraction`
-   - `evidence_extraction`
-   - `clash_identification`
-3. 暂不构建 `rebuttal_targeting`、`unanswered_point_tracking` 一类任务，因为现有 v2 结构尚未包含 `response_to_argument_id` 这类显式对齐字段。
+2. 先做可以稳定金标化的任务，再逐步扩展。
+3. 保持 submission 协议简单，优先服务回归而不是排行榜。
 
-v3 扩展：
+v1 任务：
 
-1. 通过 [benchmark_v3_annotations.json](data/benchmarks/benchmark_v3_annotations.json) 为高精度样本补充 argument 级金标。
-2. 当前新增三类攻防任务：
-   - `claim_role_classification`
-   - `attack_type_classification`
-   - `rebuttal_targeting`
-3. v3 的 `response_to_argument_ids`、`attack_type`、`claim_role` 目前是基于高精度 v2 摘要人工补标的第一版，适合作为 hardness 对比基线，不应误认为最终不可争议的唯一解释。
+1. `argument_extraction`
+2. `evidence_extraction`
+3. `clash_identification`
+
+v3 扩展任务：
+
+1. `claim_role_classification`
+2. `attack_type_classification`
+3. `rebuttal_targeting`
+
+说明：
+
+1. [benchmark_v3_annotations.json](data/benchmarks/benchmark_v3_annotations.json) 为高精度样本补充了 argument 级标注。
+2. `response_to_argument_ids`、`attack_type`、`claim_role` 属于第一版人工补标，更适合作为 hardness 对比基线，而不是不可争议的唯一金标。
+
+## Submission 格式
 
 submission 最小格式：
 
 1. 顶层包含 `submission_name`、`dataset_name`、`cases`。
 2. 每个 case 通过 `case_id` 对齐 gold dataset。
-3. `prediction` 字段按任务类型填写：
+3. `prediction` 按任务类型填写：
    - `argument_extraction` -> `prediction.arguments[].claim`
    - `evidence_extraction` -> `prediction.evidence_mentions[].title_or_desc` 与 `source_ref`
    - `clash_identification` -> `prediction.clash_points[].topic_label`
@@ -32,37 +58,35 @@ submission 最小格式：
    - `attack_type_classification` -> `prediction.attack_type`
    - `rebuttal_targeting` -> `prediction.response_to_argument_ids[]`
 
-评分规则：
+当前模板文件：
 
-1. `argument_extraction` 目前按 claim 文本做标准化后精确匹配。
-2. `evidence_extraction` 目前按 `title_or_desc|source_ref` 的标准化字符串精确匹配。
-3. `clash_identification` 目前按 `topic_label` 精确匹配。
-4. `claim_role_classification` 与 `attack_type_classification` 目前按标签精确匹配。
-5. `rebuttal_targeting` 按 `response_to_argument_ids` 集合做 precision / recall / f1。
-6. 每个 case 输出 `precision`、`recall`、`f1` 或标签对比结果，总分取 case 平均值。
+1. `submission_template.json`
+2. `submission_template_v3.json`
+3. `sample_submission.json`
 
-构建命令示例：
+## 评分规则
+
+1. `argument_extraction`：按 claim 文本标准化后精确匹配。
+2. `evidence_extraction`：按 `title_or_desc|source_ref` 标准化字符串精确匹配。
+3. `clash_identification`：按 `topic_label` 精确匹配。
+4. `claim_role_classification`：按标签精确匹配。
+5. `attack_type_classification`：按标签精确匹配。
+6. `rebuttal_targeting`：按 `response_to_argument_ids` 集合计算 precision / recall / f1。
+
+每个 case 输出局部结果，总分取 case 平均值。
+
+## 构建与评分命令
+
+构建 v1 seed：
 
 ```bash
 PYTHONPATH=src python scripts/build_benchmark_dataset.py <match-a.json> <match-b.json> --output data/benchmarks/seed_v1.json
 ```
 
-构建 v3 seed 示例：
+构建 v3 seed：
 
 ```bash
 PYTHONPATH=src python scripts/build_benchmark_dataset.py <match-a.json> <match-b.json> --annotation-overlay data/benchmarks/benchmark_v3_annotations.json --dataset-name benchmark_seed_v3 --output data/benchmarks/seed_v3.json
-```
-
-seed 数据用途：
-
-1. 固定少量高质量样本，避免调 hardness 时只靠主观感觉。
-2. 先验证 schema、case 切分和任务边界，再决定是否扩展为更完整的 benchmark pipeline。
-3. 未来补足 response link 字段后，再增量扩展到回应目标识别、未回应点追踪等任务。
-
-运行命令示例：
-
-```bash
-PYTHONPATH=src python scripts/score_benchmark_submission.py data/benchmarks/seed_v1.json data/benchmarks/my_submission.json --output data/benchmarks/latest_report.json
 ```
 
 初始化 submission 模板：
@@ -71,7 +95,15 @@ PYTHONPATH=src python scripts/score_benchmark_submission.py data/benchmarks/seed
 PYTHONPATH=src python scripts/init_benchmark_submission.py data/benchmarks/seed_v1.json --output data/benchmarks/submission_template.json
 ```
 
-说明：
+运行评分：
 
-1. 当前 scorer 是最小版本，适合比较 prompt、agent 流程和 hardness 调整后的相对变化。
-2. 当前并不处理同义改写、近义 claim 聚类或软匹配，因此更适合在相同输出协议下做版本对比，而不是做开放式 leaderboard。
+```bash
+PYTHONPATH=src python scripts/score_benchmark_submission.py data/benchmarks/seed_v1.json data/benchmarks/my_submission.json --output data/benchmarks/latest_report.json
+```
+
+## 维护建议
+
+1. benchmark 继续保持“小而准”，优先覆盖最容易被流程改动破坏的结构字段。
+2. 新增任务前，先确认 gold 字段是否足够稳定，而不是为了追求覆盖率强行扩表。
+3. 如果未来要覆盖 opening 或 coach，建议单独设计人工 rubric，而不是硬塞进现有 extraction scorer。
+4. 当前 scorer 不做同义改写、claim 聚类或软匹配，因此更适合同协议版本对比，不适合开放式 leaderboard。
